@@ -17,6 +17,13 @@ namespace KiraiMod.Modules
             foreach (string[] alias in Shared.config.aliases) __result = __result.Replace(alias[0], alias[1]);
         }
 
+        public static void ProcessStringPrefix(ref string __0)
+        {
+            if (!Shared.modules.aliases.state) return;
+
+            foreach (string[] alias in Shared.config.aliases) __0 = __0.Replace(alias[0], alias[1]);
+        }
+
         public override void OnStateChange(bool state)
         {
             //if (state) GetSelfAlias();

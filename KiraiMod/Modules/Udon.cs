@@ -197,7 +197,7 @@ namespace KiraiMod.Modules
 
         public void Broadcast()
         {
-            if (Config.General.bUseClipboard)
+            if (Shared.modules.misc.bUseClipboard)
                 Helper.BroadcastCustomEvent(System.Windows.Forms.Clipboard.GetText().Trim());
             else
                 Utils.HUDInput("Custom event name", "Execute", "_interact", "", new System.Action<string>((resp) =>

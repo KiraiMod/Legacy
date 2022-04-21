@@ -28,6 +28,7 @@ namespace KiraiMod.Modules
         public PlayerList playerlist;
         public HideSelf hideself;
         public Udon udon;
+        public Misc misc;
 
         public List<ModuleBase> modules = new List<ModuleBase>();
 
@@ -53,6 +54,7 @@ namespace KiraiMod.Modules
             modules.Add(playerlist = new PlayerList());
             modules.Add(hideself = new HideSelf());
             modules.Add(udon = new Udon());
+            modules.Add(misc = new Misc());
         }
 
         public void StartCoroutines()

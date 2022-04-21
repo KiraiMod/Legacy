@@ -76,7 +76,7 @@ namespace KiraiMod.Modules
 			icon.Find("Glow").GetComponent<Image>().color = new Color(1, 0, 1);
 
 			stats.GetComponent<ImageThreeSlice>().color = Utils.Colors.primary;
-
+			
 			int stack = 1;
 
 			Transform rank = contents.Find("KiraiModTag0");
@@ -91,7 +91,7 @@ namespace KiraiMod.Modules
 
 			if (player.IsMaster())
 			{
-				Transform master = contents.Find("KiraiModTag1");
+				Transform master = contents.Find($"KiraiModTag{stack}");
 				if (master == null)
                 {
 					master = MakeTag(stats, stack);
@@ -101,6 +101,22 @@ namespace KiraiMod.Modules
 				}
 
 				else master.gameObject.SetActive(true);
+
+				stack++;
+			}
+
+			if (player.IsKOS())
+            {
+				Transform kos = contents.Find($"KiraiModTag{stack}");
+				if (kos == null)
+				{
+					kos = MakeTag(stats, stack);
+					var text = kos.GetComponent<TMPro.TextMeshProUGUI>();
+					text.text = "KOS";
+					text.color = Utils.Colors.red;
+				}
+
+				else kos.gameObject.SetActive(true);
 
 				stack++;
 			}

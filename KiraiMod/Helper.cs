@@ -150,8 +150,55 @@ namespace KiraiMod
 
         public static void BroadcastCustomEvent(string name)
         {
-            foreach (VRC.Udon.UdonBehaviour ub in Shared.modules.udon.behaviours)
+            foreach (UdonBehaviour ub in Shared.modules.udon.behaviours)
                 ub.SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, name);
+        }
+
+        public static void OverrideVideoPlayers(string url)
+        {
+            if (url.Contains("youtube.com/watch?v="))
+            {
+                // legacy players (win7)
+                foreach (SyncVideoPlayer svp in Object.FindObjectsOfType<SyncVideoPlayer>())
+                {
+                    if (svp == null) continue;
+                    Networking.LocalPlayer.TakeOwnership(svp.gameObject);
+                    svp.field_Private_VRC_SyncVideoPlayer_0.Stop();
+                    svp.field_Private_VRC_SyncVideoPlayer_0.Clear();
+                    svp.field_Private_VRC_SyncVideoPlayer_0.AddURL(url);
+                    svp.field_Private_VRC_SyncVideoPlayer_0.Next();
+                    svp.field_Private_VRC_SyncVideoPlayer_0.Play();
+                }
+
+                // modern players (win10)
+                foreach (SyncVideoStream svs in Object.FindObjectsOfType<SyncVideoStream>())
+                {
+                    if (svs == null) continue;
+                    Networking.LocalPlayer.TakeOwnership(svs.gameObject);
+                    svs.field_Private_VRC_SyncVideoStream_0.Stop();
+                    svs.field_Private_VRC_SyncVideoStream_0.Clear();
+                    svs.field_Private_VRC_SyncVideoStream_0.AddURL(url);
+                    svs.field_Private_VRC_SyncVideoStream_0.Next();
+                    svs.field_Private_VRC_SyncVideoStream_0.Play();
+                }
+            } else
+            {
+                Utils.HUDMessage("Invalid video URL");
+            }
+        }
+
+        public static bool JoinWorldById(string id)
+        {
+            if (!Networking.GoToRoom(id))
+            {
+                string[] split = id.Split(':');
+
+                if (split.Length != 2) return false;
+
+                new PortalInternal().Method_Private_Void_String_String_PDM_0(split[0], split[1]);
+            }
+
+            return true;
         }
     }
 }

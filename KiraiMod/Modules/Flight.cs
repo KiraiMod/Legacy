@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.XR;
 using VRC.Animation;
 using VRC.SDKBase;
 
@@ -35,7 +36,7 @@ namespace KiraiMod.Modules
             else
             {
                 Physics.gravity = oGravity;
-                motion.Method_Public_Void_0();
+                motion.Method_Public_Void_1();
             }
         }
 
@@ -47,7 +48,7 @@ namespace KiraiMod.Modules
 
             float x, y, z;
 
-            if (Networking.LocalPlayer?.IsUserInVR() ?? false)
+            if (XRDevice.isPresent)
             {
                 x = Input.GetAxis("Horizontal");
                 y = Input.GetAxis("Oculus_CrossPlatform_SecondaryThumbstickVertical");

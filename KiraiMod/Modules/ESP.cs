@@ -26,6 +26,12 @@ namespace KiraiMod.Modules
             MelonCoroutines.Start(Delay(player));
         }
 
+        public override void OnAvatarInitialized(GameObject avatar, VRCAvatarManager manager)
+        {
+            if (state)
+                MelonCoroutines.Start(DelayRefresh());
+        }
+
         public IEnumerator Delay(Player player)
         {
             if (player == null) yield break;
@@ -41,6 +47,16 @@ namespace KiraiMod.Modules
             Renderer renderer = GetBubbleRenderer(player.gameObject);
             HighlightBubble(renderer, state);
             SetBubbleColor(renderer);
+        }
+
+        public IEnumerator DelayRefresh()
+        {
+            yield return null;
+            GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+            for (int i = 0; i < players.Length; i++)
+            {
+                HighlightBubble(players[i], true);
+            }
         }
 
         public static Renderer GetBubbleRenderer(GameObject player)

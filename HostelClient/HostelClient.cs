@@ -15,7 +15,6 @@ namespace KiraiMod
     public class HostelClient : MelonMod
     {
         private SoundPlayer alert;
-        private Menu menu;
 
         public string[] streamers = new string[0];
 
@@ -25,19 +24,6 @@ namespace KiraiMod
 
             RefreshList();
             MelonCoroutines.Start(InitializeHooks());
-        }
-
-        public override void VRChat_OnUiManagerInit()
-        {
-            menu = new Menu();
-
-            menu.CreateButton("sm/join", "Join via\nClipboard", "Joins a world using the system clipboard", -2f, 2f, menu.sm.transform, new Action(() =>
-            {
-                string clipboard = Clipboard.GetText();
-
-                if (!clipboard.Contains("wrld_") || !Utils.Join(clipboard.Trim()))
-                    Utils.HUDMessage("Invalid world ID in clipboard");
-            }));
         }
 
         private void RefreshList()
@@ -116,20 +102,6 @@ namespace KiraiMod
             if (VRCUiManager.prop_VRCUiManager_0 == null) return;
 
             VRCUiManager.prop_VRCUiManager_0.Method_Public_Void_String_0(message);
-        }
-
-        public static bool Join(string id)
-        {
-            if (!Networking.GoToRoom(id))
-            {
-                string[] split = id.Split(':');
-
-                if (split.Length != 2) return false;
-
-                new PortalInternal().Method_Private_Void_String_String_PDM_0(split[0], split[1]);
-            }
-
-            return true;
         }
     }
 }

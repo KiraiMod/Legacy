@@ -3,11 +3,9 @@ using MelonLoader;
 using System;
 using System.Collections;
 using System.Reflection;
-using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.UI;
 using VRC;
-using static KiraiMod.Modules.ModLog;
 using static VRC.SDKBase.VRC_EventHandler;
 
 namespace KiraiMod
@@ -88,15 +86,40 @@ namespace KiraiMod
             catch { LogWithPadding("OnAvatarInitialized", false); }
 
             if (Shared.modules.aliases.state)
+            {
                 try
                 {
-                    Shared.harmony.Patch(typeof(Text).GetProperty("text").GetGetMethod(),
+                    Shared.harmony.Patch(typeof(Text).GetProperty(nameof(Text.text)).GetGetMethod(),
                         null, new HarmonyMethod(typeof(Modules.Aliases).GetMethod(nameof(Modules.Aliases.ProcessString), BindingFlags.Public | BindingFlags.Static)));
 
                     LogWithPadding("UnityEngine.UI.Text Getter", true);
                 }
                 catch { LogWithPadding("UnityEngine.UI.Text Getter", false); }
-            else MelonLogger.Log("Not hooking UnityEngine.UI.Text because Aliases is off.");
+
+                try
+                {
+                    Shared.harmony.Patch(typeof(TMPro.TMP_Text).GetProperty(nameof(TMPro.TMP_Text.text)).GetSetMethod(),
+                        new HarmonyMethod(typeof(Modules.Aliases).GetMethod(nameof(Modules.Aliases.ProcessStringPrefix), BindingFlags.Public | BindingFlags.Static)));
+
+                    LogWithPadding("TMPro.TMP_Text Setter", true);
+                }
+                catch { LogWithPadding("TMPro.TMP_Text Setter", false); }
+            }
+            else
+            {
+                MelonLogger.Log("Not hooking UnityEngine.UI.Text because Aliases is off.");
+                MelonLogger.Log("Not hooking TMPro.TMP_Text because Aliases is off.");
+            }
+
+            try
+            {
+                Shared.harmony.Patch(typeof(QuickMenu)
+                    .GetMethod(nameof(QuickMenu.Method_Public_Void_4), BindingFlags.Public | BindingFlags.Instance),
+                    new HarmonyMethod(typeof(Hooks).GetMethod(nameof(OnMenuOpened), BindingFlags.NonPublic | BindingFlags.Static)));
+
+                LogWithPadding("OnMenuOpened", true);
+            }
+            catch { LogWithPadding("OnMenuOpened", false); }
 
             try
             {
@@ -107,7 +130,45 @@ namespace KiraiMod
                 LogWithPadding("OnMenuClosed", true);
             }
             catch { LogWithPadding("OnMenuClosed", false); }
+
+            try
+            {
+            NetworkManager.
+                field_Internal_Static_NetworkManager_0
+                .Method_Public_add_Void_Action_1_EnumPublicSealedvaNoExSeExDiClTiInDiUnique_PDM_1(new Action<EnumPublicSealedvaNoExSeExDiClTiInDiUnique>((reasonForDisconnect) =>
+                {
+                    if (Shared.modules.misc.AntiUCB && reasonForDisconnect == EnumPublicSealedvaNoExSeExDiClTiInDiUnique.DisconnectByServerLogic)
+                    {
+                        Helper.JoinWorldById($"{RoomManager.field_Internal_Static_ApiWorld_0.id}:{RoomManager.field_Internal_Static_ApiWorld_0.currentInstanceIdWithTags}");
+                    }
+                    MelonLogger.Log($"Disconnected due to {Enum.GetName(typeof(EnumPublicSealedvaNoExSeExDiClTiInDiUnique), reasonForDisconnect)}");
+                }));
+            LogWithPadding("OnDisconnect", true);
+            } 
+            catch { LogWithPadding("OnDisconnect", false); }
         }
+
+#if DEBUG
+        private static void Test1()
+        {
+            MelonLogger.Log("Test1 called");
+        }
+
+        private static void Test2()
+        {
+            MelonLogger.Log("Test2 called");
+        }
+
+        private static void Test3()
+        {
+            MelonLogger.Log("Test3 called");
+        }
+
+        private static void Test4()
+        {
+            MelonLogger.Log("Test4 called");
+        }
+#endif
 
         private void OnPlayerJoined(Player player)
         {
@@ -153,13 +214,34 @@ namespace KiraiMod
         //    }
         //}
 
+        private static void OnMenuOpened()
+        {
+#if DEBUG
+            MelonLogger.Log("Menu Opened");
+#endif
+            if (Shared.modules.playerlist.state)
+            {
+                Shared.modules.playerlist.parent.active = true;
+            }
+        }
+
         private static bool OnMenuClosed()
         {
-            return !Config.General.bPersistantQuickMenu ||
+            bool continueExecuting = !Config.General.bPersistantQuickMenu ||
                 VRCUiManager.prop_VRCUiManager_0.prop_Boolean_0 ||
-                Input.GetKey(KeyCode.Escape) || 
+                Input.GetKey(KeyCode.Escape) ||
                 Input.GetButton("Oculus_CrossPlatform_Button2") ||
                 Input.GetButton("Oculus_CrossPlatform_Button4");
+
+            if (continueExecuting) { 
+                if (Shared.modules.playerlist.state)
+                    Shared.modules.playerlist.parent.active = false;
+#if DEBUG
+                MelonLogger.Log("Menu Closing");
+#endif
+            } 
+
+            return continueExecuting;
         }
 
         private static void LogWithPadding(string src, bool passed)

@@ -115,6 +115,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\VRChat\MelonLoader\Managed\UnityEngine.UI.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.VRModule, Version=3.7.1.6, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\VRChat\MelonLoader\Managed\UnityEngine.VRModule.dll</HintPath>
+    </Reference>
     <Reference Include="VRC.Udon, Version=3.7.1.6, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\VRChat\MelonLoader\Managed\VRC.Udon.dll</HintPath>
@@ -181,6 +185,7 @@
     <Compile Include="Modules\GodMode.cs" />
     <Compile Include="Modules\Headlight.cs" />
     <Compile Include="Modules\HideSelf.cs" />
+    <Compile Include="Modules\Misc.cs" />
     <Compile Include="Modules\PlayerList.cs" />
     <Compile Include="Modules\Tracers.cs" />
     <Compile Include="Modules\ItemOrbit.cs" />
