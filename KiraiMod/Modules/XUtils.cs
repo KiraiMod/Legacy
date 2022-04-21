@@ -56,7 +56,7 @@ namespace KiraiMod.Modules
         {
             if (!state) return;
 
-            VRCPlayerApi.TrackingData tt = Networking.LocalPlayer.GetTrackingData(VRCPlayerApi.TrackingDataType.LeftHand);
+            VRCPlayerApi.TrackingData tt = Networking.LocalPlayer.GetTrackingData(UnityEngine.XR.XRDevice.isPresent ? VRCPlayerApi.TrackingDataType.LeftHand :VRCPlayerApi.TrackingDataType.Head);
 
             if (puppet == null) puppet = new GameObject();
             if (lr == null)
@@ -75,7 +75,7 @@ namespace KiraiMod.Modules
             puppet.transform.position = tt.position;
             puppet.transform.rotation = tt.rotation;
 
-            if (Input.GetAxis("Oculus_CrossPlatform_PrimaryIndexTrigger") > 0.75f)
+            if (Input.GetAxis("Oculus_CrossPlatform_PrimaryIndexTrigger") > 0.75f & Input.GetKeyDown(KeyCode.Mouse0))
             {
                 if (Physics.Raycast(puppet.transform.position, puppet.transform.forward, out hit, 1000.0f, -1, QueryTriggerInteraction.Collide))
                 {

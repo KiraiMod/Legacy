@@ -9,7 +9,6 @@
                 KiraiLib.UI.selected = Shared.PageRemap[(int)Shared.PageIndex.toggles1];
             }));
 
-            if (UnityEngine.XR.XRDevice.isPresent)
             {
                 KiraiLib.UI.Button.Create("p0/xutils-activate", "XUtils", "Starts raycast utilities", -2f, 0f, KiraiLib.UI.ShortcutMenu.transform, new System.Action(() =>
                 {
