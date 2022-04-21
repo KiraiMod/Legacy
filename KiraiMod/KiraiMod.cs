@@ -191,7 +191,7 @@ namespace KiraiMod
                 if (Input.GetKeyDown(KeyCode.KeypadMinus))
 #if DEBUG
                 {
-                    MelonLogger.Log(KiraiLib.UI.selected);
+
                 }
 #else
                     MelonLogger.Log("Alive");

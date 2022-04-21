@@ -127,8 +127,8 @@ namespace KiraiMod
                 Shared.harmony.Patch(QMMethodsByXR.ElementAt(0),
                     new HarmonyMethod(typeof(Hooks).GetMethod(nameof(OnMenuOpened), BindingFlags.NonPublic | BindingFlags.Static)));
 
-                Shared.harmony.Patch(QMMethodsByXR.ElementAt(1),
-                    new HarmonyMethod(typeof(Hooks).GetMethod(nameof(OnMenuOpened), BindingFlags.NonPublic | BindingFlags.Static)));
+                //Shared.harmony.Patch(QMMethodsByXR.ElementAt(1),
+                //    new HarmonyMethod(typeof(Hooks).GetMethod(nameof(OnMenuOpened), BindingFlags.NonPublic | BindingFlags.Static)));
 
                 LogWithPadding("OnMenuOpened", true);
             }
