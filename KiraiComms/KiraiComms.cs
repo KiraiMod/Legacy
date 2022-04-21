@@ -1,7 +1,9 @@
 ﻿using MelonLoader;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Security.Cryptography;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,6 +16,17 @@ namespace KiraiMod
 {
     public class KiraiComms : MelonMod
     {
+        static KiraiComms()
+        {
+            Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("KiraiMod.KiraiLibLoader.dll");
+            MemoryStream mem = new MemoryStream((int)stream.Length);
+            stream.CopyTo(mem);
+
+            Assembly.Load(mem.ToArray());
+
+            new Action(() => KiraiLibLoader.Load())();
+        }
+
         private bool loading = true;
         private Action<int, string> SendRPC;
         private Dictionary<string, RSA> encryptors = new Dictionary<string, RSA>();
@@ -87,7 +100,7 @@ namespace KiraiMod
                                             {
                                                 string str = System.Text.Encoding.UTF8.GetString(ourRSA.DecryptValue(Convert.FromBase64String(data.payload.Substring(2 + len)))).Replace("\0", "");
 
-                                                HUDMessage($"{data.sender}: {str}");
+                                                KiraiLib.Logger.Log($"{data.sender}: {str}");
                                             }
                                         }
                                         break;
@@ -157,12 +170,12 @@ namespace KiraiMod
                     {
                         if (val.Length <= 128)
                             SendRPC(0x002, name.Length.ToString("X").PadLeft(2, '0') + name + Convert.ToBase64String(rsa.EncryptValue(System.Text.Encoding.UTF8.GetBytes(val))));
-                        else HUDMessage("Messages can only be 128 characters long.");
+                        else KiraiLib.Logger.Log("Messages can only be 128 characters long.");
                     }));
                 } 
                 else
                 {
-                    HUDMessage($"{QuickMenu.prop_QuickMenu_0.field_Private_APIUser_0.displayName} is not using KiraiComms");
+                    KiraiLib.Logger.Log($"{QuickMenu.prop_QuickMenu_0.field_Private_APIUser_0.displayName} is not using KiraiComms");
                 }
             }));
         }
@@ -177,19 +190,13 @@ namespace KiraiMod
             MelonLogger.Log($"Hooking {src}...".PadRight(71, ' ') + (passed ? "Passed" : "Failed"));
         }
 
-        public static void HUDMessage(string message)
-        {
-            if (VRCUiManager.prop_VRCUiManager_0 == null) return;
-
-            VRCUiManager.prop_VRCUiManager_0.Method_Public_Void_String_0(message);
-        }
-
         public static void HUDInput(string title, string text, string placeholder, string initial, System.Action<string> OnAccept)
         {
-            VRCUiPopupManager
-                .field_Private_Static_VRCUiPopupManager_0
-                .Method_Public_Void_String_String_InputType_Boolean_String_Action_3_String_List_1_KeyCode_Text_Action_String_Boolean_Action_1_VRCUiPopup_PDM_1
-                (
+            typeof(VRCUiPopupManager)
+                .GetMethods()
+                .Where(m => m.Name.Contains("Method_Public_Void_String_String_InputType_Boolean_String_Action_3_String_List_1_KeyCode_Text_Action_String_Boolean_Action_1_VRCUiPopup_PDM_"))
+                .First(m => UnhollowerRuntimeLib.XrefScans.XrefScanner.XrefScan(m).Where(x => x.Type == UnhollowerRuntimeLib.XrefScans.XrefType.Global).Count() == 0)
+                .Invoke(VRCUiPopupManager.field_Private_Static_VRCUiPopupManager_0, new object[] {
                     title,
                     initial,
                     InputField.InputType.Standard,
@@ -211,7 +218,7 @@ namespace KiraiMod
                     placeholder,
                     true,
                     null
-                );
+                });
         }
     }
 }
