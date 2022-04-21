@@ -34,13 +34,13 @@ namespace KiraiMod
             PortalPosition(player.transform.position + player.transform.forward * distance, player.transform.rotation, blank);
         }
 
-        public static void PortalPosition(Vector3 position, Quaternion rotation, bool blank = false)
+        public static GameObject PortalPosition(Vector3 position, Quaternion rotation, bool blank = false)
         {
             GameObject portal = Networking.Instantiate(VRC_EventHandler.VrcBroadcastType.Always, "Portals/PortalInternalDynamic", position, rotation);
 
-            if (portal == null) return;
+            if (portal == null) return null;
 
-            Networking.RPC(RPC.Destination.AllBufferOne, portal, "ConfigurePortal", new Il2CppSystem.Object[] {
+            Networking.RPC(RPC.Destination.AllBufferOne, portal, nameof(PortalInternal.ConfigurePortal), new Il2CppSystem.Object[] {
                 "wrld_5b89c79e-c340-4510-be1b-476e9fcdedcc",
                 "KOS",
                 new Il2CppSystem.Int32
@@ -50,6 +50,34 @@ namespace KiraiMod
             });
 
             if (blank) MelonCoroutines.Start(Utils.DestroyDelayed(1.0f, portal.GetComponent<PortalInternal>()));
+
+            return portal;
+        }
+
+        public static void SetTimer(PortalInternal portal, float time)
+        {
+            if (portal is null) return;
+
+            portal.field_Private_Single_1 = time * -1 + 30;
+
+            //Networking.RPC(RPC.Destination.AllBufferOne, portal, nameof(PortalInternal.SetTimerRPC), new Il2CppSystem.Object[] {
+            //    new Il2CppSystem.Single
+            //    {
+            //        m_value = time
+            //    }.BoxIl2CppObject(),
+            //    Player.prop_Player_0
+            //});
+        }
+
+        public static System.Collections.IEnumerator ReversePortal(PortalInternal portal)
+        {
+            for (int i = 0; i < 116; i++)
+            {
+                if (portal == null) yield break;
+                SetTimer(portal, i / 4 + 2);
+                yield return new WaitForSecondsRealtime(0.25f);
+            }
+            SetTimer(portal, 0);
         }
 
         public static void Teleport(Vector3 pos)

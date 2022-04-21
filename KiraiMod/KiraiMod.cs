@@ -117,6 +117,7 @@ namespace KiraiMod
 
             Shared.modules.OnUpdate();
 
+            // todo: make this event driven using OnPlayerJoined and OnMenuOpened/Closed
             if (Shared.menu != null)
             {
                 if (!Shared.menu.qm.prop_Boolean_0)
@@ -149,7 +150,7 @@ namespace KiraiMod
                     foreach (var a in Object.FindObjectsOfType<VRC.SDKBase.VRC_AvatarPedestal>())
                     {
                         VRC.SDKBase.Networking.SetOwner(VRC.SDKBase.Networking.LocalPlayer, a.gameObject);
-                        VRC.SDKBase.Networking.RPC(VRC.SDKBase.RPC.Destination.All, a.gameObject, "SwitchAvatar", new Il2CppSystem.Object[] { text });
+                        VRC.SDKBase.Networking.RPC(VRC.SDKBase.RPC.Destination.All, a.gameObject, nameof(VRC.SDKBase.VRC_AvatarPedestal.SwitchAvatar), new Il2CppSystem.Object[] { text });
                     }
             }
             if (Input.GetKeyDown(KeyCode.KeypadMinus))

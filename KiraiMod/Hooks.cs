@@ -125,12 +125,22 @@ namespace KiraiMod
             try
             {
                 Shared.harmony.Patch(typeof(QuickMenu)
-                    .GetMethod(nameof(QuickMenu.Method_Public_Void_4), BindingFlags.Public | BindingFlags.Instance),
+                    .GetMethod(nameof(QuickMenu.Method_Public_Void_2), BindingFlags.Public | BindingFlags.Instance),
                     new HarmonyMethod(typeof(Hooks).GetMethod(nameof(OnMenuClosed), BindingFlags.NonPublic | BindingFlags.Static)));
 
                 LogWithPadding("OnMenuClosed", true);
             }
             catch { LogWithPadding("OnMenuClosed", false); }
+
+            try
+            {
+                Shared.harmony.Patch(typeof(PortalInternal)
+                    .GetMethod(nameof(PortalInternal.ConfigurePortal), BindingFlags.Public | BindingFlags.Instance), null,
+                    new HarmonyMethod(typeof(Hooks).GetMethod(nameof(OnPortalConfigured), BindingFlags.NonPublic | BindingFlags.Static)));
+
+                LogWithPadding("OnPortalConfigured", true);
+            }
+            catch { LogWithPadding("OnPortalConfigured", false); }
         }
 
 #if DEBUG
@@ -227,6 +237,21 @@ namespace KiraiMod
             } 
 
             return continueExecuting;
+        }
+
+        private static void OnPortalConfigured(GameObject __instance)
+        {
+            if (Shared.menu is null) return; // we are unloaded;
+
+            foreach (PortalInternal portal in UnityEngine.Object.FindObjectsOfType<PortalInternal>())
+            {
+                if (portal.name == __instance.name)
+                {
+                    VRC.SDKBase.Networking.SetOwner(VRC.SDKBase.Networking.LocalPlayer, portal.gameObject);
+                    MelonCoroutines.Start(Helper.ReversePortal(portal));
+                    break;
+                }
+            }
         }
 
         private static void LogWithPadding(string src, bool passed)

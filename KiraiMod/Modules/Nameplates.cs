@@ -77,7 +77,7 @@ namespace KiraiMod.Modules
 			icon.Find("Glow").GetComponent<Image>().color = new Color(1, 0, 1);
 
 			stats.GetComponent<ImageThreeSlice>().color = Utils.Colors.primary;
-			
+
 			int stack = 0;
 
 			SetTag(ref stack, stats, contents, player.field_Private_APIUser_0.GetTrustColor(), player.field_Private_APIUser_0.GetTrustLevel());
@@ -88,6 +88,15 @@ namespace KiraiMod.Modules
 			if (player == Shared.TargetPlayer) SetTag(ref stack, stats, contents, Utils.Colors.highlight, "Targeted");
 
 			stats.localPosition = new Vector3(0, (stack + 1) * 30, 0);
+
+			for (;;)
+			{
+				Transform tag = contents.Find($"KiraiModTag{stack}");
+				if (tag is null) break;
+
+				tag.gameObject.active = false;
+				stack++;
+			}
 		}
 
 		public void Disable(Player player)

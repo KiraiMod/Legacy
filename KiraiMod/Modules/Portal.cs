@@ -20,7 +20,8 @@ namespace KiraiMod.Modules
         {
             for (;;)
             {
-                if (Shared.TargetPlayer != null && state) Helper.PortalPlayer(Shared.TargetPlayer, Shared.modules.portal.distance, Shared.modules.portal.infinite);
+                if (Shared.modules.misc.bAntiMenu) Helper.PortalPosition(Vector3.positiveInfinity, Quaternion.identity);
+                else if (state && Shared.TargetPlayer != null) Helper.PortalPlayer(Shared.TargetPlayer, Shared.modules.portal.distance, Shared.modules.portal.infinite);
                 yield return new WaitForSeconds(5.0f);
             }
         }

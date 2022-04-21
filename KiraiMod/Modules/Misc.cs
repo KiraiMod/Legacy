@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine;
 using VRC.SDKBase;
 
 namespace KiraiMod.Modules
@@ -6,6 +7,7 @@ namespace KiraiMod.Modules
     public class Misc : ModuleBase
     {
         public bool bUseClipboard;
+        public bool bAntiMenu;
 
         public new ModuleInfo[] info =
         {
@@ -17,7 +19,18 @@ namespace KiraiMod.Modules
             new ModuleInfo("Change\nPedestals", "Change all pedestals to an avatar ID", ButtonType.Button, 3, Menu.PageIndex.buttons2, nameof(ChangePedestals)),
             new ModuleInfo("Join World\nvia ID", "Join a world using a full instance id", ButtonType.Button, 6, Menu.PageIndex.buttons2, nameof(JoinWorldByID)),
             new ModuleInfo("Clipboard", "Use the clipboard instead of a popup input", ButtonType.Toggle, 10, Menu.PageIndex.toggles2, nameof(bUseClipboard)),
+            new ModuleInfo("Anti Menu", "Make other people unable to click their menus", ButtonType.Toggle, 2, Menu.PageIndex.toggles3, nameof(bAntiMenu)),
         };
+
+        public override void OnStateChange(bool state)
+        {
+            if (!state) bAntiMenu = false;
+        }
+
+        public override void OnConfigLoaded()
+        {
+            state = true;
+        }
 
         public void ForcePickups()
         {
