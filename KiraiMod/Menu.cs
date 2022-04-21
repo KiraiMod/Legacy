@@ -353,6 +353,8 @@ namespace KiraiMod
         {
             private bool initialized = false;
             private float initial;
+            private Text valueText;
+            private UnityEngine.UI.Slider uiSlider;
 
             public GameObject self;
             public Action OnChange;
@@ -374,14 +376,16 @@ namespace KiraiMod
                 slider.transform.localPosition = new Vector3(size * (x - 0.25f), size * (y + 2.5f), 0.01f);
                 slider.transform.localRotation = Quaternion.Euler(0, 0, 0);
 
-                UnityEngine.UI.Slider uiSlider = slider.GetComponentInChildren<UnityEngine.UI.Slider>();
+                uiSlider = slider.GetComponentInChildren<UnityEngine.UI.Slider>();
                 uiSlider.minValue = min;
                 uiSlider.maxValue = max;
                 uiSlider.onValueChanged = new UnityEngine.UI.Slider.SliderEvent();
                 uiSlider.onValueChanged.AddListener(new Action<float>(_ =>
                 {
                     uiSlider.onValueChanged.RemoveAllListeners();
-                    uiSlider.onValueChanged.AddListener(OnChange);
+                    uiSlider.onValueChanged.AddListener(new Action<float>(value => {
+                        SetValue(value);
+                    }));
                     MelonCoroutines.Start(DelayedInit());
                 }));
 
@@ -392,16 +396,32 @@ namespace KiraiMod
                 GameObject textGO = new GameObject("Text");
                 textGO.transform.SetParent(parent.transform, false);
 
-                Text textComp = textGO.AddComponent<Text>();
-                textComp.text = text;
-                textComp.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
-                textComp.fontSize = 64;
-                textComp.color = Utils.Colors.highlight;
-                textComp.alignment = TextAnchor.MiddleCenter;
-                textComp.transform.localPosition = slider.transform.localPosition;
-                textComp.transform.localPosition += new Vector3(0, 80, 0);
-                textComp.GetComponent<RectTransform>().sizeDelta = new Vector2(textComp.fontSize * text.Count(), 100f);
-                textComp.enabled = true;
+                Font font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+
+                Text textText = textGO.AddComponent<Text>();
+                textText.supportRichText = true;
+                textText.text = $"<b>{text}</b>";
+                textText.font = font;
+                textText.fontSize = 64;
+                textText.color = Utils.Colors.highlight;
+                textText.alignment = TextAnchor.MiddleCenter;
+                textText.transform.localPosition = slider.transform.localPosition;
+                textText.transform.localPosition += new Vector3(0, 80, 0);
+                textText.GetComponent<RectTransform>().sizeDelta = new Vector2(textText.fontSize * text.Count(), 100f);
+
+                GameObject valueGO = new GameObject("Text");
+                valueGO.transform.SetParent(parent.transform, false);
+
+                valueText = valueGO.AddComponent<Text>();
+                valueText.supportRichText = true;
+                valueText.text = "INVALID STATE";
+                valueText.font = font;
+                valueText.fontSize = 48;
+                valueText.color = Utils.Colors.highlight;
+                valueText.alignment = TextAnchor.MiddleCenter;
+                valueText.transform.localPosition = slider.transform.localPosition;
+                valueText.transform.localPosition += new Vector3(0, -70, 0);
+                valueText.GetComponent<RectTransform>().sizeDelta = new Vector2(valueText.fontSize * text.Count(), 100f);
 
                 self = slider.gameObject;
             }
@@ -409,15 +429,16 @@ namespace KiraiMod
             public void SetValue(float value)
             {
                 this.value = value;
-                if (initialized) self.GetComponentInChildren<UnityEngine.UI.Slider>().value = value;
-                else initial = value;
+                if (!initialized) initial = value;
+                valueText.text = value.ToString("0.00");
+                uiSlider.value = value;
             }
 
             private System.Collections.IEnumerator DelayedInit()
             {
                 yield return new WaitForEndOfFrame();
                 initialized = true;
-                self.GetComponentInChildren<UnityEngine.UI.Slider>().Set(initial, true);
+                uiSlider.Set(initial, true);
             }
         }
     }

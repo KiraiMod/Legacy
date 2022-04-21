@@ -122,6 +122,12 @@ namespace KiraiMod
             y = 1 - i / 4;
         }
 
+        public static void GetSliderLayout(int i, out float x, out float y)
+        {
+            x = (float)(-0.75 + i % 2 * 2);
+            y = (float)(1.25 - i / 2 * 0.5);
+        }
+
         public static string CreateID(string name, int page)
         {
             return $"p{page}/{name.ToLower().Replace('\n', '-').Replace(' ', '-')}";

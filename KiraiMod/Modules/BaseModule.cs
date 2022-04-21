@@ -38,6 +38,8 @@ namespace KiraiMod.Modules
         public int index = -1;
         public int page = -1;
         public string reference = null;
+        public float min;
+        public float max;
 
         public ModuleInfo (string label, string description, ButtonType type, int index, Menu.PageIndex page, string reference) {
             this.label = label;
@@ -46,6 +48,17 @@ namespace KiraiMod.Modules
             this.index = index;
             this.page = (int)page;
             this.reference = reference;
+        }
+
+        public ModuleInfo(string label, ButtonType type, int index, Menu.PageIndex page, string reference, float min, float max)
+        {
+            this.label = label;
+            this.type = type;
+            this.index = index;
+            this.page = (int)page;
+            this.reference = reference;
+            this.min = min;
+            this.max = max;
         }
     }
 

@@ -7,8 +7,10 @@ namespace KiraiMod.Modules
         public float distance = 1;
         public float speed = 2;
 
-        public new ModuleInfo[] info = { 
-            new ModuleInfo("Orbit", "Orbits the selected player", ButtonType.Toggle, 7, Menu.PageIndex.options1, nameof(state))
+        public new ModuleInfo[] info = {
+            new ModuleInfo("Orbit", "Orbits the selected player", ButtonType.Toggle, 7, Menu.PageIndex.options1, nameof(state)),
+            new ModuleInfo("Orbit Speed", ButtonType.Slider, 3, Menu.PageIndex.sliders1, nameof(speed), 0, 8),
+            new ModuleInfo("Orbit Distance", ButtonType.Slider, 4, Menu.PageIndex.sliders1, nameof(distance), 0, 4)
         };
 
         public override void OnUpdate()

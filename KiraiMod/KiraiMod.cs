@@ -223,7 +223,20 @@ namespace KiraiMod
                     }
                     else if (info.type == Modules.ButtonType.Slider)
                     {
+                        FieldInfo reference = module.GetType().GetField(info.reference, BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
+                        if (reference == null)
+                        {
+                            MelonLogger.LogWarning($"Failed to find method {info.reference} on {module.GetType()}");
+                            continue;
+                        }
+                        float cval = (float)reference.GetValue(module);
 
+                        Utils.GetSliderLayout(info.index, out float x, out float y);
+                        Shared.menu.CreateSlider(Utils.CreateID(info.label, info.page),
+                            info.label, x, y, info.min, info.max, cval, Shared.menu.pages[info.page].transform, new System.Action<float>((value) =>
+                            {
+                                reference.SetValue(module, value);
+                            }));
                     }
                     else
                     {
