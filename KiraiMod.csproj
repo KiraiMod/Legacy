@@ -140,6 +140,7 @@
     <Compile Include="Extensions.cs" />
     <Compile Include="Helper.cs" />
     <Compile Include="Hooks.cs" />
+    <Compile Include="IPC.cs" />
     <Compile Include="KiraiMod.cs" />
     <Compile Include="Menu.cs" />
     <Compile Include="Modules\BaseModule.cs" />
@@ -171,6 +172,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="resources.assetbundle" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="WebUI.html" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

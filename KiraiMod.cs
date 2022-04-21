@@ -1,5 +1,6 @@
 ﻿using MelonLoader;
 using System.Reflection;
+using UnhollowerRuntimeLib;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -25,6 +26,7 @@ namespace KiraiMod
             Shared.modules = new Modules.Modules();
             Shared.config = new Config();
             Shared.config.Load();
+            Shared.ipc = new IPC();
             Shared.hooks = new Hooks();
 
             Shared.modules.StartCoroutines();
@@ -87,7 +89,7 @@ namespace KiraiMod
             Shared.menu = new Menu();
 
             Shared.menu.qm.transform.Find("QuickMenu_NewElements/_Background/Panel").GetComponent<Image>().color = Color.white;
-            //.material = Shared.resources.LoadAsset_Internal("assets/holoui.mat", Il2CppType.Of<Material>()).Cast<Material>();
+            //.material = Shared.resources.LoadAsset_Internal("assets/uiglass.mat", Il2CppType.Of<Material>()).Cast<Material>();
 
             Shared.menu.CreatePage("kiraimod_options");
             Shared.menu.CreatePage("kiraimod_options2");

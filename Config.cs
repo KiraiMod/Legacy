@@ -1,19 +1,21 @@
 ﻿using MelonLoader;
+using MelonLoader.TinyJSON;
 using System.Collections.Generic;
 
 namespace KiraiMod
 {
     public class Config
     {
+        private Options options = new Options();
+
         public static readonly string config = "kiraimod.config.json";
         public static readonly string alias = "kiraimod.alias.json";
         public List<string[]> aliases = new List<string[]>();
-        Options options = new Options();
 
         public void Save()
         {
             MelonModLogger.Log("Saving to config");
-            System.IO.File.WriteAllText(config, MelonLoader.TinyJSON.JSON.Dump(options));
+            System.IO.File.WriteAllText(config, JSON.Dump(options));
         }
 
         public void Load()
@@ -23,18 +25,19 @@ namespace KiraiMod
             if (!System.IO.File.Exists(config))
             {
                 MelonModLogger.Log("Config did not exist, creating new one with current values");
-                System.IO.File.WriteAllText(config, MelonLoader.TinyJSON.JSON.Dump(options));
+                System.IO.File.WriteAllText(config, JSON.Dump(options));
             }
 
-            options = MelonLoader.TinyJSON.JSON.Load(System.IO.File.ReadAllText(config)).Make<Options>();
+            options = JSON.Load(System.IO.File.ReadAllText(config)).Make<Options>();
 
-            if (System.IO.File.Exists(alias)) aliases = MelonLoader.TinyJSON.JSON.Load(System.IO.File.ReadAllText(alias)).Make<List<string[]>>();
+            if (System.IO.File.Exists(alias)) aliases = JSON.Load(System.IO.File.ReadAllText(alias)).Make<List<string[]>>();
         }
 
-        sealed internal class Options
+        internal sealed class Options
         {
-            public bool bKOS;
-            public bool bInfinite;
+            public bool bInfinitePortals;
+            public bool bAutoKOS;
+
             public bool bModLog;
             public bool bNameplates;
             public bool bNameplatesRGB;
@@ -50,13 +53,13 @@ namespace KiraiMod
             public float fOrbitDistance;
             public float fRGBSpeed;
 
-            [MelonLoader.TinyJSON.BeforeEncode]
+            [BeforeEncode]
             public void BeforeEncode()
             {
                 Set(false);
             }
 
-            [MelonLoader.TinyJSON.AfterDecode]
+            [AfterDecode]
             public void AfterDecode()
             {
                 Set(true);
@@ -64,8 +67,8 @@ namespace KiraiMod
 
             public void Set(bool load)
             {
-                Move(load, ref Shared.modules.kos.state,          ref bKOS              );
-                Move(load, ref Shared.modules.portal.state,       ref bInfinite         );
+                Move(load, ref Shared.modules.portal.infinite,    ref bInfinitePortals  );
+                Move(load, ref Shared.modules.kos.state,          ref bAutoKOS          );
                 Move(load, ref Shared.modules.modlog.state,       ref bModLog           );
                 Move(load, ref Shared.modules.nameplates.state,   ref bNameplates       );
                 Move(load, ref Shared.modules.nameplates.rgb,     ref bNameplatesRGB    );
@@ -97,6 +100,12 @@ namespace KiraiMod
             {
                 if (load) prop1 = prop2;
                 else      prop2 = prop1;
+            }
+
+            public void LOSS(bool load, Modules.ModuleBase module, bool state) // Load Only SetState
+            {
+                if (load) module.SetState(state);
+                else return;
             }
         }
     }

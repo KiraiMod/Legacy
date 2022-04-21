@@ -13,5 +13,6 @@ namespace KiraiMod
         public static Hooks hooks;
         public static AssetBundle resources;
         public static HarmonyInstance harmony;
+        public static IPC ipc;
     }
 }

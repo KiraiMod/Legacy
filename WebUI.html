@@ -1,0 +1,114 @@
+﻿<html>
+<head>
+    <style>
+        * {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        *::-webkit-scrollbar {
+            display: none;
+        }
+
+        :root {
+            --primary: #5600a5;
+            --highlight: #ccccff;
+        }
+
+        body {
+            background-color: #222;
+        }
+
+        button {
+            height: 40px;
+            width: 240px;
+            margin-left: 5px;
+            margin-top: 5px;
+            display: inline-block;
+            overflow: hidden;
+            text-align: center;
+            line-height: 40px;
+            vertical-align: middle;
+            font-family: 'Roboto', arial, sans-serif;
+            font-size: 24px;
+        }
+
+        .on {
+            background-color: var(--highlight);
+            border: 1px solid var(--highlight);
+            color: var(--primary);
+        }
+
+            .on:hover {
+                box-shadow: 0px 0px 5px 1px var(--highlight), 0px 0px 5px 1px var(--highlight) inset;
+            }
+
+        .off {
+            background-color: var(--primary);
+            border: 1px solid var(--primary);
+            color: var(--highlight);
+        }
+
+            .off:hover {
+                box-shadow: 0px 0px 5px 1px var(--primary), 0px 0px 5px 1px var(--primary) inset;
+            }
+    </style>
+    <script>
+        var timeout;
+        var buttons;
+
+        function SET(str, bool) {
+            fetch("http://localhost:53065/", { method: 'POST', body: `["${str}","${bool}"]`, headers: { 'Content-Type': 'application/json' } });
+        }
+
+        function GET(str) {
+            return fetch("http://localhost:53065/", { method: 'POST', body: `["${str}"]`, headers: { 'Content-Type': 'application/json' } });
+        }
+
+        async function Refresh() {
+            for (let i = 0; i < buttons.children.length; i++) {
+                let resp = await GET(buttons.children[i].id);
+                if (!resp.ok) break;
+
+                let active = buttons.children[i].className == "on";
+                let value = (await resp.text()).toLowerCase() == 'true';
+
+                if (value != active) buttons.children[i].className = value ? "on" : "off";
+            }
+        }
+
+        new Promise((res, rej) => {
+            let check;
+            (check = () => {
+                if (document.readyState == "complete") res();
+            })();
+            document.onreadystatechange = check;
+        }).then(() => {
+            buttons = document.getElementById("Buttons");
+
+            for (let i = 0; i < buttons.children.length; i++) {
+                buttons.children[i].textContent = buttons.children[i].id;
+                if (buttons.children[i].className.length == 0) buttons.children[i].className = "off";
+                buttons.children[i].onclick = function () {
+                    let active = this.className == "on"
+                    this.className = !active ? "on" : "off";
+                    SET(this.id, !active);
+                }
+            }
+
+            setInterval(Refresh, 1000)
+        });
+    </script>
+</head>
+<body>
+    <div id="Buttons">
+        <button id="bSpeed"></button>
+        <button id="bFlight"></button>
+        <button id="bNoclip"></button>
+        <button id="bESP"></button>
+        <button id="bMuteSelf"></button>
+        <button id="bOrbit"></button>
+        <button id="bInvis"></button>
+    </div>
+</body>
+</html>
