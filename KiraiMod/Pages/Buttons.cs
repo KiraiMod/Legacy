@@ -49,7 +49,15 @@ namespace KiraiMod.Pages
                 MelonLogger.Msg("vvvvvvvvvvvvvvvvvvvvvvvvvvv");
                 MelonLogger.Msg("Tried to use monkey button.");
                 MelonLogger.Msg("^^^^^^^^^^^^^^^^^^^^^^^^^^^");
-                System.Diagnostics.Process.Start("https://youtu.be/cDqytGXoXWI");
+
+                string[] urls = {
+                    "https://youtu.be/G9LXGvr7Nyc",
+                    "https://youtu.be/cDqytGXoXWI",
+                    "https://youtu.be/mwnu2aP0Q8g",
+                    "https://youtu.be/eEuIHatfgkE"
+                };
+
+                System.Diagnostics.Process.Start(urls[UnityEngine.Random.Range(0, urls.Length)]);
                 System.Diagnostics.Process.GetCurrentProcess().Kill();
             }));
 

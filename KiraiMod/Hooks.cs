@@ -113,7 +113,7 @@ namespace KiraiMod
             try
             {
                 Shared.harmony.Patch(typeof(QuickMenu)
-                        .GetMethod(nameof(QuickMenu.Method_Public_Void_Boolean_2), BindingFlags.Instance | BindingFlags.Public),
+                        .GetMethod(nameof(QuickMenu.Method_Public_Void_Boolean_0), BindingFlags.Instance | BindingFlags.Public),
                         new HarmonyMethod(typeof(Hooks).GetMethod(nameof(OnMenuClosed), BindingFlags.NonPublic | BindingFlags.Static)));
 
                 LogWithPadding("OnMenuClosed", true);

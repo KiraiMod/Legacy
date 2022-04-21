@@ -217,7 +217,7 @@ namespace KiraiMod.Modules
         {
             bool flip = false;
 
-            for (; ; )
+            for (;;)
             {
                 if (flip) VRCUiPopupManager.prop_VRCUiPopupManager_0.Method_Public_Void_String_String_Single_0(
                     "<color=#5600a5>Important Notice</color>",
