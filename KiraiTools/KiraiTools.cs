@@ -47,6 +47,7 @@ namespace KiraiMod
             }
 
             wand.transform.position = Networking.LocalPlayer.GetBonePosition(HumanBodyBones.RightHand);
+            wand.transform.rotation = Networking.LocalPlayer.GetBoneRotation(HumanBodyBones.RightHand);
             wand.active = true;
         }
 
