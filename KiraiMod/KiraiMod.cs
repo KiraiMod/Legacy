@@ -232,10 +232,6 @@ namespace KiraiMod
 
             Shared.PageRemap.Clear();
 
-            KiraiLib.UI.CreatePage();
-            KiraiLib.UI.CreatePage();
-            KiraiLib.UI.CreatePage();
-
             Shared.PageRemap.Add(KiraiLib.UI.CreatePage("KiraiMod.Toggles1"));
             Shared.PageRemap.Add(KiraiLib.UI.CreatePage("KiraiMod.Toggles2"));
             Shared.PageRemap.Add(KiraiLib.UI.CreatePage("KiraiMod.Toggles3"));
