@@ -168,6 +168,7 @@ namespace KiraiMod
 
         public static bool JoinWorldById(string id)
         {
+            id = id.Replace("https://vrchat.net/launch?worldId=", "").Replace("&instanceId=", ":").Trim();
             if (!Networking.GoToRoom(id))
             {
                 string[] split = id.Split(':');

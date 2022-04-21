@@ -17,15 +17,6 @@ namespace KiraiMod
             public readonly static Color primary = new Color(0.34f, 0f, 0.65f);
             public readonly static Color highlight = new Color(0.8f, 0.8f, 1f);
 
-            public readonly static Color legendary = new Color(1f, 0.41f, 0.70f);
-            public readonly static Color veteran = new Color(1f, 0.82f, 0f);
-            public readonly static Color trusted = new Color(0.75f, 0.26f, 0.9f);
-            public readonly static Color known = new Color(1f, 0.48f, 0.25f);
-            public readonly static Color user = new Color(0.17f, 0.81f, 0.36f);
-            public readonly static Color newuser = new Color(0.09f, 0.47f, 1f);
-            public readonly static Color visitor = new Color(0.8f, 0.8f, 0.8f);
-            public readonly static Color quest = new Color(0f, 0.87f, 0.25f);
-
             public readonly static Color black = new Color(0.0f, 0.0f, 0.0f);
             public readonly static Color red = new Color(1.0f, 0.0f, 0.0f);
             public readonly static Color green = new Color(0.0f, 1.0f, 0.0f);
