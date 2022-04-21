@@ -12,7 +12,8 @@ namespace KiraiMod
         {
             if (player.field_Private_APIUser_0 == null) return false;
 
-            return APIUser.CurrentUser.friendIDs.Contains(player.field_Private_APIUser_0.id);
+            return player.IsLocal() ||
+                APIUser.CurrentUser.friendIDs.Contains(player.field_Private_APIUser_0.id);
         }
 
         public static bool IsKOS(this Player player)

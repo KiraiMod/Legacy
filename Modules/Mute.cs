@@ -24,18 +24,28 @@ namespace KiraiMod.Modules
             Refresh();
         }
 
+        public override void OnPlayerJoined(Player player)
+        {
+            Apply(player);
+        }
+
         public void Refresh()
         {
             if (PlayerManager.field_Private_Static_PlayerManager_0 == null ||
                 PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0 == null)
                 return;
 
-            foreach (Player player in PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0)
+            for (int i = 0; i < PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0.Count; i++)
             {
-                if (player.field_Internal_VRCPlayer_0 == null) continue;
-
-                if (!player.IsFriend()) player.field_Internal_VRCPlayer_0.field_Internal_Boolean_3 = !state;
+                Apply(PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0[i]);
             }
+        }
+
+        public void Apply(Player player)
+        {
+            if (player.field_Internal_VRCPlayer_0 == null) return;
+
+            if (!player.IsFriend()) player.field_Internal_VRCPlayer_0.field_Internal_Boolean_3 = !state;
         }
     }
 }
