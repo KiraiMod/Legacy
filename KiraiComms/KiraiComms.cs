@@ -27,12 +27,10 @@ namespace KiraiMod
             new Action(() => KiraiLibLoader.Load())();
         }
 
-        private bool loading = true;
         private Action<int, string> SendRPC;
         private Dictionary<string, RSA> encryptors = new Dictionary<string, RSA>();
         private RSA ourRSA;
-
-        private KiraiLib.UI.Button button;
+        private bool halt = false;
 
         public override void OnApplicationStart()
         {
@@ -109,11 +107,16 @@ namespace KiraiMod
                     });
                 }).Invoke();
 
+                KiraiLib.Callbacks.OnUIReload += () =>
+                {
+                    VRChat_OnUiManagerInit();
+                };
+
                 MelonCoroutines.Start(WaitForNetworkManager());
             }
             else
             {
-                loading = false;
+                halt = true;
                 MelonLogger.LogError("Didn't find KiraiRPC, stopping...");
             }
         }
@@ -134,34 +137,13 @@ namespace KiraiMod
             catch { LogWithPadding("OnPlayerLeft", false); }
         }
 
-        public override void OnUpdate()
-        {
-            if (loading)
-            {
-                if (Input.GetKeyDown(KeyCode.Delete))
-                {
-                    button.Destroy();
-                    button = null;
-                }
-
-                if (Input.GetKeyDown(KeyCode.Insert))
-                {
-                    if (button != null)
-                    {
-                        button.Destroy();
-                        button = null;
-                    }
-
-                    VRChat_OnUiManagerInit();
-                }
-            }
-        }
-
         public override void VRChat_OnUiManagerInit()
         {
+            if (halt) return;
+
             KiraiLib.UI.Initialize();
 
-            button = KiraiLib.UI.Button.Create("uim/message", "Message", "Send a message to this user", -1, -3, KiraiLib.UI.UserInteractMenu.transform, new Action(() =>
+            KiraiLib.UI.Button.Create("uim/message", "Message", "Send a message to this user", -1, -3, KiraiLib.UI.UserInteractMenu.transform, new Action(() =>
             {
                 string name = QuickMenu.prop_QuickMenu_0.field_Private_APIUser_0.displayName;
                 if (encryptors.TryGetValue(name, out RSA rsa)) {
@@ -176,7 +158,7 @@ namespace KiraiMod
                 {
                     KiraiLib.Logger.Log($"{QuickMenu.prop_QuickMenu_0.field_Private_APIUser_0.displayName} is not using KiraiComms");
                 }
-            }), false);
+            }));
         }
 
         private void OnPlayerLeft(Player player)
