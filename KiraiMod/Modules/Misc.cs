@@ -56,6 +56,13 @@ namespace KiraiMod.Modules
 
         public override void OnLevelWasLoaded()
         {
+            MelonLoader.MelonCoroutines.Start(WaitForPlayerToLoad());
+        }
+
+        public System.Collections.IEnumerator WaitForPlayerToLoad()
+        {
+            while (VRC.Player.prop_Player_0?.gameObject is null) yield return null;
+
             if (HighStep)
             {
                 CharacterController c = VRC.Player.prop_Player_0.GetComponent<CharacterController>();
