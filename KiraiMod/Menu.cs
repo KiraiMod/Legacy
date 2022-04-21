@@ -17,7 +17,8 @@ namespace KiraiMod
             buttons1,
             buttons2,
             sliders1,
-            xutils
+            xutils,
+            udon
         }
 
         public QuickMenu qm;

@@ -190,6 +190,7 @@
     <Compile Include="Modules\Portal.cs" />
     <Compile Include="Modules\Speed.cs" />
     <Compile Include="Modules\Aliases.cs" />
+    <Compile Include="Modules\Udon.cs" />
     <Compile Include="Modules\XUtils.cs" />
     <Compile Include="Pages\Buttons.cs" />
     <Compile Include="Pages\Sliders.cs" />

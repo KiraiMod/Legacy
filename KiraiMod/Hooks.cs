@@ -21,7 +21,7 @@ namespace KiraiMod
 
         private IEnumerator Initialize()
         {
-            while (ReferenceEquals(NetworkManager.field_Internal_Static_NetworkManager_0, null)) yield return null;
+            while (NetworkManager.field_Internal_Static_NetworkManager_0 is null) yield return null;
 
             try
             {
@@ -30,9 +30,9 @@ namespace KiraiMod
                     .field_Internal_ObjectPublicHa1UnT1Unique_1_Player_0
                     .field_Private_HashSet_1_UnityAction_1_T_0
                     .Add(new Action<Player>(player => OnPlayerJoined(player)));
-                MelonLogger.Log("Hooking OnPlayerJoined... Passed");
+                LogWithPadding("OnPlayerJoined", true);
             }
-            catch { MelonLogger.LogWarning("Hooking OnPlayerJoined... Failed"); }
+            catch { LogWithPadding("OnPlayerJoined", false); }
 
             try
             {
@@ -41,9 +41,9 @@ namespace KiraiMod
                     .field_Internal_ObjectPublicHa1UnT1Unique_1_Player_1
                     .field_Private_HashSet_1_UnityAction_1_T_0
                     .Add(new Action<Player>(player => OnPlayerLeft(player)));
-                MelonLogger.Log("Hooking OnPlayerLeft... Passed");
+                LogWithPadding("OnPlayerLeft", true);
             }
-            catch { MelonLogger.LogWarning("Hooking OnPlayerLeft... Failed"); }
+            catch { LogWithPadding("OnPlayerLeft", false); }
 
             try
             {
@@ -51,15 +51,15 @@ namespace KiraiMod
                     .GetMethod(nameof(VRC_EventDispatcherRFC.Method_Public_Void_Player_VrcEvent_VrcBroadcastType_Int32_Single_0), BindingFlags.Public | BindingFlags.Instance), 
                     new HarmonyMethod(typeof(Hooks).GetMethod(nameof(OnRPC), BindingFlags.NonPublic | BindingFlags.Static)));
 
-                MelonLogger.Log("Hooking RPCs... Passed");
+                LogWithPadding("RPCs", true);
             }
-            catch { MelonLogger.LogWarning("Hooking RPCs... Failed"); }
+            catch { LogWithPadding("RPCs", false); }
 
             //try
             //{
             //    Shared.harmony.Patch(typeof(ObjectPublicIPhotonPeerListenerObStBoStObCoDiBo2ObUnique)
             //        .GetMethod(nameof(ObjectPublicIPhotonPeerListenerObStBoStObCoDiBo2ObUnique
-            //        .Method_Public_Virtual_New_Boolean_Byte_Object_ObjectPublicObByObInByObObUnique_SendOptions_0), 
+            //        .Method_Public_Virtual_New_Boolean_Byte_Object_ObjectPublicObByObInByObObUnique_SendOptions_0),
             //        BindingFlags.Public | BindingFlags.Instance),
             //        new HarmonyMethod(typeof(Hooks).GetMethod(nameof(SendOperationPrefix), BindingFlags.NonPublic | BindingFlags.Static)));
 
@@ -83,8 +83,8 @@ namespace KiraiMod
                     .GetMethod(nameof(VRCAvatarManager.Method_Private_Boolean_GameObject_PDM_0), BindingFlags.Instance | BindingFlags.Public), 
                     new HarmonyMethod(typeof(Hooks).GetMethod(nameof(OnAvatarInitialized), BindingFlags.NonPublic | BindingFlags.Static)));
 
-                MelonLogger.Log("Hooking OnAvatarInitialized... Passed");
-            } catch { MelonLogger.Log("Hooking OnAvatarInitialized... Failed"); }
+                LogWithPadding("OnAvatarInitialized", true);
+            } catch { LogWithPadding("OnAvatarInitialized", false); }
 
             if (Shared.modules.aliases.state)
                 try
@@ -92,9 +92,9 @@ namespace KiraiMod
                     Shared.harmony.Patch(typeof(Text).GetProperty("text").GetGetMethod(),
                         null, new HarmonyMethod(typeof(Modules.Aliases).GetMethod(nameof(Modules.Aliases.ProcessString), BindingFlags.Public | BindingFlags.Static)));
 
-                    MelonLogger.Log("Hooking UnityEngine.UI.Text Getter ... Passed");
+                    LogWithPadding("UnityEngine.UI.Text Getter", true);
                 }
-                catch { MelonLogger.Log("Hooking UnityEngine.UI.Text Getter ... Failed"); }
+                catch { LogWithPadding("UnityEngine.UI.Text Getter", false); }
             else MelonLogger.Log("Not hooking UnityEngine.UI.Text because Aliases is off.");
         }
 
@@ -131,7 +131,8 @@ namespace KiraiMod
                 float.IsNaN(__1.ParameterObject.transform.position.y) || 
                 float.IsNaN(__1.ParameterObject.transform.position.z)))
             {
-                MelonLogger.Log($"Prevented ${__0.field_Private_APIUser_0.displayName} ({__0.field_Private_APIUser_0.id}) from using Love's camera crash on you.");
+                MelonLogger.Log($"Prevented {__0.field_Private_APIUser_0.displayName} ({__0.field_Private_APIUser_0.id}) from using Love's camera crash on you.");
+                return false;
             }
 
             if (Shared.Options.bWorldTriggers && __2 == VrcBroadcastType.Local) __2 = VrcBroadcastType.AlwaysUnbuffered;
@@ -185,18 +186,18 @@ namespace KiraiMod
             return true;
         }
 
-        private static void SendOperationPrefix(ref byte __0, ref Il2CppSystem.Object __1, ref ObjectPublicObByObInByObObUnique __2, ref ExitGames.Client.Photon.SendOptions __3)
+        //private static void SendOperationPrefix(ref byte __0, ref Il2CppSystem.Object __1, ref ObjectPublicObByObInByObObUnique __2, ref ExitGames.Client.Photon.SendOptions __3)
+        //{
+        //}
+
+        //private static void OnEvent(ref ExitGames.Client.Photon.EventData __0)
+        //{
+        //    if (__0 == null) return;
+        //}
+
+        private static void LogWithPadding(string src, bool passed)
         {
-
-        }
-
-        private static void OnEvent(ref ExitGames.Client.Photon.EventData __0)
-        {
-            if (__0 == null) return;
-
-            if (__0.Code == 33)
-            {
-            }
+            MelonLogger.Log($"Hooking {src}...".PadRight(73, ' ') + (passed ? "Passed" : "Failed"));
         }
     }
 }

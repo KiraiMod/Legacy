@@ -27,6 +27,7 @@ namespace KiraiMod.Modules
         public FreeCam freecam;
         public PlayerList playerlist;
         public HideSelf hideself;
+        public Udon udon;
 
         public List<ModuleBase> modules = new List<ModuleBase>();
 
@@ -51,6 +52,7 @@ namespace KiraiMod.Modules
             modules.Add(freecam = new FreeCam());
             modules.Add(playerlist = new PlayerList());
             modules.Add(hideself = new HideSelf());
+            modules.Add(udon = new Udon());
         }
 
         public void StartCoroutines()
@@ -61,52 +63,37 @@ namespace KiraiMod.Modules
         public void OnPlayerJoined(Player player)
         {
             for (int i = 0; i < modules.Count; i++)
-            {
                 modules[i].OnPlayerJoined(player);
-            }
         }
 
         public void OnPlayerLeft(Player player)
         {
             for (int i = 0; i < modules.Count; i++)
-            {
                 modules[i].OnPlayerLeft(player);
-            }
         }
 
         public void OnUpdate()
         {
             for (int i = 0; i < modules.Count; i++)
-            {
                 modules[i].OnUpdate();
-            }
         }
 
         public void OnConfigLoaded()
         {
             for (int i = 0; i < modules.Count; i++)
-            {
                 modules[i].OnConfigLoaded();
-            }
         }
 
         public void OnLevelWasLoaded()
         {
             for (int i = 0; i < modules.Count; i++)
-            {
                 modules[i].OnLevelWasLoaded();
-            }
         }
 
         internal void OnAvatarInitialized(GameObject avatar, VRCAvatarManager instance)
         {
             for (int i = 0; i < modules.Count; i++)
-            {
-#if DEBUG
-                MelonLogger.Log($"Dispatching OnAvatarInitialized to {modules[i].GetType().Name}");
-#endif
                 modules[i].OnAvatarInitialized(avatar, instance);
-            }
         }
     }
 }

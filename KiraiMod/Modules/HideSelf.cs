@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MelonLoader;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,6 +11,8 @@ namespace KiraiMod.Modules
     public class HideSelf : ModuleBase
     {
         private Transform head;
+        private VRC_AnimationController animController;
+        private VRCVrIkController ikController;
 
         public string messageToYou;
 
@@ -22,6 +25,8 @@ namespace KiraiMod.Modules
 
         public override void OnStateChange(bool state)
         {
+            if (VRCPlayer.field_Internal_Static_VRCPlayer_0?.transform is null) return;
+
             if (head is null)
             {
                 head = VRCVrCamera.field_Private_Static_VRCVrCamera_0.transform.parent;
@@ -34,7 +39,17 @@ namespace KiraiMod.Modules
                 messageToYou = null;
             }
 
+            if (animController is null)
+                animController = VRCPlayer.field_Internal_Static_VRCPlayer_0.GetComponentInChildren<VRC_AnimationController>();
+
+            if (ikController is null)
+                ikController = VRCPlayer.field_Internal_Static_VRCPlayer_0.GetComponentInChildren<VRCVrIkController>();
+
             VRCPlayer.field_Internal_Static_VRCPlayer_0.transform.position += new Vector3(0, state ? -4 : 4, 0);
+
+            animController.field_Private_Boolean_0 = !state;
+
+            MelonCoroutines.Start(ToggleIKController());
 
             if (state)
             {
@@ -55,6 +70,22 @@ namespace KiraiMod.Modules
                 if (changed)
                     Shared.menu.Set(Utils.CreateID("noclip", Shared.modules.noclip.info[0].page), false);
             }
+        }
+
+        public override void OnLevelWasLoaded()
+        {
+            animController = null;
+            ikController = null;
+        }
+
+        private System.Collections.IEnumerator ToggleIKController()
+        {
+            if (state)
+                yield return new WaitForSeconds(2);
+            else
+                yield return null;
+
+            ikController.field_Private_Boolean_0 = !state;
         }
     }
 }
