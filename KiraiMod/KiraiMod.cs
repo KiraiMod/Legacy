@@ -110,6 +110,7 @@ namespace KiraiMod
                                     {
                                         Shared.modules.nameplates.kmodders.Add(data.sender);
                                         Shared.modules.nameplates.Refresh();
+                                        Shared.modules.playerlist.Refresh();
                                         if (data.id == 0x000)
                                             KiraiSendRPC(0x001, data.sender);
                                     }
@@ -130,6 +131,7 @@ namespace KiraiMod
                                     {
                                         Shared.modules.nameplates.cmodders.Add(data.sender);
                                         Shared.modules.nameplates.Refresh();
+                                        Shared.modules.playerlist.Refresh();
                                     }
                                     break;
                             }

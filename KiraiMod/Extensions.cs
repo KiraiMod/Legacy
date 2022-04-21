@@ -74,6 +74,7 @@ namespace KiraiMod
         {
             return player.field_Private_APIUser_0.IsMod() ? Utils.Colors.aqua : 
                 player.IsKModder() ? Utils.Colors.primary : 
+                player.IsCModder() ? Color.magenta :
                 Utils.Colors.white;
         }
     }

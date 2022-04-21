@@ -129,7 +129,7 @@ namespace KiraiMod.Modules
 			if (player.field_Private_APIUser_0.IsMod()) SetTag(ref stack, stats, contents, Utils.Colors.red, "Moderator");
 			if (player.IsMaster()) SetTag(ref stack, stats, contents, Utils.Colors.highlight, "Master");
 			if (player.IsKModder()) SetTag(ref stack, stats, contents, Utils.Colors.highlight, "KiraiMod");
-            if (player.IsCModder()) SetTag(ref stack, stats, contents, Color.cyan, "Cartridge");
+            if (player.IsCModder()) SetTag(ref stack, stats, contents, Color.magenta, "Cartridge");
 #if BETA
 			if (player.IsFModder()) SetTag(ref stack, stats, contents, Color.white, "FClient");
 #endif

@@ -128,7 +128,7 @@ namespace KiraiMod.Modules
             if (up is null)
                 up = KiraiLib.UI.Label.Create("sm/players_up", "<color=#5600a5>======== <color=#ccf>[ Less ]</color> ========</color>", 0, 0, parent.transform, () => {
                     offset -= 16;
-                    RefreshEx(!locked);
+                    Refresh();
                 }, false);
 
             if (down is null)
@@ -136,10 +136,11 @@ namespace KiraiMod.Modules
                     if (offset + 16 >= PlayerManager.field_Private_Static_PlayerManager_0?.field_Private_List_1_Player_0.Count) return;
 
                     offset += 16;
-                    RefreshEx(!locked);
+                    Refresh();
                 }, false);
         }
 
+        public void Refresh() => RefreshEx(!locked);
         public void RefreshEx(bool normal)
         {
             if (parent == null) Init();
