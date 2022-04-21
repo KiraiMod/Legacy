@@ -25,11 +25,6 @@ namespace KiraiMod.Modules
             MelonCoroutines.Start(Delay(player));
         }
 
-        public override void OnAvatarInitialized(GameObject avatar, VRCAvatarManager manager)
-        {
-            if (state) MelonCoroutines.Start(DelayRefresh());
-        }
-
         public IEnumerator Delay(Player player)
         {
             if (player == null) yield break;

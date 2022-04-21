@@ -142,6 +142,16 @@ namespace KiraiMod
                 LogWithPadding("OnPortalConfigured", true);
             }
             catch { LogWithPadding("OnPortalConfigured", false); }
+
+            try
+            {
+                Shared.harmony.Patch(typeof(HighlightsFX)
+                    .GetMethod(nameof(HighlightsFX.Method_Public_Void_Renderer_Boolean_0), BindingFlags.Public | BindingFlags.Instance),
+                    new HarmonyMethod(typeof(Hooks).GetMethod(nameof(HighlightRenderer), BindingFlags.NonPublic | BindingFlags.Static)));
+
+                LogWithPadding("HighlightRenderer", true);
+            }
+            catch { LogWithPadding("HighlightRenderer", false); }
         }
 
 #if DEBUG
@@ -253,6 +263,11 @@ namespace KiraiMod
                     break;
                 }
             }
+        }
+
+        private bool HighlightRenderer(Renderer __0, bool __1)
+        {
+            return !Shared.modules.esp.state || __1 || __0.name != "SelectRegion";
         }
 
         private static void LogWithPadding(string src, bool passed)

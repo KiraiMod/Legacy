@@ -81,22 +81,14 @@ namespace KiraiMod.Modules
 			int stack = 0;
 
 			SetTag(ref stack, stats, contents, player.field_Private_APIUser_0.GetTrustColor(), player.field_Private_APIUser_0.GetTrustLevel());
+			if (player.IsMod()) SetTag(ref stack, stats, contents, Utils.Colors.red, "Moderator");
 			if (player.IsMaster()) SetTag(ref stack, stats, contents, Utils.Colors.highlight, "Master");
-			if (player.IsKOS()) SetTag(ref stack, stats, contents, Utils.Colors.red, "KOS");
 			if (player.IsKModder()) SetTag(ref stack, stats, contents, Utils.Colors.highlight, "KiraiMod");
-			if (player.IsDModder()) SetTag(ref stack, stats, contents, Utils.Colors.highlight, "DayClient");
+			if (player.IsDModder()) SetTag(ref stack, stats, contents, Color.yellow, "DayClient");
+			if (player.IsKOS()) SetTag(ref stack, stats, contents, Utils.Colors.red, "KOS");
 			if (player == Shared.TargetPlayer) SetTag(ref stack, stats, contents, Utils.Colors.highlight, "Targeted");
 
 			stats.localPosition = new Vector3(0, (stack + 1) * 30, 0);
-
-			for (;;)
-			{
-				Transform tag = contents.Find($"KiraiModTag{stack}");
-				if (tag is null) break;
-
-				tag.gameObject.active = false;
-				stack++;
-			}
 		}
 
 		public void Disable(Player player)
@@ -170,14 +162,12 @@ namespace KiraiMod.Modules
         {
 			Transform tag = contents.Find($"KiraiModTag{stack}");
 			if (tag == null)
-			{
 				tag = MakeTag(stats, stack);
-				var text = tag.GetComponent<TMPro.TextMeshProUGUI>();
-				text.text = label;
-				text.color = color;
-			}
-
 			else tag.gameObject.SetActive(true);
+
+			var text = tag.GetComponent<TMPro.TextMeshProUGUI>();
+			text.color = color;
+			text.text = label;
 
 			stack++;
 		}
