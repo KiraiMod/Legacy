@@ -18,7 +18,7 @@ namespace KiraiMod
     {
         static KiraiComms()
         {
-            Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("KiraiMod.KiraiLibLoader.dll");
+            Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("KiraiMod.Lib.KiraiLibLoader.dll");
             MemoryStream mem = new MemoryStream((int)stream.Length);
             stream.CopyTo(mem);
 
