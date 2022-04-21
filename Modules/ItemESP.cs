@@ -35,7 +35,7 @@ namespace KiraiMod.Modules
                 lr.positionCount = cache.Length * 2;
                 for (int i = 0; i < cache.Length; i++)
                 {
-                    lr.SetPosition(i * 2, src); //src
+                    if (cache[i] != null) lr.SetPosition(i * 2, src); //src
                     lr.SetPosition(i * 2 + 1, cache[i].transform.position); //dest
                 }
             }
