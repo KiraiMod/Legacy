@@ -99,6 +99,8 @@ namespace KiraiMod
 
         private static void OnRPC(ref Player __0, ref VrcEvent __1, ref VrcBroadcastType __2, ref int __3, ref float __4)
         {
+            if (Shared.Options.bWorldTriggers && __2 == VrcBroadcastType.Local) __2 = VrcBroadcastType.AlwaysUnbuffered;
+
             switch (__1.EventType)
             {
                 case VrcEventType.SendRPC:

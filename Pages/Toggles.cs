@@ -19,6 +19,11 @@
                 Shared.menu.selected = -1;
             }));
 
+            Shared.menu.CreateToggle("p0/world-triggers", false, "World Triggers", "All local triggers become global.", -1f, 0f, Shared.menu.pages[0].transform, new System.Action<bool>((state) =>
+            {
+                Shared.Options.bWorldTriggers = state;
+            }));
+
             Shared.menu.CreateToggle("p0/loud-mic", false, "Loud Mic", "Makes your microphone louder.", 0f, 0f, Shared.menu.pages[0].transform, new System.Action<bool>((state) =>
             {
                 USpeaker.field_Internal_Static_Single_1 = state ? float.MaxValue : 1f;

@@ -14,5 +14,10 @@ namespace KiraiMod
         public static AssetBundle resources;
         public static HarmonyInstance harmony;
         public static IPC ipc;
+
+        public static class Options
+        {
+            public static bool bWorldTriggers;
+        }
     }
 }

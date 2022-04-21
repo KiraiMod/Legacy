@@ -128,6 +128,8 @@ namespace KiraiMod
             public static bool bMuteSelf { get { return Shared.modules.mute  .state; } set { Shared.modules.mute  .SetState(value); } }
             public static bool bOrbit    { get { return Shared.modules.orbit .state; } set { Shared.modules.orbit .SetState(value); } }
             public static bool bInvis    { get { return Shared.modules.invis .state; } set { Shared.modules.invis .SetState(value); } }
+
+            public static bool bWorldTriggers { get { return Shared.Options.bWorldTriggers; } set { Shared.Options.bWorldTriggers = value; } }
         }
     }
 }
