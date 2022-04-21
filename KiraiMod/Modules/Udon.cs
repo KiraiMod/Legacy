@@ -68,7 +68,11 @@ namespace KiraiMod.Modules
             }
         }
 
-        public override void OnUnload() => MelonCoroutines.Start(Setup(false));
+        public override void OnUnload()
+        {
+            Repeat = false;
+            MelonCoroutines.Start(Setup(false));
+        }
         public override void OnReload() => MelonCoroutines.Start(Setup(true));
 
         private System.Collections.IEnumerator Setup(bool expand)
