@@ -200,7 +200,6 @@ namespace KiraiMod
                 #endregion
             }
 
-            MelonLogger.Log(CompatibilityModule.NoMovement);
             if (CompatibilityModule.NoCompatibility || !CompatibilityModule.NoMovement)
             {
                 #region QuickMenu Movement
