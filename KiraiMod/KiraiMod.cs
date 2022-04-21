@@ -222,6 +222,17 @@ namespace KiraiMod
                     if (Input.GetKeyDown(KeyCode.C)) Shared.modules.hideself.SetState();
                     if (Input.GetKeyDown(KeyCode.X)) 
                         (KiraiLib.UI.elements[Utils.CreateID("World\nCrash", (int)Shared.PageIndex.toggles3)] as KiraiLib.UI.Toggle).SetState();
+                    if (Input.GetKeyDown(KeyCode.Mouse2))
+                        VRC.SDKBase.Networking.RPC(
+                            VRC.SDKBase.RPC.Destination.All,
+                            VRCPlayer.field_Internal_Static_VRCPlayer_0.gameObject,
+                            "PlayEmoteRPC",
+                            new Il2CppSystem.Object[] {
+                                new Il2CppSystem.Int32
+                                {
+                                    m_value = 3
+                                }.BoxIl2CppObject()
+                            });
                 }
             }
             else if (Shared.modules.misc.BindsAlt)
