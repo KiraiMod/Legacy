@@ -42,9 +42,14 @@ namespace KiraiMod
 
             if (!MelonHandler.Mods.Any(mod => mod.Assembly.GetName().Name.Contains("KiraiMod")))
             {
-                // we have no dom so we will do it ourselves
+                // we have no dom so we will do it ourselves -\_(._.)_/-
+                MelonLogger.Log("KiraiMod not found. Maintaining full control.");
                 Store();
                 Apply();
+            }
+            else
+            {
+                MelonLogger.Log("KiraiMod found! Forfeiting all control.");
             }
 
         }
