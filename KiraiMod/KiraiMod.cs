@@ -18,6 +18,18 @@ namespace KiraiMod
             if (Random.Range(1, 8192) == 1)
                 MelonLogger.Log(Utils.StringIya);
 
+            if (int.TryParse(((string)typeof(BuildInfo).GetField(nameof(BuildInfo.Version)).GetValue(null)).Replace(".", ""), out int version))
+            {
+                if (int.TryParse(BuildInfo.Version.Replace(".", ""), out int buildVer))
+                {
+                    if (buildVer > version)
+                    {
+                        System.Windows.Forms.MessageBox.Show("Your MelonLoader is outdated.", "Outdated Loader");
+                        System.Diagnostics.Process.Start("https://github.com/HerpDerpinstine/MelonLoader/releases/latest");
+                    }
+                }
+            }
+
             System.IO.Stream stream = Assembly.GetManifestResourceStream("KiraiMod.resources.assetbundle");
             System.IO.MemoryStream mem = new System.IO.MemoryStream((int)stream.Length);
             stream.CopyTo(mem);
@@ -73,7 +85,7 @@ namespace KiraiMod
                                 case 0x001:
                                     if (data.payload == VRC.Player.prop_Player_0.field_Private_APIUser_0.displayName)
                                     {
-                                        Shared.modules.nameplates.users[data.sender] = data.payload;
+                                        Shared.modules.nameplates.users[data.sender] = "KiraiMod";
                                         Shared.modules.nameplates.Refresh();
                                         if (data.id == 0x000)
                                             SendRPC(0x001, data.sender);
