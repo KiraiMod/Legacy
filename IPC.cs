@@ -196,13 +196,13 @@ namespace KiraiMod
 
         private static class Registry
         {
-            public static bool bSpeed    { get { return Shared.modules.speed .state; } set { Shared.modules.speed .SetState(value); } }
-            public static bool bFlight   { get { return Shared.modules.flight.state; } set { Shared.modules.flight.SetState(value); } }
-            public static bool bNoclip   { get { return Shared.modules.noclip.state; } set { Shared.modules.noclip.SetState(value); } }
-            public static bool bESP      { get { return Shared.modules.esp   .state; } set { Shared.modules.esp   .SetState(value); } }
-            public static bool bMuteSelf { get { return Shared.modules.mute  .state; } set { Shared.modules.mute  .SetState(value); } }
-            public static bool bOrbit    { get { return Shared.modules.orbit .state; } set { Shared.modules.orbit .SetState(value); } }
-            public static bool bInvis    { get { return Shared.modules.invis .state; } set { Shared.modules.invis .SetState(value); } }
+            public static bool bSpeed     { get { return Shared.modules.speed    .state; } set { Shared.modules.speed    .SetState(value); } }
+            public static bool bFlight    { get { return Shared.modules.flight   .state; } set { Shared.modules.flight   .SetState(value); } }
+            public static bool bNoclip    { get { return Shared.modules.noclip   .state; } set { Shared.modules.noclip   .SetState(value); } }
+            public static bool bESP       { get { return Shared.modules.esp      .state; } set { Shared.modules.esp      .SetState(value); } }
+            public static bool bMuteSelf  { get { return Shared.modules.mute     .state; } set { Shared.modules.mute     .SetState(value); } }
+            public static bool bOrbit     { get { return Shared.modules.orbit    .state; } set { Shared.modules.orbit    .SetState(value); } }
+            public static bool bItemOrbit { get { return Shared.modules.itemOrbit.state; } set { Shared.modules.itemOrbit.SetState(value); } }
 
             public static bool bWorldTriggers { get { return Shared.Options.bWorldTriggers; } set { Shared.Options.bWorldTriggers = value; } }
 

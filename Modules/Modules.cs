@@ -21,7 +21,7 @@ namespace KiraiMod.Modules
         public Headlight headlight;
         public Aliases aliases;
         public Mute mute;
-        public Invis invis;
+        public ItemOrbit itemOrbit;
 
         public List<ModuleBase> modules = new List<ModuleBase>();
 
@@ -40,7 +40,7 @@ namespace KiraiMod.Modules
             modules.Add(headlight = new Headlight());
             modules.Add(aliases = new Aliases());
             modules.Add(mute = new Mute());
-            modules.Add(invis = new Invis());
+            modules.Add(itemOrbit = new ItemOrbit());
         }
 
         public void StartCoroutines()
