@@ -11,8 +11,12 @@ namespace KiraiMod.Modules
     {
         public GameObject parent;
         public bool locked = false;
+        public int offset = 0;
 
         public System.Collections.Generic.List<KiraiLib.UI.Label> players = new System.Collections.Generic.List<KiraiLib.UI.Label>();
+
+        private KiraiLib.UI.Label up;
+        private KiraiLib.UI.Label down;
         private bool hasSet = false;
 
         public new ModuleInfo[] info = {
@@ -51,12 +55,22 @@ namespace KiraiMod.Modules
 
         public override void OnPlayerJoined(Player player)
         {
-            if (state && !locked) Refresh();
+            if (state)
+            {
+                if (locked) Shared.modules.worldcrash.Show();
+                else RefreshEx(true);
+            }
         }
 
         public override void OnPlayerLeft(Player player)
         {
-            if (state && !locked) Refresh();
+            if (state)
+            {
+                if (PlayerManager.prop_PlayerManager_0.field_Private_List_1_Player_0.Count % 16 == 0) offset -= 16;
+
+                if (locked) Shared.modules.worldcrash.Show();
+                else RefreshEx(true);
+            }
         }
 
         public override void OnLevelWasLoaded()
@@ -110,11 +124,27 @@ namespace KiraiMod.Modules
 
                 parent.active = false;
             }
+
+            if (up is null)
+                up = KiraiLib.UI.Label.Create("sm/players_up", "<color=#5600a5>======== <color=#ccf>[ Less ]</color> ========</color>", 0, 0, parent.transform, () => {
+                    offset -= 16;
+                    RefreshEx(!locked);
+                }, false);
+
+            if (down is null)
+                down = KiraiLib.UI.Label.Create("sm/players_down", "<color=#5600a5>======== <color=#ccf>[ More ]</color> ========</color>", 0, -1190, parent.transform, () => {
+                    if (offset + 16 >= PlayerManager.field_Private_Static_PlayerManager_0?.field_Private_List_1_Player_0.Count) return;
+
+                    offset += 16;
+                    RefreshEx(!locked);
+                }, false);
         }
 
-        public void Refresh()
+        public void RefreshEx(bool normal)
         {
             if (parent == null) Init();
+
+            if (!normal) locked = true;
 
             if (state)
             {
@@ -123,23 +153,59 @@ namespace KiraiMod.Modules
                 players.Clear();
 
                 if (PlayerManager.field_Private_Static_PlayerManager_0?.field_Private_List_1_Player_0 == null) return;
+                offset = Mathf.Clamp(offset, 0, PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0.Count - 1);
 
-                for (int i = 0; i < Mathf.Min(PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0.Count, 18); i++)
+                for (int i = 0; i < Mathf.Min(PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0.Count, 16); i++)
                 {
-                    Player user = PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0[i];
+                    if (i + offset >= PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0.Count) break;
 
-                    KiraiLib.UI.Label text = KiraiLib.UI.Label.Create($"sm/player_{i}",
-                        " " 
-                        + (user.IsMaster() ? "<b>" : "") 
-                        + $"<color={user.GetTextColor().ToHex()}>{i + 1} </color>" 
-                        + (user.IsMaster() ? "</b>" : "") 
-                        + (user.IsFriend() ? "<b>" : "") 
-                        + $"<color={user.field_Private_APIUser_0.GetTrustColor().ToHex()}>{user.field_Private_APIUser_0.displayName}</color>" 
-                        + (user.IsFriend() ? "</b>" : ""), 
-                        0, i * -70, parent.transform, new Action(() => { Utils.SelectPlayer(user); }), false);
+                    int _i = i;
+                    Player user = PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0[i + offset];
+
+                    KiraiLib.UI.Label text = null;
+                    if (normal)
+                    {
+                        text = KiraiLib.UI.Label.Create($"sm/players_{i}",
+                            " "
+                            + (user.IsMaster() ? "<b>" : "")
+                            + $"<color={user.GetTextColor().ToHex()}>{i + 1 + offset} </color>"
+                            + (user.IsMaster() ? "</b>" : "")
+                            + (user.IsFriend() ? "<b>" : "")
+                            + $"<color={user.field_Private_APIUser_0.GetTrustColor().ToHex()}>{user.field_Private_APIUser_0.displayName}</color>"
+                            + (user.IsFriend() ? "</b>" : ""),
+                            0, (i + 1) * -70, parent.transform, new Action(() => { Utils.SelectPlayer(user); }), false);
+                    }
+                    else
+                    {
+                        text = KiraiLib.UI.Label.Create($"sm/players_{i}", GenText(user, Shared.modules.worldcrash.selected.Contains(user.field_Private_APIUser_0.displayName), _i + offset),
+                            0, (i + 1) * -70, parent.transform, new Action(() =>
+                            {
+                                bool targeted = Shared.modules.worldcrash.selected.Contains(user.field_Private_APIUser_0.displayName);
+
+                                if (targeted) Shared.modules.worldcrash.selected.Remove(user.field_Private_APIUser_0.displayName);
+                                else Shared.modules.worldcrash.selected.Add(user.field_Private_APIUser_0.displayName);
+
+                                text.SetText(GenText(user, !targeted, _i + offset));
+                            }), false);
+                    }
                     players.Add(text);
                 }
             }
+        }
+
+        private string GenText(Player user, bool selected, int index)
+        {
+            return " "
+                + (user.IsMaster() ? "<b>" : "")
+                + "<color="
+                + (selected ? "#ccf" : "#5600a5")
+                + ">"
+                + (index + 1)
+                + " </color>"
+                + (user.IsMaster() ? "</b>" : "")
+                + (user.IsFriend() ? "<b>" : "")
+                + $"<color={user.field_Private_APIUser_0.GetTrustColor().ToHex()}>{user.field_Private_APIUser_0.displayName}</color>"
+                + (user.IsFriend() ? "</b>" : "");
         }
     }
 }

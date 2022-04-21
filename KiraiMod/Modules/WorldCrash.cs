@@ -13,7 +13,7 @@ namespace KiraiMod.Modules
             new ModuleInfo("Deactivate\nMulti Crash", "Disable Multi Crash after activation", ButtonType.Half, 7, true, Shared.PageIndex.buttons2, nameof(Deactivate))
         };
 
-        private System.Collections.Generic.List<string> selected = new System.Collections.Generic.List<string>();
+        public System.Collections.Generic.List<string> selected = new System.Collections.Generic.List<string>();
         private System.Collections.Generic.List<string> processed = new System.Collections.Generic.List<string>();
 
         public void Activate()
@@ -86,49 +86,7 @@ namespace KiraiMod.Modules
 
         public void Show()
         {
-            Shared.modules.playerlist.locked = true;
-
-            if (Shared.modules.playerlist.parent == null) Shared.modules.playerlist.Init();
-
-            foreach (KiraiLib.UI.Label player in Shared.modules.playerlist.players)
-                player.Destroy();
-            Shared.modules.playerlist.players.Clear();
-
-            if (PlayerManager.field_Private_Static_PlayerManager_0?.field_Private_List_1_Player_0 == null) return;
-
-            for (int i = 0; i < Mathf.Min(PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0.Count, 18); i++)
-            {
-                int _i = i; // retarded local
-                Player user = PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0[i];
-
-                KiraiLib.UI.Label text = null;
-                text = KiraiLib.UI.Label.Create($"sm/player_{i}", GenText(user, selected.Contains(user.field_Private_APIUser_0.displayName), _i),
-                    0, i * -70, Shared.modules.playerlist.parent.transform, new Action(() =>
-                    {
-                        bool targeted = selected.Contains(user.field_Private_APIUser_0.displayName);
-
-                        if (targeted) selected.Remove(user.field_Private_APIUser_0.displayName);
-                        else selected.Add(user.field_Private_APIUser_0.displayName);
-
-                        text.SetText(GenText(user, !targeted, _i));
-                    }), false);
-                Shared.modules.playerlist.players.Add(text);
-            }
-        }
-
-        private string GenText(Player user, bool selected, int index)
-        {
-            return " "
-                + (user.IsMaster() ? "<b>" : "")
-                + "<color="
-                + (selected ? "#ccf" : "#5600a5")
-                + ">"
-                + (index + 1)
-                + " </color>"
-                + (user.IsMaster() ? "</b>" : "")
-                + (user.IsFriend() ? "<b>" : "")
-                + $"<color={user.field_Private_APIUser_0.GetTrustColor().ToHex()}>{user.field_Private_APIUser_0.displayName}</color>"
-                + (user.IsFriend() ? "</b>" : "");
+            Shared.modules.playerlist.RefreshEx(false);
         }
     }
 }

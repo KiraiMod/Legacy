@@ -267,7 +267,7 @@ namespace KiraiMod
             if (continueExecuting) {
                 if (Shared.modules.playerlist.locked)
                 {
-                    Shared.modules.playerlist.Refresh();
+                    Shared.modules.playerlist.RefreshEx(true);
                     Shared.modules.playerlist.locked = false;
                 }
                 
