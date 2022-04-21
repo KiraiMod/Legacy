@@ -66,8 +66,19 @@ namespace KiraiMod.Modules
                     .GetResponse())
                     .GetResponseStream())
                     .ReadToEnd();
+
+                if (data[data.Length - 1] == '\n')
+                    data = data.Remove(data.Length - 1);
+
                 kosList = data.Split('\n');
                 MelonLogger.Log("Downloaded KOS list with " + kosList.Length + " users");
+
+#if DEBUG
+                for (int i = 0; i < kosList.Length; i++)
+                {
+                    MelonLogger.Log($"[KOS] {i}: {kosList[i]}");
+                }
+#endif
             }
             catch { MelonLogger.LogWarning("Failed to download KOS list."); }
         }
