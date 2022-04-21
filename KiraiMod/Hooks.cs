@@ -2,6 +2,7 @@
 using MelonLoader;
 using System;
 using System.Collections;
+using System.Linq;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.UI;
@@ -36,6 +37,16 @@ namespace KiraiMod
                 LogWithPadding("Cursor.Visible Setter", true);
             }
             catch { LogWithPadding("Cursor.Visible Setter", false); }
+
+            try
+            {
+                Shared.harmony.Patch(typeof(System.Diagnostics.Process)
+                    .GetMethods().FirstOrDefault(m => m.Name == nameof(System.Diagnostics.Process.GetProcesses) && m.GetParameters().Length == 0),
+                    null, new HarmonyMethod(typeof(Hooks).GetMethod(nameof(GetProcesses), BindingFlags.NonPublic | BindingFlags.Static)));
+
+                LogWithPadding("Process.GetProcesses", true);
+            }
+            catch { LogWithPadding("Process.GetProcesses", false); }
 
             try
             {
@@ -105,10 +116,18 @@ namespace KiraiMod
                 MelonLogger.Log("Not hooking TMPro.TMP_Text because Aliases is off.");
             }
 
+            var QMMethodsByCC = typeof(QuickMenu).GetMethods()
+                .Where(m => m.Name.Contains("Method_Public_Void_") && m.Name.Length == 20)
+                .OrderByDescending(m => (Attribute.GetCustomAttribute(m, typeof(UnhollowerBaseLib.Attributes.CallerCountAttribute)) as UnhollowerBaseLib.Attributes.CallerCountAttribute).Count);
+
+            var QMMethodsByXR = QMMethodsByCC.Skip(2).OrderByDescending(m => UnhollowerRuntimeLib.XrefScans.XrefScanner.XrefScan(m).Count());
+
             try
             {
-                Shared.harmony.Patch(typeof(QuickMenu)
-                    .GetMethod(nameof(QuickMenu.Method_Public_Void_1), BindingFlags.Public | BindingFlags.Instance),
+                Shared.harmony.Patch(QMMethodsByXR.ElementAt(0),
+                    new HarmonyMethod(typeof(Hooks).GetMethod(nameof(OnMenuOpened), BindingFlags.NonPublic | BindingFlags.Static)));
+
+                Shared.harmony.Patch(QMMethodsByXR.ElementAt(1),
                     new HarmonyMethod(typeof(Hooks).GetMethod(nameof(OnMenuOpened), BindingFlags.NonPublic | BindingFlags.Static)));
 
                 LogWithPadding("OnMenuOpened", true);
@@ -117,8 +136,7 @@ namespace KiraiMod
 
             try
             {
-                Shared.harmony.Patch(typeof(QuickMenu)
-                    .GetMethod(nameof(QuickMenu.Method_Public_Void_3), BindingFlags.Public | BindingFlags.Instance),
+                Shared.harmony.Patch(QMMethodsByCC.ElementAt(1),
                     new HarmonyMethod(typeof(Hooks).GetMethod(nameof(OnMenuClosed), BindingFlags.NonPublic | BindingFlags.Static)));
 
                 LogWithPadding("OnMenuClosed", true);
@@ -169,6 +187,11 @@ namespace KiraiMod
             }
             catch { LogWithPadding("OnPlayerLeft", false); }
         }
+
+        private static void GetProcesses(ref System.Diagnostics.Process[] __result)
+        {
+            __result = new System.Diagnostics.Process[0];
+    }
 
         private static bool FuckOffPayToCheatThisIsMyFeatureNotYours(bool __0) 
         {
