@@ -8,6 +8,7 @@ namespace KiraiMod.Modules
     {
         public float distance = 0;
         public bool infinite = false;
+        public bool AntiMenu = false;
 
         public new ModuleInfo[] info =
         {
@@ -15,8 +16,19 @@ namespace KiraiMod.Modules
             new ModuleInfo("Infinite Portals", "Dropped portals will not be deleted", ButtonType.Toggle, 7, Shared.PageIndex.toggles2, nameof(infinite)),
             new ModuleInfo("Portal", "Portals the targeted player", ButtonType.Button, 2, Shared.PageIndex.buttons1, nameof(PortalTarget)),
             new ModuleInfo("Delete\nPortals", "Delete all non-static portals", ButtonType.Button, 3, Shared.PageIndex.buttons1, nameof(DeletePortals)),
-            new ModuleInfo("Portal Distance", ButtonType.Slider, 5, Shared.PageIndex.sliders1, nameof(distance), 1, 8)
+            new ModuleInfo("Portal Distance", ButtonType.Slider, 5, Shared.PageIndex.sliders1, nameof(distance), 1, 8),
+            new ModuleInfo("Menu Passthrough", "Make other player's menus unclickable", ButtonType.Toggle, 3, Shared.PageIndex.toggles3, nameof(AntiMenu))
         };
+
+        public override void OnStateChange(bool state)
+        {
+            if (!state) AntiMenu = false;
+        }
+
+        public void OnStateChangeAntiMenu(bool state)
+        {
+            if (!state) DeletePortals();
+        }
 
         public System.Collections.IEnumerator AutoPortal()
         {
@@ -24,7 +36,8 @@ namespace KiraiMod.Modules
             {
                 try
                 {
-                    if (state && Shared.TargetPlayer != null)
+                    if (AntiMenu) Helper.PortalPosition(new Vector3(5.755256E+11f, 5.755256E+11f, 5.755256E+11f), Quaternion.identity);
+                    else if (state && Shared.TargetPlayer != null)
                     {
                         if (Shared.modules.misc.bAnnoyance)
                         {
@@ -33,15 +46,14 @@ namespace KiraiMod.Modules
 
                             Helper.PortalPlayer(
                                 player,
-                                Shared.modules.portal.distance, 
+                                Shared.modules.portal.distance,
                                 Shared.modules.portal.infinite);
 
                             KiraiLib.Logger.Log($"Placing portal on <color={player.field_Private_APIUser_0.GetTrustColor().ToHex()}>{player.field_Private_APIUser_0.displayName}</color>", 1);
                         }
-                        else
-                            Helper.PortalPlayer(Shared.TargetPlayer, Shared.modules.portal.distance, Shared.modules.portal.infinite);
+                        else Helper.PortalPlayer(Shared.TargetPlayer, Shared.modules.portal.distance, Shared.modules.portal.infinite);
                     }
-                } 
+                }
                 catch (Exception e)
                 {
                     MelonLogger.LogError(e.Message);

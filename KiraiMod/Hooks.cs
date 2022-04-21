@@ -310,9 +310,9 @@ namespace KiraiMod
             {
                 if (portal.name == __instance.name)
                 {
-                    if (float.IsInfinity(portal.transform.position.x) ||
-                        float.IsInfinity(portal.transform.position.y) ||
-                        float.IsInfinity(portal.transform.position.z))
+                    if (Mathf.Abs(portal.transform.position.x) > 10000 ||
+                        Mathf.Abs(portal.transform.position.y) > 10000 ||
+                        Mathf.Abs(portal.transform.position.z) > 10000)
                     {
                         KiraiLib.Logger.Log($"Blocked invalid portal from {VRC.SDKBase.Networking.GetOwner(portal.gameObject).displayName}");
                         portal.gameObject.active = false;
