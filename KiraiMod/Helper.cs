@@ -1,4 +1,4 @@
-﻿using MelonLoader;
+using MelonLoader;
 using System.Linq;
 using UnityEngine;
 using VRC;
@@ -35,7 +35,7 @@ namespace KiraiMod
             if (portal == null) return;
 
             Networking.RPC(RPC.Destination.AllBufferOne, portal, "ConfigurePortal", new Il2CppSystem.Object[] {
-                "wrld_8365f7c2-9771-4bf3-8bcc-901fbe9a903d",
+                "wrld_5b89c79e-c340-4510-be1b-476e9fcdedcc",
                 "KOS",
                 new Il2CppSystem.Int32
                 {
