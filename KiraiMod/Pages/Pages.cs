@@ -1,4 +1,6 @@
-﻿namespace KiraiMod.Pages
+﻿using UnhollowerRuntimeLib;
+
+namespace KiraiMod.Pages
 {
     public class Pages
     {
@@ -26,6 +28,11 @@
                 Shared.menu.selected = (int)Menu.PageIndex.sliders1;
             }));
 
+            Shared.menu.CreateButton("udon/refresh", "Refresh", "Fetch all UdonBehaviours again", 3f, 2f, Shared.menu.pages[(int)Menu.PageIndex.udon].transform, new System.Action(() =>
+            {
+                Shared.modules.udon.OnLevelWasLoaded();
+            }));
+
             Shared.menu.CreateButton("udon/more", "Up", "See less UdonBheaviours", 3f, 1f, Shared.menu.pages[(int)Menu.PageIndex.udon].transform, new System.Action(() =>
             {
                 Shared.modules.udon.CurrentPage--;
@@ -36,9 +43,14 @@
                 Shared.modules.udon.CurrentPage++;
             }));
 
-            Shared.menu.CreateButton("udon/refresh", "Refresh", "Fetch all UdonBehaviours again", 3f, -1f, Shared.menu.pages[(int)Menu.PageIndex.udon].transform, new System.Action(() =>
+            Shared.menu.CreateButton("udon/broadcast", "Broadcast", "Broadcast an event to every UdonBehaviour", 3f, -1f, Shared.menu.pages[(int)Menu.PageIndex.udon].transform, new System.Action(() =>
             {
-                Shared.modules.udon.OnLevelWasLoaded();
+                string text = System.Windows.Forms.Clipboard.GetText().Trim();
+
+                foreach (VRC.Udon.UdonBehaviour ub in Shared.modules.udon.behaviours)
+                {
+                    ub.SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, text);
+                }
             }));
         }
     }

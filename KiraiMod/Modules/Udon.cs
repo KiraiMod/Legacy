@@ -8,7 +8,7 @@ namespace KiraiMod.Modules
     public class Udon : ModuleBase
     {
         private List<GameObject> pages = new List<GameObject>();
-        private UdonBehaviour[] behaviours;
+        public UdonBehaviour[] behaviours;
 
         private readonly int pageSize = 12;
 
