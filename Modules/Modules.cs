@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using MelonLoader;
+using System;
+using System.Collections.Generic;
 using VRC;
 
 namespace KiraiMod.Modules
@@ -17,6 +19,7 @@ namespace KiraiMod.Modules
         public ModLog modlog;
         public Headlight headlight;
         public Aliases aliases;
+        public Mute mute;
 
         public List<ModuleBase> modules = new List<ModuleBase>();
 
@@ -34,6 +37,12 @@ namespace KiraiMod.Modules
             modules.Add(modlog = new ModLog());
             modules.Add(headlight = new Headlight());
             modules.Add(aliases = new Aliases());
+            modules.Add(mute = new Mute());
+        }
+
+        public void StartCoroutines()
+        {
+            MelonCoroutines.Start(Shared.modules.portal.AutoPortal());
         }
 
         public void OnPlayerJoined(Player player)
@@ -73,6 +82,14 @@ namespace KiraiMod.Modules
             for (int i = 0; i < modules.Count; i++)
             {
                 modules[i].OnLevelWasLoaded();
+            }
+        }
+
+        internal void OnAvatarInitialized(VRCAvatarManager instance)
+        {
+            for (int i = 0; i < modules.Count; i++)
+            {
+                modules[i].OnAvatarInitialized(instance);
             }
         }
     }

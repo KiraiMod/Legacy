@@ -36,6 +36,11 @@ namespace KiraiMod.Modules
 			if (state && player.field_Private_VRCPlayerApi_0.isMaster) Refresh();
         }
 
+        public override void OnAvatarInitialized(VRCAvatarManager manager)
+        {
+            if (state) Enable(manager.field_Private_VRCPlayer_0.field_Private_Player_0);
+        }
+
         public override void OnUpdate()
         {
             if (state && rgb)

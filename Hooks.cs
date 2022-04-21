@@ -4,6 +4,7 @@ using System;
 using System.Collections;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using UnityEngine;
 using UnityEngine.UI;
 using VRC;
 using static KiraiMod.Modules.ModLog;
@@ -54,6 +55,15 @@ namespace KiraiMod
             }
             catch { MelonModLogger.LogWarning("Hooking RPCs... Failed"); }
 
+            try
+            {
+                Shared.harmony.Patch(typeof(VRCAvatarManager)
+                    .GetMethod(nameof(VRCAvatarManager.Method_Private_Boolean_GameObject_String_Single_0), BindingFlags.Instance | BindingFlags.Public), 
+                    null, new HarmonyMethod(typeof(Hooks).GetMethod(nameof(OnAvatarInitialized), BindingFlags.NonPublic | BindingFlags.Static)));
+
+                MelonModLogger.Log("Hooking OnAvatarInitialized... Passed");
+            } catch { MelonModLogger.Log("Hooking OnAvatarInitialized... Failed"); }
+
             if (Shared.modules.aliases.state)
                 try
                 {
@@ -80,6 +90,14 @@ namespace KiraiMod
             Shared.modules.OnPlayerLeft(player);
         }
 
+        private static void OnAvatarInitialized(GameObject __0, ref VRCAvatarManager __instance, ref bool __result)
+        {
+            if (__instance.field_Private_VRCPlayer_0.field_Private_Player_0 == null ||
+                __instance.field_Private_VRCPlayer_0.field_Private_Player_0.field_Private_APIUser_0 == null) return;
+
+            Shared.modules.OnAvatarInitialized(__instance);
+        }
+
         private static void OnRPC(ref Player __0, ref VrcEvent __1, ref VrcBroadcastType __2, ref int __3, ref float __4)
         {
             switch (__1.EventType)
@@ -87,6 +105,8 @@ namespace KiraiMod
                 case VrcEventType.SendRPC:
                     if (__1.ParameterObject.name == "ModerationManager")
                     {
+                        Shared.modules.mute.Refresh();
+                        
                         string param = "";
                         foreach (byte b in __1.ParameterBytes)
                         {

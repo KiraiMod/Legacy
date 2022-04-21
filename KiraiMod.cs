@@ -3,6 +3,7 @@ using System.Reflection;
 using UnhollowerRuntimeLib;
 using UnityEngine;
 using UnityEngine.UI;
+using VRC;
 
 namespace KiraiMod
 {
@@ -12,6 +13,7 @@ namespace KiraiMod
 
         public bool bUnload = false;
         public bool bSpoof = false;
+        public bool bMute = false;
 
         public override void OnApplicationStart()
         {
@@ -31,7 +33,7 @@ namespace KiraiMod
             Shared.config.Load();
             Shared.hooks = new Hooks();
 
-            MelonCoroutines.Start(Shared.modules.portal.AutoPortal());
+            Shared.modules.StartCoroutines();
         }
 
         public override void OnApplicationQuit()

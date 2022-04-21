@@ -147,6 +147,7 @@
     <Compile Include="Modules\KOS.cs" />
     <Compile Include="Modules\ModLog.cs" />
     <Compile Include="Modules\Modules.cs" />
+    <Compile Include="Modules\Mute.cs" />
     <Compile Include="Modules\Nameplates.cs" />
     <Compile Include="Modules\Noclip.cs" />
     <Compile Include="Modules\Orbit.cs" />

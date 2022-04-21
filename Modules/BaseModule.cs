@@ -22,10 +22,11 @@ namespace KiraiMod.Modules
         public virtual void OnStateChange(bool state) { }
         public virtual void OnConfigLoaded() { }
 
-        public virtual void OnPlayerJoined(Player player) { }
-        public virtual void OnPlayerLeft(Player player) { }
         public virtual void OnUpdate() { }
         public virtual void OnLevelWasLoaded() { }
+        public virtual void OnPlayerJoined(Player player) { }
+        public virtual void OnPlayerLeft(Player player) { }
+        public virtual void OnAvatarInitialized(VRCAvatarManager manager) { }
     }
 
     public class ModuleInfo

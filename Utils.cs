@@ -46,9 +46,11 @@ namespace KiraiMod
             Object.Destroy(obj);
         }
 
-        public static void LogGO(GameObject go, int? n_depth = null)
+        public static void LogGO(GameObject go, int max = -1, int? n_depth = null)
         {
             int depth = n_depth ?? 0;
+            if (max != -1 && depth > max) return;
+
             MelonModLogger.Log(System.ConsoleColor.Green, "".PadLeft(depth * 4, ' ') + go.name);
 
             Component[] components = go.GetComponents<Component>();
@@ -57,16 +59,17 @@ namespace KiraiMod
                 MelonModLogger.Log(
                     System.ConsoleColor.Cyan,
                     "".PadLeft((depth + 1) * 4, ' ') + 
+                    ((go.name.Length + 2 < components[i].ToString().Length) ?
                     components[i].ToString().Substring(
                         go.name.Length + 2, 
                         components[i].ToString().Length - go.name.Length - 3
-                    )
+                    ) : components[i].ToString())
                 );
             }
 
             for (int i = 0; i < go.transform.childCount; i++)
             {
-                LogGO(go.transform.GetChild(i).gameObject, depth + 1);
+                LogGO(go.transform.GetChild(i).gameObject, max, depth + 1);
             }
         }
 
