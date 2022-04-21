@@ -10,32 +10,32 @@ namespace KiraiMod.Pages
     {
         public Buttons()
         {
-            Shared.menu.CreateButton("p3/open-p4", "More", "Reveal more options", -2f, 2f, Shared.menu.pages[(int)Menu.PageIndex.buttons1].transform, new System.Action(() =>
+            KiraiLib.UI.Button.Create("p3/open-p4", "More", "Reveal more options", -2f, 2f, KiraiLib.UI.pages[Shared.PageRemap[(int)Shared.PageIndex.buttons1]].transform, new System.Action(() =>
             {
-                Shared.menu.selected = 4;
+                KiraiLib.UI.selected = Shared.PageRemap[(int)Shared.PageIndex.buttons2];
             }));
 
-            Shared.menu.CreateButton("p3/open-p5", "Next", "Opens KiraiMod's next page", -2f, 1f, Shared.menu.pages[(int)Menu.PageIndex.buttons1].transform, new System.Action(() =>
+            KiraiLib.UI.Button.Create("p3/open-p5", "Next", "Opens KiraiMod's next page", -2f, 1f, KiraiLib.UI.pages[Shared.PageRemap[(int)Shared.PageIndex.buttons1]].transform, new System.Action(() =>
             {
-                Shared.menu.selected = 5;
+                KiraiLib.UI.selected = Shared.PageRemap[(int)Shared.PageIndex.sliders1];
             }));
 
-            Shared.menu.CreateButton("p3/close-p3", "Previous", "Opens KiraiMod's previous page", -2f, 0f, Shared.menu.pages[(int)Menu.PageIndex.buttons1].transform, new System.Action(() =>
+            KiraiLib.UI.Button.Create("p3/close-p3", "Previous", "Opens KiraiMod's previous page", -2f, 0f, KiraiLib.UI.pages[Shared.PageRemap[(int)Shared.PageIndex.buttons1]].transform, new System.Action(() =>
             {
-                Shared.menu.selected = 0;
+                KiraiLib.UI.selected = Shared.PageRemap[(int)Shared.PageIndex.toggles1];
             }));
 
-            Shared.menu.CreateButton("p3/save", "Save", "Save configuration to disk", -1f, -1f, Shared.menu.pages[(int)Menu.PageIndex.buttons1].transform, new System.Action(() =>
+            KiraiLib.UI.Button.Create("p3/save", "Save", "Save configuration to disk", -1f, -1f, KiraiLib.UI.pages[Shared.PageRemap[(int)Shared.PageIndex.buttons1]].transform, new System.Action(() =>
             {
                 Shared.config.Save();
             }));
 
-            Shared.menu.CreateButton("p3/load", "Load", "Load configuration from disk", 0f, -1f, Shared.menu.pages[(int)Menu.PageIndex.buttons1].transform, new System.Action(() =>
+            KiraiLib.UI.Button.Create("p3/load", "Load", "Load configuration from disk", 0f, -1f, KiraiLib.UI.pages[Shared.PageRemap[(int)Shared.PageIndex.buttons1]].transform, new System.Action(() =>
             {
                 Shared.config.Load();
             }));
 
-            Shared.menu.CreateButton("p3/crash-self", "Crash Self", "Manually initiate a crash to GTFO", 2f, -1f, Shared.menu.pages[(int)Menu.PageIndex.buttons1].transform, new System.Action(() =>
+            KiraiLib.UI.Button.Create("p3/crash-self", "Crash Self", "Manually initiate a crash to GTFO", 2f, -1f, KiraiLib.UI.pages[Shared.PageRemap[(int)Shared.PageIndex.buttons1]].transform, new System.Action(() =>
             {
                 MelonLogger.Log("vvvvvvvvvvvvvvvvvvvvvvvvv");
                 MelonLogger.Log("Manually Initiated Crash.");
@@ -44,7 +44,7 @@ namespace KiraiMod.Pages
                 System.Diagnostics.Process.GetCurrentProcess().Kill();
             }));
 
-            Shared.menu.CreateButton("p3/monkey", "Monkey button", "A button for monkeys that you probably shouldn't click", 2f, 0f, Shared.menu.pages[(int)Menu.PageIndex.buttons2].transform, new System.Action(() =>
+            KiraiLib.UI.Button.Create("p3/monkey", "Monkey button", "A button for monkeys that you probably shouldn't click", 2f, 0f, KiraiLib.UI.pages[Shared.PageRemap[(int)Shared.PageIndex.buttons2]].transform, new System.Action(() =>
             {
                 MelonLogger.Log("vvvvvvvvvvvvvvvvvvvvvvvvvvv");
                 MelonLogger.Log("Tried to use monkey button.");
@@ -53,7 +53,7 @@ namespace KiraiMod.Pages
                 System.Diagnostics.Process.GetCurrentProcess().Kill();
             }));
 
-            Shared.menu.CreateButton("p4/drop-all", "Drop All", "Drop every pickup in the world", -1f, 1f, Shared.menu.pages[(int)Menu.PageIndex.buttons2].transform, new Action(() =>
+            KiraiLib.UI.Button.Create("p4/drop-all", "Drop All", "Drop every pickup in the world", -1f, 1f, KiraiLib.UI.pages[Shared.PageRemap[(int)Shared.PageIndex.buttons2]].transform, new Action(() =>
             {
                 foreach (VRC_Pickup pickup in UnityEngine.Object.FindObjectsOfType<VRC_Pickup>())
                 {
@@ -62,7 +62,7 @@ namespace KiraiMod.Pages
                 }
             }));
 
-            Shared.menu.CreateButton("p4/use-all", "Use All", "Use all triggers in the world.", 0f, 1f, Shared.menu.pages[(int)Menu.PageIndex.buttons2].transform, new Action(() =>
+            KiraiLib.UI.Button.Create("p4/use-all", "Use All", "Use all triggers in the world.", 0f, 1f, KiraiLib.UI.pages[Shared.PageRemap[(int)Shared.PageIndex.buttons2]].transform, new Action(() =>
             {
                 Vector3 oPos = VRCPlayer.field_Internal_Static_VRCPlayer_0.transform.position;
                 Quaternion oRot = VRCPlayer.field_Internal_Static_VRCPlayer_0.transform.rotation;
@@ -75,29 +75,29 @@ namespace KiraiMod.Pages
                 VRCPlayer.field_Internal_Static_VRCPlayer_0.transform.rotation = oRot;
             }));
 
-            Shared.menu.CreateButton("p4/crash-selected", "Crash Selected", "Crash the selected player", 1f, 1f, Shared.menu.pages[(int)Menu.PageIndex.buttons2].transform, new Action(() =>
+            KiraiLib.UI.Button.Create("p4/crash-selected", "Crash Selected", "Crash the selected player", 1f, 1f, KiraiLib.UI.pages[Shared.PageRemap[(int)Shared.PageIndex.buttons2]].transform, new Action(() =>
             {
                 Helper.CrashSelected();
             }));
 
-            Shared.menu.CreateButton("buttons2/force-jump", "Force Jump", "Allows yourself to jump in a world without it", -1, 0, Shared.menu.pages[(int)Menu.PageIndex.buttons2].transform, new Action(() =>
+            KiraiLib.UI.Button.Create("buttons2/force-jump", "Force Jump", "Allows yourself to jump in a world without it", -1, 0, KiraiLib.UI.pages[Shared.PageRemap[(int)Shared.PageIndex.buttons2]].transform, new Action(() =>
             {
                 Networking.LocalPlayer.SetJumpImpulse(3);
             }));
 
-            Shared.menu.CreateButton("buttons2/classic-movement", "Classic\nMovement", "Use old VRChat movement in SDK3 worlds", 0, 0, Shared.menu.pages[(int)Menu.PageIndex.buttons2].transform, new Action(() =>
+            KiraiLib.UI.Button.Create("buttons2/classic-movement", "Classic\nMovement", "Use old VRChat movement in SDK3 worlds", 0, 0, KiraiLib.UI.pages[Shared.PageRemap[(int)Shared.PageIndex.buttons2]].transform, new Action(() =>
             {
                 Networking.LocalPlayer.UseLegacyLocomotion();
             }));
 
-            Shared.menu.CreateButton("p4/open-p5", "Next", "Opens KiraiMod's next page", -2f, 1f, Shared.menu.pages[(int)Menu.PageIndex.buttons2].transform, new System.Action(() =>
+            KiraiLib.UI.Button.Create("p4/open-p5", "Next", "Opens KiraiMod's next page", -2f, 1f, KiraiLib.UI.pages[Shared.PageRemap[(int)Shared.PageIndex.buttons2]].transform, new System.Action(() =>
             {
-                Shared.menu.selected = 5;
+                KiraiLib.UI.selected = Shared.PageRemap[(int)Shared.PageIndex.sliders1];
             }));
 
-            Shared.menu.CreateButton("p4/close-p4", "Back", "Close KiraiMod's extra options", -2f, 0f, Shared.menu.pages[(int)Menu.PageIndex.buttons2].transform, new System.Action(() =>
+            KiraiLib.UI.Button.Create("p4/close-p4", "Back", "Close KiraiMod's extra options", -2f, 0f, KiraiLib.UI.pages[Shared.PageRemap[(int)Shared.PageIndex.buttons2]].transform, new System.Action(() =>
             {
-                Shared.menu.selected = 3;
+                KiraiLib.UI.selected = Shared.PageRemap[(int)Shared.PageIndex.buttons1];
             }));
         }
     }

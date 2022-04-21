@@ -3,7 +3,6 @@ using System;
 using System.Collections;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.UI;
 using VRC;
 
 namespace KiraiMod.Modules
@@ -11,12 +10,12 @@ namespace KiraiMod.Modules
     public class PlayerList : ModuleBase
     {
         public GameObject parent;
-        private System.Collections.Generic.List<Menu.Label> players = new System.Collections.Generic.List<Menu.Label>();
-        private Vector3 oCenter;
-        private Vector3 oExtent;
+
+        private System.Collections.Generic.List<KiraiLib.UI.Label> players = new System.Collections.Generic.List<KiraiLib.UI.Label>();
+        private bool hasSet = false;
 
         public new ModuleInfo[] info = {
-            new ModuleInfo("Player List", "Show the players in your instance", ButtonType.Toggle, 8, Menu.PageIndex.toggles2, nameof(state))
+            new ModuleInfo("Player List", "Show the players in your instance", ButtonType.Toggle, 8, Shared.PageIndex.toggles2, nameof(state))
         };
 
         public PlayerList()
@@ -64,7 +63,7 @@ namespace KiraiMod.Modules
 
         public override void OnLevelWasLoaded()
         {
-            if (state && Shared.menu != null && !Shared.menu.qm.prop_Boolean_0)
+            if (state && parent != null && !QuickMenu.prop_QuickMenu_0.prop_Boolean_0)
                 parent.active = false;
         }
 
@@ -75,30 +74,26 @@ namespace KiraiMod.Modules
             BoxCollider collider = QuickMenu.prop_QuickMenu_0.GetComponent<BoxCollider>();
             if (collider != null)
             {
-                if (state)
+                if (!hasSet && state)
                 {
-                    oExtent = collider.extents;
-                    collider.extents = new Vector3(1678.67f, 835.6065f, 0.5f);
-
-                    oCenter = collider.center;
-                    collider.center = new Vector3(-420, 501.3639f, 0);
+                    hasSet = true;
+                    collider.extents += new Vector3(420, 0, 0);
+                    collider.center -= new Vector3(420, 0, 0);
                 }
-                else
+                else if (hasSet && !state)
                 {
-                    if (oExtent != Vector3.zero)
-                    {
-                        collider.extents = oExtent;
-                        collider.center = oCenter;
-                    }
+                    hasSet = false;
+                    collider.extents += new Vector3(-420, 0, 0);
+                    collider.center -= new Vector3(-420, 0, 0);
                 }
             }
 
-            parent.active = state && Shared.menu.qm.prop_Boolean_0;
+            parent.active = state && QuickMenu.prop_QuickMenu_0.prop_Boolean_0;
         }
 
         private IEnumerator DelayedInit()
         {
-            while (Shared.menu is null) yield return null; // wait for parent and ui init
+            while (VRCUiManager.prop_VRCUiManager_0 is null) yield return null; // wait for parent and ui init
 
             Init();
         }
@@ -110,7 +105,7 @@ namespace KiraiMod.Modules
                 parent = new GameObject();
                 parent.name = "KiraiPlayerList";
                 parent.AddComponent<RectTransform>();
-                parent.transform.SetParent(Shared.menu.qm.transform, true);
+                parent.transform.SetParent(QuickMenu.prop_QuickMenu_0.transform, true);
                 parent.transform.localPosition = new Vector3(-1670, 885, 0);
                 parent.transform.localScale = Vector3.one;
                 parent.transform.localRotation = Quaternion.identity;
@@ -125,8 +120,8 @@ namespace KiraiMod.Modules
 
             if (state)
             {
-                foreach (Menu.Label player in players)
-                    UnityEngine.Object.Destroy(player.self.gameObject);
+                foreach (KiraiLib.UI.Label player in players)
+                    player.Destroy();
                 players.Clear();
 
                 if (PlayerManager.field_Private_Static_PlayerManager_0?.field_Private_List_1_Player_0 == null) return;
@@ -135,7 +130,7 @@ namespace KiraiMod.Modules
                 {
                     Player user = PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0[i];
 
-                    Menu.Label text = Shared.menu.CreateLabel($"sm/player_{i}", " " +
+                    KiraiLib.UI.Label text = KiraiLib.UI.Label.Create($"sm/player_{i}", " " +
                         (user.IsMaster() ? "<b>" : "") +
                         $"<color={user.GetTextColor().ToHex()}>{i + 1} </color>" +
                         (user.IsMaster() ? "</b>" : "") +

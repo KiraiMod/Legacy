@@ -37,39 +37,39 @@ namespace KiraiMod.Modules
         public ButtonType type = ButtonType.Undefined;
         public float x = -1;
         public float y = -1;
-        public int page = -1;
+        public Shared.PageIndex page;
         public string reference = null;
         public float min;
         public float max;
 
-        public ModuleInfo (string label, string description, ButtonType type, int index, Menu.PageIndex page, string reference) {
+        public ModuleInfo (string label, string description, ButtonType type, int index, Shared.PageIndex page, string reference) {
             this.label = label;
             this.description = description;
             this.type = type;
             Utils.GetGenericLayout(index, out int x, out int y);
             this.x = x;
             this.y = y;
-            this.page = (int)page;
+            this.page = page;
             this.reference = reference;
         }
 
-        public ModuleInfo(string label, string description, ButtonType type, int x, int y, Menu.PageIndex page, string reference)
+        public ModuleInfo(string label, string description, ButtonType type, int x, int y, Shared.PageIndex page, string reference)
         {
             this.label = label;
             this.description = description;
             this.type = type;
             this.x = x;
             this.y = y;
-            this.page = (int)page;
+            this.page = page;
             this.reference = reference;
         }
 
-        public ModuleInfo(string label, ButtonType type, int index, Menu.PageIndex page, string reference, float min, float max)
+        public ModuleInfo(string label, ButtonType type, int index, Shared.PageIndex page, string reference, float min, float max)
         {
             this.label = label;
             this.type = type;
             Utils.GetSliderLayout(index, out x, out y);
-            this.page = (int)page;
+            this.page = page;
             this.reference = reference;
             this.min = min;
             this.max = max;

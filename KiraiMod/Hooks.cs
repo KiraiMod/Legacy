@@ -116,7 +116,7 @@ namespace KiraiMod
             try
             {
                 Shared.harmony.Patch(typeof(QuickMenu)
-                    .GetMethod(nameof(QuickMenu.Method_Public_Void_0), BindingFlags.Public | BindingFlags.Instance),
+                    .GetMethod(nameof(QuickMenu.Method_Public_Void_1), BindingFlags.Public | BindingFlags.Instance),
                     new HarmonyMethod(typeof(Hooks).GetMethod(nameof(OnMenuOpened), BindingFlags.NonPublic | BindingFlags.Static)));
 
                 LogWithPadding("OnMenuOpened", true);
@@ -126,7 +126,7 @@ namespace KiraiMod
             try
             {
                 Shared.harmony.Patch(typeof(QuickMenu)
-                    .GetMethod(nameof(QuickMenu.Method_Public_Void_2), BindingFlags.Public | BindingFlags.Instance),
+                    .GetMethod(nameof(QuickMenu.Method_Public_Void_3), BindingFlags.Public | BindingFlags.Instance),
                     new HarmonyMethod(typeof(Hooks).GetMethod(nameof(OnMenuClosed), BindingFlags.NonPublic | BindingFlags.Static)));
 
                 LogWithPadding("OnMenuClosed", true);
@@ -173,6 +173,11 @@ namespace KiraiMod
         private static void Test4()
         {
             MelonLogger.Log("Test4 called");
+        }
+
+        private static void Test5()
+        {
+            MelonLogger.Log("Test5 called");
         }
 #endif
 
@@ -252,14 +257,23 @@ namespace KiraiMod
 
         private static void OnPortalConfigured(GameObject __instance)
         {
-            if (Shared.menu is null) return; // we are unloaded;
-
             foreach (PortalInternal portal in UnityEngine.Object.FindObjectsOfType<PortalInternal>())
             {
                 if (portal.name == __instance.name)
                 {
-                    VRC.SDKBase.Networking.SetOwner(VRC.SDKBase.Networking.LocalPlayer, portal.gameObject);
-                    MelonCoroutines.Start(Helper.ReversePortal(portal));
+                    if (float.IsInfinity(portal.transform.position.x) ||
+                        float.IsInfinity(portal.transform.position.y) ||
+                        float.IsInfinity(portal.transform.position.z))
+                    {
+                        KiraiLib.Logger.Log($"Blocked invalid portal from {VRC.SDKBase.Networking.GetOwner(portal.gameObject).displayName}");
+                        portal.gameObject.active = false;
+                    }
+                    else if (!Shared.unloaded)
+                    {
+                        VRC.SDKBase.Networking.SetOwner(VRC.SDKBase.Networking.LocalPlayer, portal.gameObject);
+                        MelonCoroutines.Start(Helper.ReversePortal(portal));
+                    }
+
                     break;
                 }
             }

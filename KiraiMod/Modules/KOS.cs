@@ -21,8 +21,8 @@ namespace KiraiMod.Modules
         public List<Player> players = new List<Player>();
 
         public new ModuleInfo[] info = {
-            new ModuleInfo("Auto KOS", "Auto targets and portals players on the KOS list", ButtonType.Toggle, 11, Menu.PageIndex.toggles2, nameof(state)),
-            new ModuleInfo("Refresh KOS", "Refreshes KOS list and scans lobby", ButtonType.Button, 4, Menu.PageIndex.buttons1, nameof(Refresh))
+            new ModuleInfo("Auto KOS", "Auto targets and portals players on the KOS list", ButtonType.Toggle, 11, Shared.PageIndex.toggles2, nameof(state)),
+            new ModuleInfo("Refresh KOS", "Refreshes KOS list and scans lobby", ButtonType.Button, 4, Shared.PageIndex.buttons1, nameof(Refresh))
         };
 
         public KOS()
@@ -124,11 +124,21 @@ namespace KiraiMod.Modules
             oTarget = Shared.TargetPlayer;
             Shared.TargetPlayer = target;
 
-            oAuto = Shared.menu.GetBool("p0/auto-portal") ?? oAuto;
-            Shared.menu.Set("p0/auto-portal", true);
+            if (KiraiLib.UI.elements.TryGetValue("p0/auto-portal", out KiraiLib.UI.UIElement v1))
+            {
+                KiraiLib.UI.Toggle toggle = v1 as KiraiLib.UI.Toggle;
 
-            oInfinite = Shared.menu.GetBool("p0/auto-portal") ?? oInfinite;
-            Shared.menu.Set("p0/infinite-portals", true);
+                oAuto = toggle.state;
+                toggle.SetState(true);
+            }
+
+            if (KiraiLib.UI.elements.TryGetValue("p0/infinite-portals", out KiraiLib.UI.UIElement v2))
+            {
+                KiraiLib.UI.Toggle toggle = v2 as KiraiLib.UI.Toggle;
+
+                oInfinite = toggle.state;
+                toggle.SetState(true);
+            }
         }
 
         private void Deactivate()
@@ -139,16 +149,19 @@ namespace KiraiMod.Modules
             Shared.TargetPlayer = oTarget;
             oTarget = null;
 
-            Menu.MenuObject obj;
-            if (Shared.menu.objects.TryGetValue(Utils.CreateID("Auto Portal", (int)Menu.PageIndex.toggles1), out obj))
+            if (KiraiLib.UI.elements.TryGetValue("p0/auto-portal", out KiraiLib.UI.UIElement v1))
             {
-                obj.toggle.SetState(oAuto);
+                KiraiLib.UI.Toggle toggle = v1 as KiraiLib.UI.Toggle;
+
+                toggle.SetState(oAuto);
                 oAuto = false;
             }
 
-            if (Shared.menu.objects.TryGetValue(Utils.CreateID("Infinite Portals", (int)Menu.PageIndex.toggles1), out obj))
+            if (KiraiLib.UI.elements.TryGetValue("p0/infinite-portals", out KiraiLib.UI.UIElement v2))
             {
-                obj.toggle.SetState(oInfinite);
+                KiraiLib.UI.Toggle toggle = v2 as KiraiLib.UI.Toggle;
+
+                toggle.SetState(oInfinite);
                 oInfinite = false;
             }
 

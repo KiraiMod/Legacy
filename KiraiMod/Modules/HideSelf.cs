@@ -18,7 +18,7 @@ namespace KiraiMod.Modules
 
         public new ModuleInfo[] info =
         {
-            new ModuleInfo("Collider Hider", "Move your collider to make yourself unclickable", ButtonType.Toggle, 6, Menu.PageIndex.toggles1, nameof(state))
+            new ModuleInfo("Collider Hider", "Move your collider to make yourself unclickable", ButtonType.Toggle, 6, Shared.PageIndex.toggles1, nameof(state))
         };
 
         bool changed;
@@ -46,7 +46,8 @@ namespace KiraiMod.Modules
             {
                 if (!Shared.modules.noclip.state)
                 {
-                    Shared.menu.Set(Utils.CreateID("noclip", Shared.modules.noclip.info[0].page), true);
+                    (KiraiLib.UI.elements[Utils.CreateID("noclip", (int)Shared.PageIndex.toggles1)] as KiraiLib.UI.Toggle)?.SetState(true);
+
                     changed = true;
                 }
                 else 
@@ -59,7 +60,7 @@ namespace KiraiMod.Modules
                 head.localPosition = Vector3.zero;
 
                 if (changed)
-                    Shared.menu.Set(Utils.CreateID("noclip", Shared.modules.noclip.info[0].page), false);
+                    (KiraiLib.UI.elements[Utils.CreateID("noclip", (int)Shared.PageIndex.toggles1)] as KiraiLib.UI.Toggle)?.SetState(false);
             }
         }
 

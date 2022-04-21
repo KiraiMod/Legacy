@@ -9,9 +9,9 @@ namespace KiraiMod.Modules
         public float size = 1;
 
         public new ModuleInfo[] info = {
-            new ModuleInfo("Item Orbit", "Orbit all items around target", ButtonType.Toggle, 8, Menu.PageIndex.toggles1, nameof(state)),
-            new ModuleInfo("Item Orbit Speed", ButtonType.Slider, 6, Menu.PageIndex.sliders1, nameof(speed), 0, 4),
-            new ModuleInfo("Item Orbit Size", ButtonType.Slider, 8, Menu.PageIndex.sliders1, nameof(size), 0, 4)
+            new ModuleInfo("Item Orbit", "Orbit all items around target", ButtonType.Toggle, 8, Shared.PageIndex.toggles1, nameof(state)),
+            new ModuleInfo("Item Orbit Speed", ButtonType.Slider, 6, Shared.PageIndex.sliders1, nameof(speed), 0, 4),
+            new ModuleInfo("Item Orbit Size", ButtonType.Slider, 8, Shared.PageIndex.sliders1, nameof(size), 0, 4)
     };
 
         VRC_Pickup[] cached;

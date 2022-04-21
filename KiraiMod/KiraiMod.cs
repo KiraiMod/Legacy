@@ -1,9 +1,11 @@
 ﻿using MelonLoader;
+using System;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Reflection;
-using UnhollowerRuntimeLib;
+using System.Windows.Forms;
 using UnityEngine;
-using UnityEngine.UI;
 
 [assembly: MelonInfo(typeof(KiraiMod.KiraiMod), "KiraiMod", null, "Kirai Chan#8315")]
 [assembly: MelonGame("VRChat", "VRChat")]
@@ -13,13 +15,15 @@ namespace KiraiMod
 {
     public class KiraiMod : MelonMod
     {
-        public KiraiMod()
+        static KiraiMod()
         {
-            System.IO.Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("KiraiMod.Lib.KiraiLib.dll");
-            System.IO.MemoryStream mem = new System.IO.MemoryStream((int)stream.Length);
+            Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("KiraiMod.Lib.KiraiLibLoader.dll");
+            MemoryStream mem = new MemoryStream((int)stream.Length);
             stream.CopyTo(mem);
 
             Assembly.Load(mem.ToArray());
+
+            new Action(() => KiraiLibLoader.Load())();
         }
 
         public bool bUnload = false;
@@ -28,7 +32,7 @@ namespace KiraiMod
         {
             MelonLogger.Log("Starting");
 
-            if (Random.Range(1, 8192) == 1)
+            if (UnityEngine.Random.Range(1, 8192) == 1)
                 MelonLogger.Log(Utils.StringIya);
 
             if (int.TryParse(((string)typeof(BuildInfo).GetField(nameof(BuildInfo.Version)).GetValue(null)).Replace(".", ""), out int version))
@@ -37,8 +41,8 @@ namespace KiraiMod
                 {
                     if (buildVer > version)
                     {
-                        System.Windows.Forms.MessageBox.Show("Your MelonLoader is outdated.", "Outdated Loader");
-                        System.Diagnostics.Process.Start("https://github.com/HerpDerpinstine/MelonLoader/releases/latest");
+                        MessageBox.Show("Your MelonLoader is outdated.", "Outdated Loader");
+                        Process.Start("https://github.com/HerpDerpinstine/MelonLoader/releases/latest");
                     }
                 }
             }
@@ -47,8 +51,8 @@ namespace KiraiMod
             {
                 if (MelonHandler.Mods.Any(m => m.Info.Name == ""))
                 {
-                    System.Windows.Forms.MessageBox.Show("AdvancedSafety by knah is required to prevent crashes with Notorious", "Potential Incompatbility");
-                    System.Diagnostics.Process.Start("https://github.com/knah/VRCMods");
+                    MessageBox.Show("AdvancedSafety by knah is required to prevent crashes with Notorious", "Potential Incompatbility");
+                    Process.Start("https://github.com/knah/VRCMods");
                 }
             }
 
@@ -65,10 +69,10 @@ namespace KiraiMod
             if (MelonHandler.Mods.Any(mod => mod.Assembly.GetName().Name.Contains("KiraiRPC")))
             {
                 MelonLogger.Log("Found KiraiRPC, using it");
-                new System.Action(() =>
+                new Action(() =>
                 {
                     var SendRPC = KiraiRPC.GetSendRPC("KiraiMod");
-                    KiraiRPC.callbackChain += new System.Action<KiraiRPC.RPCData>((data) =>
+                    KiraiRPC.callbackChain += (data) =>
                     {
                         if (data.target == "KiraiRPC")
                         {
@@ -110,10 +114,25 @@ namespace KiraiMod
                                     break;
                             }
                         }
-                    });
+                    };
                     KiraiRPC.Config.primary = "KiraiMod";
                 }).Invoke();
             }
+
+            KiraiLib.Callbacks.OnUIReload += () => 
+            {
+                MelonLogger.Log("OnUIReload");
+                VRChat_OnUiManagerInit();
+
+                Shared.unloaded = false;
+            };
+
+            KiraiLib.Callbacks.OnUIUnload += () =>
+            {
+                MelonLogger.Log("OnUIUnload");
+
+                Shared.unloaded = true;
+            };
         }
 
         public override void OnApplicationQuit()
@@ -133,9 +152,9 @@ namespace KiraiMod
             Shared.modules.OnUpdate();
 
             // todo: make this event driven using OnPlayerJoined and OnMenuOpened/Closed
-            if (Shared.menu != null)
+            if (VRCUiManager.prop_VRCUiManager_0 != null)
             {
-                if (!Shared.menu.qm.prop_Boolean_0)
+                if (!QuickMenu.prop_QuickMenu_0.prop_Boolean_0)
                 {
                     Shared.modules.xutils.SetState(false);
                     if (Shared.modules.xutils.state2)
@@ -145,8 +164,6 @@ namespace KiraiMod
                         Shared.modules.xutils.state2 = false;
                     }
                 }
-
-                Shared.menu.HandlePages();
             }
 
             if (Shared.modules.misc.BindsNumpad)
@@ -158,10 +175,11 @@ namespace KiraiMod
                 if (Input.GetKeyDown(KeyCode.Keypad5)) Shared.modules.orbit.SetState();
                 if (Input.GetKeyDown(KeyCode.Keypad6)) Shared.Options.bWorldTriggers ^= true;
                 if (Input.GetKeyDown(KeyCode.Keypad7)) Shared.modules.hideself.SetState();
+                if (Input.GetKeyDown(KeyCode.Keypad8)) Shared.modules.misc.bAntiMenu ^= true;
                 if (Input.GetKeyDown(KeyCode.KeypadMinus))
 #if DEBUG
                 {
-                    KiraiLib.Logger.Log("Hello!");
+
                 }
 #else
                     MelonLogger.Log("Alive");
@@ -177,7 +195,8 @@ namespace KiraiMod
                     if (Input.GetKeyDown(KeyCode.E)) Shared.modules.esp.SetState();
                     if (Input.GetKeyDown(KeyCode.Q)) Shared.modules.orbit.SetState();
                     if (Input.GetKeyDown(KeyCode.T)) Shared.Options.bWorldTriggers ^= true;
-                    if (Input.GetKeyDown(KeyCode.H)) Shared.modules.hideself.SetState();
+                    if (Input.GetKeyDown(KeyCode.C)) Shared.modules.hideself.SetState();
+                    if (Input.GetKeyDown(KeyCode.A)) Shared.modules.misc.bAntiMenu ^= true;
                 }
             }
             else if (Shared.modules.misc.BindsAlt)
@@ -191,6 +210,7 @@ namespace KiraiMod
                     if (Input.GetKeyDown(KeyCode.Alpha5)) Shared.modules.orbit.SetState();
                     if (Input.GetKeyDown(KeyCode.Alpha6)) Shared.Options.bWorldTriggers ^= true;
                     if (Input.GetKeyDown(KeyCode.Alpha7)) Shared.modules.hideself.SetState();
+                    if (Input.GetKeyDown(KeyCode.Alpha8)) Shared.modules.misc.bAntiMenu ^= true;
                 }
             }
 
@@ -209,24 +229,35 @@ namespace KiraiMod
 
         public override void VRChat_OnUiManagerInit()
         {
-            Shared.menu = new Menu();
+            MelonLogger.Log("OnUiManagerInit");
 
-            if (!MelonHandler.Mods.Any(m => m.Assembly.GetName().Name == "KiraiUI"))
-                Shared.menu.qm.transform.Find("QuickMenu_NewElements/_Background/Panel").GetComponent<Image>().color = Color.white;
+            KiraiLib.UI.Initialize();
 
             if (MelonHandler.Mods.Any(mod => mod.Assembly.GetName().Name.Contains("KiraiUI")))
             {
-                new System.Action(() =>
+                new Action(() =>
                 {
                     if (!KiraiUI.instance.hasStored) KiraiUI.instance.Store();
                     KiraiUI.instance.Apply();
                 }).Invoke();
             }
 
-            foreach (string name in System.Enum.GetNames(typeof(Menu.PageIndex)))
-            {
-                Shared.menu.CreatePage($"kiraimod_{name.ToLower()}");
-            }
+            Shared.PageRemap.Clear();
+
+            KiraiLib.UI.CreatePage();
+            KiraiLib.UI.CreatePage();
+            KiraiLib.UI.CreatePage();
+
+            Shared.PageRemap.Add(KiraiLib.UI.CreatePage("KiraiMod.Toggles1"));
+            Shared.PageRemap.Add(KiraiLib.UI.CreatePage("KiraiMod.Toggles2"));
+            Shared.PageRemap.Add(KiraiLib.UI.CreatePage("KiraiMod.Toggles3"));
+            Shared.PageRemap.Add(KiraiLib.UI.CreatePage("KiraiMod.Buttons1"));
+            Shared.PageRemap.Add(KiraiLib.UI.CreatePage("KiraiMod.Buttons2"));
+            Shared.PageRemap.Add(KiraiLib.UI.CreatePage("KiraiMod.Sliders1"));
+            Shared.PageRemap.Add(KiraiLib.UI.CreatePage("KiraiMod.XUtils"));
+            Shared.PageRemap.Add(KiraiLib.UI.CreatePage("KiraiMod.Udon1"));
+            Shared.PageRemap.Add(KiraiLib.UI.CreatePage("KiraiMod.Udon2"));
+            Shared.PageRemap.Add(KiraiLib.UI.CreatePage("KiraiMod.UserInfo"));
 
             new Pages.Pages();
 
@@ -239,9 +270,9 @@ namespace KiraiMod
                     {
                         if (info.reference == nameof(Modules.ModuleBase.state))
                         {
-                            Shared.menu.CreateToggle(Utils.CreateID(info.label, info.page), module.state,
-                            info.label, info.description, info.x, info.y, Shared.menu.pages[info.page].transform,
-                            new System.Action<bool>(state =>
+                            KiraiLib.UI.Toggle.Create(Utils.CreateID(info.label, (int)info.page),
+                            info.label, info.description, info.x, info.y, module.state, KiraiLib.UI.pages[Shared.PageRemap[(int)info.page]].transform,
+                            new Action<bool>(state =>
                             {
                                 module.SetState(state);
                             }));
@@ -255,14 +286,14 @@ namespace KiraiMod
                                 continue;
                             }
                             bool cval = (bool)reference.GetValue(module);
-                            Shared.menu.CreateToggle(Utils.CreateID(info.label, info.page), cval,
-                                info.label, info.description, info.x, info.y, Shared.menu.pages[info.page].transform,
+                            KiraiLib.UI.Toggle.Create(Utils.CreateID(info.label, (int)info.page),
+                                info.label, info.description, info.x, info.y, cval, KiraiLib.UI.pages[Shared.PageRemap[(int)info.page]].transform,
                                 onStateChange == null
-                                ? new System.Action<bool>(state =>
+                                ? new Action<bool>(state =>
                                 {
                                     reference.SetValue(module, state);
                                 })
-                                : new System.Action<bool>(state =>
+                                : new Action<bool>(state =>
                                 {
                                     if (state == cval) return;
 
@@ -290,9 +321,9 @@ namespace KiraiMod
                             MelonLogger.LogWarning($"Failed to find method {info.reference} on {module.GetType()}");
                             continue;
                         }
-                        Shared.menu.CreateButton(Utils.CreateID(info.label, info.page),
-                            info.label, info.description, info.x, info.y, Shared.menu.pages[info.page].transform,
-                            new System.Action(() =>
+                        KiraiLib.UI.Button.Create(Utils.CreateID(info.label, (int)info.page),
+                            info.label, info.description, info.x, info.y, KiraiLib.UI.pages[Shared.PageRemap[(int)info.page]].transform,
+                            new Action(() =>
                             {
                                 reference.Invoke(module, null);
                             }));
@@ -308,11 +339,11 @@ namespace KiraiMod
                         float cval = (float)reference.GetValue(module);
 
                         MethodInfo onValueChange = module.GetType().GetMethod($"OnValueChange{info.reference}", BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
-                        Shared.menu.CreateSlider(Utils.CreateID(info.label, info.page),
-                            info.label, info.x, info.y, info.min, info.max, cval, Shared.menu.pages[info.page].transform, onValueChange == null ? new System.Action<float>((value) =>
+                        KiraiLib.UI.Slider.Create(Utils.CreateID(info.label, (int)info.page),
+                            info.label, info.x, info.y, info.min, info.max, cval, KiraiLib.UI.pages[Shared.PageRemap[(int)info.page]].transform, onValueChange == null ? new Action<float>((value) =>
                             {
                                 reference.SetValue(module, value);
-                            }) : new System.Action<float>((value) =>
+                            }) : new Action<float>((value) =>
                             {
                                 onValueChange.Invoke(module, new object[] { value });
                             }));
@@ -327,7 +358,7 @@ namespace KiraiMod
                 }
             }
 
-            Shared.menu.CreateButton("p2/unload", "Unload", "Reverses most KiraiMod changes", 1f, -1f, Shared.menu.pages[(int)Menu.PageIndex.buttons1].transform, new System.Action(() =>
+            KiraiLib.UI.Button.Create("p2/unload", "Unload", "Reverses most KiraiMod changes", 1f, -1f, KiraiLib.UI.pages[Shared.PageRemap[(int)Shared.PageIndex.buttons1]].transform, new Action(() =>
             {
                 KiraiLib.Logger.Log("Press INSERT to reload");
                 Unload();
@@ -350,19 +381,9 @@ namespace KiraiMod
             Helper.DeletePortals();
 
             if (MelonHandler.Mods.Any(mod => mod.Assembly.GetName().Name.Contains("KiraiUI")))
-                new System.Action(() => KiraiUI.instance.Restore()).Invoke();
+                new Action(() => KiraiUI.instance.Restore()).Invoke();
 
-            foreach (Menu.MenuObject menuObject in Shared.menu.objects.Values)
-            {
-                if (menuObject.button != null) Object.Destroy(menuObject.button.self);
-                else if (menuObject.toggle != null) Object.Destroy(menuObject.toggle.self);
-                else if (menuObject.slider != null) Object.Destroy(menuObject.slider.self);
-                else if (menuObject.label != null) Object.Destroy(menuObject.label.self);
-            }
-
-            for (int i = 0; i < Shared.menu.pages.Count; i++) Object.Destroy(Shared.menu.pages[i]);
-
-            Shared.menu.sm.SetActive(Shared.menu.qm.field_Internal_Boolean_0);
+            KiraiLib.UI.Unload();
         }
 
         public void Reload()
@@ -372,7 +393,8 @@ namespace KiraiMod
             bUnload = false;
             MelonLogger.Log("Reloading");
             Shared.config.Load();
-            VRChat_OnUiManagerInit();
+
+            KiraiLib.UI.Reload();
         }
     }
 }

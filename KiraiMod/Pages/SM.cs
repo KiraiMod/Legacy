@@ -4,14 +4,15 @@
     {
         public SM()
         {
-            Shared.menu.CreateButton("um/open-p0", "Open\nKiraiMod", "Opens KiraiMod menus", -2f, 1f, Shared.menu.sm.transform, new System.Action(() =>
+            KiraiLib.UI.Button.Create("um/open-p0", "Open\nKiraiMod", "Opens KiraiMod menus", -2f, 1f, KiraiLib.UI.ShortcutMenu.transform, new System.Action(() =>
             {
-                Shared.menu.selected = 0;
+                MelonLoader.MelonLogger.Log($"Menu button was clicked! ({KiraiLib.OnUpdateToken is null})");
+                KiraiLib.UI.selected = Shared.PageRemap[(int)Shared.PageIndex.toggles1];
             }));
 
             if (UnityEngine.XR.XRDevice.isPresent)
             {
-                Shared.menu.CreateButton("p0/xutils-activate", "XUtils", "Starts raycast utilities", -2f, 0f, Shared.menu.sm.transform, new System.Action(() =>
+                KiraiLib.UI.Button.Create("p0/xutils-activate", "XUtils", "Starts raycast utilities", -2f, 0f, KiraiLib.UI.ShortcutMenu.transform, new System.Action(() =>
                 {
                     Shared.modules.xutils.SetState(true);
                 }));

@@ -15,9 +15,9 @@ namespace KiraiMod.Modules
         public bool directional = false;
 
         public new ModuleInfo[] info = {
-            new ModuleInfo("Flight", "Allows you to fly around with no gravity", ButtonType.Toggle, 1, Menu.PageIndex.toggles1, nameof(state)),
-            new ModuleInfo("3D Flight", "Fly in the direction you are looking", ButtonType.Toggle, 4, Menu.PageIndex.toggles2, nameof(directional)),
-            new ModuleInfo("Flight Speed", ButtonType.Slider, 2, Menu.PageIndex.sliders1, nameof(speed), 0, 32)
+            new ModuleInfo("Flight", "Allows you to fly around with no gravity", ButtonType.Toggle, 1, Shared.PageIndex.toggles1, nameof(state)),
+            new ModuleInfo("3D Flight", "Fly in the direction you are looking", ButtonType.Toggle, 4, Shared.PageIndex.toggles2, nameof(directional)),
+            new ModuleInfo("Flight Speed", ButtonType.Slider, 2, Shared.PageIndex.sliders1, nameof(speed), 0, 32)
         };
 
         public override void OnStateChange(bool state)
@@ -53,7 +53,8 @@ namespace KiraiMod.Modules
                 x = Input.GetAxis("Horizontal");
                 y = Input.GetAxis("Oculus_CrossPlatform_SecondaryThumbstickVertical");
                 z = Input.GetAxis("Vertical");
-            } else
+            }
+            else
             {
                 x = y = z = 0;
 
@@ -68,22 +69,20 @@ namespace KiraiMod.Modules
             }
 
             if (camera == null)
-            {
                 camera = VRCVrCamera.field_Private_Static_VRCVrCamera_0.GetComponentInChildren<Camera>().transform;
-            }
 
             VRCPlayer.field_Internal_Static_VRCPlayer_0.transform.position += (directional
                 ? camera.right
-                : VRCPlayer.field_Internal_Static_VRCPlayer_0.transform.right) * Shared.modules.flight.speed * Time.deltaTime * x;
+                : VRCPlayer.field_Internal_Static_VRCPlayer_0.transform.right) * Shared.modules.flight.speed * Time.deltaTime * x * (Input.GetKey(KeyCode.LeftShift) ? 8 : 1);
 
             VRCPlayer.field_Internal_Static_VRCPlayer_0.transform.position += (directional
                 ? camera.forward
                 : VRCPlayer.field_Internal_Static_VRCPlayer_0.transform.forward)
-                * Shared.modules.flight.speed * Time.deltaTime * z;
+                * Shared.modules.flight.speed * Time.deltaTime * z * (Input.GetKey(KeyCode.LeftShift) ? 8 : 1);
 
             VRCPlayer.field_Internal_Static_VRCPlayer_0.transform.position += (directional
                 ? camera.up
-                : VRCPlayer.field_Internal_Static_VRCPlayer_0.transform.up) * Shared.modules.flight.speed * Time.deltaTime * y;
+                : VRCPlayer.field_Internal_Static_VRCPlayer_0.transform.up) * Shared.modules.flight.speed * Time.deltaTime * y * (Input.GetKey(KeyCode.LeftShift) ? 8 : 1);
 
 
             if (!Shared.modules.noclip.state && Physics.gravity.y != 0)

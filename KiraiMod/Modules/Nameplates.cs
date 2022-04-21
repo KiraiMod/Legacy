@@ -13,8 +13,8 @@ namespace KiraiMod.Modules
 		public bool RGB = false;
 
 		public new ModuleInfo[] info = {
-			new ModuleInfo("Nameplates", "Custom nameplates. Highlight for friends and red for KOS", ButtonType.Toggle, 1, Menu.PageIndex.toggles2, nameof(state)),
-			new ModuleInfo("RGB Nameplates", "Rainbow nameplates for friends", ButtonType.Toggle, 2, Menu.PageIndex.toggles2, nameof(RGB)),
+			new ModuleInfo("Nameplates", "Custom nameplates. Highlight for friends and red for KOS", ButtonType.Toggle, 1, Shared.PageIndex.toggles2, nameof(state)),
+			new ModuleInfo("RGB Nameplates", "Rainbow nameplates for friends", ButtonType.Toggle, 2, Shared.PageIndex.toggles2, nameof(RGB)),
 		};
 
 		public List<string> kiraimodders = new List<string>();
@@ -59,13 +59,8 @@ namespace KiraiMod.Modules
 			if (!state || !RGB || PlayerManager.field_Private_Static_PlayerManager_0?.field_Private_List_1_Player_0 == null) return;
 
 			foreach (Player player in PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0)
-            {
 				if (player.IsFriend())
-				{
-					player.transform.Find("Player Nameplate/Canvas/Nameplate/Contents/Main/Text Container/Name")
-						.GetComponent<TMPro.TextMeshProUGUI>().color = KiraiLib.GetRainbow(Config.General.fRGBSpeed);
-				}
-			}
+					player.field_Internal_VRCPlayer_0.nameplate.uiName.color = KiraiLib.GetRainbow(Config.General.fRGBSpeed);
         }
 
 		public void OnStateChangeRGB(bool state)
@@ -73,13 +68,8 @@ namespace KiraiMod.Modules
 			if (!state) return;
 
 			foreach (Player player in PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0)
-			{
 				if (player?.IsFriend() ?? false)
-				{
-					player.transform.Find("Player Nameplate/Canvas/Nameplate/Contents/Main/Text Container/Name")
-						.GetComponent<TMPro.TextMeshProUGUI>().color = player.field_Private_APIUser_0.GetTrustColor();
-				}
-			}
+					player.field_Internal_VRCPlayer_0.nameplate.uiName.color = player.field_Private_APIUser_0.GetTrustColor();
 		}
 
         private IEnumerator DelayedRefresh()
@@ -94,17 +84,26 @@ namespace KiraiMod.Modules
 			if (player?.field_Private_APIUser_0 is null) return;
 
 			Transform contents = player.transform.Find("Player Nameplate/Canvas/Nameplate/Contents");
-			Transform main = contents.Find("Main");
-			Transform icon = contents.Find("Icon");
+			//Transform main = contents.Find("Main");
+			//Transform icon = contents.Find("Icon");
 			Transform stats = contents.Find("Quick Stats");
 
-			main.Find("Background").GetComponent<ImageThreeSlice>().color = player.field_Private_APIUser_0.GetTrustColor();
-			main.Find("Pulse").GetComponent<ImageThreeSlice>().color = new Color(1, 0, 1);
-			main.Find("Glow").GetComponent<ImageThreeSlice>().color = new Color(1, 0, 1);
+			player.field_Internal_VRCPlayer_0.nameplate.uiNameBackground.color = player.field_Private_APIUser_0.GetTrustColor();
+			player.field_Internal_VRCPlayer_0.nameplate.uiNameVoicePulse.color = new Color(1, 0, 1);
+			player.field_Internal_VRCPlayer_0.nameplate.uiNameVoiceGlow.color = new Color(1, 0, 1);
 
-			icon.Find("Background").GetComponent<Image>().color = player.field_Private_APIUser_0.GetTrustColor();
-			icon.Find("Pulse").GetComponent<Image>().color = new Color(1, 0, 1);
-			icon.Find("Glow").GetComponent<Image>().color = new Color(1, 0, 1);
+			player.field_Internal_VRCPlayer_0.nameplate.uiIconBackground.color = player.field_Private_APIUser_0.GetTrustColor();
+			player.field_Internal_VRCPlayer_0.nameplate.uiIconVoicePulse.color = new Color(1, 0, 1);
+			player.field_Internal_VRCPlayer_0.nameplate.uiIconVoiceGlow.color = new Color(1, 0, 1);
+
+
+			//main.Find("Background").GetComponent<ImageThreeSlice>().color = player.field_Private_APIUser_0.GetTrustColor();
+			//main.Find("Pulse").GetComponent<ImageThreeSlice>().color = new Color(1, 0, 1);
+			//main.Find("Glow").GetComponent<ImageThreeSlice>().color = new Color(1, 0, 1);
+
+			//icon.Find("Background").GetComponent<Image>().color = player.field_Private_APIUser_0.GetTrustColor();
+			//icon.Find("Pulse").GetComponent<Image>().color = new Color(1, 0, 1);
+			//icon.Find("Glow").GetComponent<Image>().color = new Color(1, 0, 1);
 
 			stats.GetComponent<ImageThreeSlice>().color = Utils.Colors.primary;
 

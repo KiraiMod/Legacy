@@ -5,7 +5,7 @@ namespace KiraiMod.Modules
     public class Noclip : ModuleBase
     {
         public new ModuleInfo[] info = {
-            new ModuleInfo("Noclip", "Disable player collisions and fly around", ButtonType.Toggle, 2, Menu.PageIndex.toggles1, nameof(state))
+            new ModuleInfo("Noclip", "Disable player collisions and fly around", ButtonType.Toggle, 2, Shared.PageIndex.toggles1, nameof(state))
         };
 
         public override void OnStateChange(bool state)

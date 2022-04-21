@@ -95,7 +95,7 @@ namespace KiraiMod
 
         public static void SelectPlayer(Player user)
         {
-            Shared.menu.qm.Method_Public_Void_Player_0(user);
+            QuickMenu.prop_QuickMenu_0.Method_Public_Void_Player_0(user);
         }
 
         public static void GetGenericLayout(int i, out int x, out int y)
@@ -112,8 +112,6 @@ namespace KiraiMod
 
         public static string CreateID(string name, int page)
         {
-            if (Enum.IsDefined(typeof(Menu.PageIndex), page))
-                return $"{Enum.GetName(typeof(Menu.PageIndex), page)}/{name.ToLower().Replace('\n', '-').Replace(' ', '-')}";
             return $"p{page}/{name.ToLower().Replace('\n', '-').Replace(' ', '-')}";
         }
 

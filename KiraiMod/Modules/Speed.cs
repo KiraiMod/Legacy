@@ -11,9 +11,9 @@
 
         public new ModuleInfo[] info =
         {
-            new ModuleInfo("Speed", "Change movement speed", ButtonType.Toggle, 0, Menu.PageIndex.toggles1, nameof(state)),
-            new ModuleInfo("Run Speed", ButtonType.Slider, 0, Menu.PageIndex.sliders1, nameof(SpeedRun), 0, 32),
-            new ModuleInfo("Walk Speed", ButtonType.Slider, 1, Menu.PageIndex.sliders1, nameof(SpeedWalk), 0, 32)
+            new ModuleInfo("Speed", "Change movement speed", ButtonType.Toggle, 0, Shared.PageIndex.toggles1, nameof(state)),
+            new ModuleInfo("Run Speed", ButtonType.Slider, 0, Shared.PageIndex.sliders1, nameof(SpeedRun), 0, 32),
+            new ModuleInfo("Walk Speed", ButtonType.Slider, 1, Shared.PageIndex.sliders1, nameof(SpeedWalk), 0, 32)
         };
 
         public override void OnStateChange(bool state)

@@ -16,24 +16,24 @@
             buttons = new Buttons();
             sliders = new Sliders();
 
-            Shared.menu.CreateButton("sliders1/goto-udon", "Next", "Opens KiraiMod's next page", -2f, 1f, Shared.menu.pages[(int)Menu.PageIndex.sliders1].transform, new System.Action(() =>
+            KiraiLib.UI.Button.Create("sliders1/goto-udon", "Next", "Opens KiraiMod's next page", -2f, 1f, KiraiLib.UI.pages[Shared.PageRemap[(int)Shared.PageIndex.sliders1]].transform, new System.Action(() =>
             {
-                Shared.menu.selected = (int)Menu.PageIndex.udon1;
+                KiraiLib.UI.selected = Shared.PageRemap[(int)Shared.PageIndex.udon1];
             }));
 
-            Shared.menu.CreateButton("udon/goto-sliders1", "Previous", "Opens KiraiMod's previous page", -2f, 0f, Shared.menu.pages[(int)Menu.PageIndex.udon1].transform, new System.Action(() =>
+            KiraiLib.UI.Button.Create("udon/goto-sliders1", "Previous", "Opens KiraiMod's previous page", -2f, 0f, KiraiLib.UI.pages[Shared.PageRemap[(int)Shared.PageIndex.udon1]].transform, new System.Action(() =>
             {
-                Shared.menu.selected = (int)Menu.PageIndex.sliders1;
+                KiraiLib.UI.selected = Shared.PageRemap[(int)Shared.PageIndex.sliders1];
             }));
 
-            Shared.menu.CreateButton("udon1/goto-udon2", "Next", "Opens KiraiMod's next page", -2f, 1f, Shared.menu.pages[(int)Menu.PageIndex.udon1].transform, new System.Action(() =>
+            KiraiLib.UI.Button.Create("udon1/goto-udon2", "Next", "Opens KiraiMod's next page", -2f, 1f, KiraiLib.UI.pages[Shared.PageRemap[(int)Shared.PageIndex.udon1]].transform, new System.Action(() =>
             {
-                Shared.menu.selected = (int)Menu.PageIndex.udon2;
+                KiraiLib.UI.selected = Shared.PageRemap[(int)Shared.PageIndex.udon2];
             }));
 
-            Shared.menu.CreateButton("udon2/goto-udon1", "Previous", "Opens KiraiMod's previous page", -2f, 0f, Shared.menu.pages[(int)Menu.PageIndex.udon2].transform, new System.Action(() =>
+            KiraiLib.UI.Button.Create("udon2/goto-udon1", "Previous", "Opens KiraiMod's previous page", -2f, 0f, KiraiLib.UI.pages[Shared.PageRemap[(int)Shared.PageIndex.udon2]].transform, new System.Action(() =>
             {
-                Shared.menu.selected = (int)Menu.PageIndex.udon1;
+                KiraiLib.UI.selected = Shared.PageRemap[(int)Shared.PageIndex.udon1];
             }));
         }
     }

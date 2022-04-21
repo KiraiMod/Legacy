@@ -10,19 +10,19 @@ namespace KiraiMod.Modules
     {
         public new ModuleInfo[] info =
         {
-            new ModuleInfo("Refresh", "Fetch all UdonBehaviours again", ButtonType.Button, 3, 2, Menu.PageIndex.udon1, nameof(Refresh)),
-            new ModuleInfo("Up", "See less UdonBehaviours", ButtonType.Button, 3, 1, Menu.PageIndex.udon1, nameof(Up)),
-            new ModuleInfo("Down", "See more UdonBehaviours", ButtonType.Button, 3, 0, Menu.PageIndex.udon1, nameof(Down)),
-            new ModuleInfo("Broadcast", "Broadcast an event to every UdonBehaviour", ButtonType.Button, 3, -1, Menu.PageIndex.udon1, nameof(Broadcast)),
+            new ModuleInfo("Refresh", "Fetch all UdonBehaviours again", ButtonType.Button, 3, 2, Shared.PageIndex.udon1, nameof(Refresh)),
+            new ModuleInfo("Up", "See less UdonBehaviours", ButtonType.Button, 3, 1, Shared.PageIndex.udon1, nameof(Up)),
+            new ModuleInfo("Down", "See more UdonBehaviours", ButtonType.Button, 3, 0, Shared.PageIndex.udon1, nameof(Down)),
+            new ModuleInfo("Broadcast", "Broadcast an event to every UdonBehaviour", ButtonType.Button, 3, -1, Shared.PageIndex.udon1, nameof(Broadcast)),
 
-            new ModuleInfo("Targeted", "Execute the event for the targeted player", ButtonType.Toggle, 3, 2, Menu.PageIndex.udon2, nameof(Targeted)),
-            new ModuleInfo("Networked", "Execute the event for everyone", ButtonType.Toggle, 3, -1, Menu.PageIndex.udon2, nameof(Networked)),
-            new ModuleInfo("Up", "See less event names", ButtonType.Button, 3, 1, Menu.PageIndex.udon2, nameof(Up2)),
-            new ModuleInfo("Down", "See more event names", ButtonType.Button, 3, 0, Menu.PageIndex.udon2, nameof(Down2)),
+            new ModuleInfo("Targeted", "Execute the event for the targeted player", ButtonType.Toggle, 3, 2, Shared.PageIndex.udon2, nameof(Targeted)),
+            new ModuleInfo("Networked", "Execute the event for everyone", ButtonType.Toggle, 3, -1, Shared.PageIndex.udon2, nameof(Networked)),
+            new ModuleInfo("Up", "See less event names", ButtonType.Button, 3, 1, Shared.PageIndex.udon2, nameof(Up2)),
+            new ModuleInfo("Down", "See more event names", ButtonType.Button, 3, 0, Shared.PageIndex.udon2, nameof(Down2)),
         };
 
         private List<GameObject> pages = new List<GameObject>();
-        private List<Menu.Button> buttons = new List<Menu.Button>();
+        private List<KiraiLib.UI.Button> buttons = new List<KiraiLib.UI.Button>();
         private readonly int pageSize = 12;
         private UdonBehaviour selected;
         private int currentPage = 0;
@@ -32,13 +32,13 @@ namespace KiraiMod.Modules
         public bool Targeted = false;
 
         public UdonBehaviour[] behaviours;
-        public int CurrentPage { 
-            get => currentPage; 
+        public int CurrentPage {
+            get => currentPage;
             set {
-                if (value < 0 || value > pages.Count - 1) return; 
-                HandlePage(currentPage, value); 
-                currentPage = value; 
-            } 
+                if (value < 0 || value > pages.Count - 1) return;
+                HandlePage(currentPage, value);
+                currentPage = value;
+            }
         }
         public int ButtonPage
         {
@@ -67,7 +67,7 @@ namespace KiraiMod.Modules
                 GameObject page = new GameObject($"page_{i}");
                 pages.Add(page);
 
-                page.transform.SetParent(Shared.menu.pages[(int)Menu.PageIndex.udon1].transform, false);
+                page.transform.SetParent(KiraiLib.UI.pages[Shared.PageRemap[(int)Shared.PageIndex.udon1]].transform, false);
                 page.active = i == 0;
 
                 for (int j = 0; j < Mathf.Min(behaviours.Length - (i * pageSize), 12); j++)
@@ -95,7 +95,7 @@ namespace KiraiMod.Modules
 
                     button.onClick.AddListener(new System.Action(() =>
                     {
-                        Shared.menu.selected = (int)Menu.PageIndex.udon2;
+                        KiraiLib.UI.selected = Shared.PageRemap[(int)Shared.PageIndex.udon2];
                         selected = behaviours[current];
                         ButtonPage = 0;
                     }));
@@ -107,18 +107,14 @@ namespace KiraiMod.Modules
 
         public void OnStateChangeNetworked(bool state)
         {
-            if (state && Shared.menu.objects.TryGetValue(Utils.CreateID("Targeted", (int)Menu.PageIndex.udon2), out Menu.MenuObject obj))
-            {
-                obj.toggle.SetState(false);
-            }
+            if (state)
+                (KiraiLib.UI.elements[Utils.CreateID("Targeted", Shared.PageRemap[(int)Shared.PageIndex.udon2])] as KiraiLib.UI.Toggle)?.SetState(false);
         }
 
         public void OnStateChangeTargeted(bool state)
         {
-            if (state && Shared.menu.objects.TryGetValue(Utils.CreateID("Networked", (int)Menu.PageIndex.udon2), out Menu.MenuObject obj))
-            {
-                obj.toggle.SetState(false);
-            }
+            if (state)
+                (KiraiLib.UI.elements[Utils.CreateID("Networked", Shared.PageRemap[(int)Shared.PageIndex.udon2])] as KiraiLib.UI.Toggle)?.SetState(false);
         }
 
 
@@ -139,7 +135,8 @@ namespace KiraiMod.Modules
             {
                 string name = GetEventName(i + buttonPage * 12);
                 Utils.GetGenericLayout(i, out int x, out int y);
-                buttons.Add(Shared.menu.CreateButton($"udon2/execute-{i + (buttonPage * 12) - 1}", name, "Execute this event", x, y, Shared.menu.pages[(int)Menu.PageIndex.udon2].transform, new System.Action(() =>
+                buttons.Add(KiraiLib.UI.Button.Create($"udon2/execute-{i + (buttonPage * 12) - 1}", name, "Execute this event", x, y, 
+                    KiraiLib.UI.pages[Shared.PageRemap[(int)Shared.PageIndex.udon2]].transform, new System.Action(() =>
                 {
                     Execute(name);
                 }), false));
@@ -148,8 +145,9 @@ namespace KiraiMod.Modules
 
         private void ClearButtons()
         {
-            foreach (Menu.Button button in buttons)
-                Object.Destroy(button.self);
+            foreach (KiraiLib.UI.Button button in buttons)
+                button.Destroy();
+            buttons.Clear();
         }
 
         private string GetEventName(int index)

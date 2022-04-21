@@ -8,9 +8,9 @@ namespace KiraiMod.Modules
         public float speed = 2;
 
         public new ModuleInfo[] info = {
-            new ModuleInfo("Orbit", "Orbits the selected player", ButtonType.Toggle, 7, Menu.PageIndex.toggles1, nameof(state)),
-            new ModuleInfo("Orbit Speed", ButtonType.Slider, 3, Menu.PageIndex.sliders1, nameof(speed), 0, 8),
-            new ModuleInfo("Orbit Distance", ButtonType.Slider, 4, Menu.PageIndex.sliders1, nameof(distance), 0, 4)
+            new ModuleInfo("Orbit", "Orbits the selected player", ButtonType.Toggle, 7, Shared.PageIndex.toggles1, nameof(state)),
+            new ModuleInfo("Orbit Speed", ButtonType.Slider, 3, Shared.PageIndex.sliders1, nameof(speed), 0, 8),
+            new ModuleInfo("Orbit Distance", ButtonType.Slider, 4, Shared.PageIndex.sliders1, nameof(distance), 0, 4)
         };
 
         public override void OnUpdate()
@@ -22,8 +22,8 @@ namespace KiraiMod.Modules
 
             if (x < -0.1f || x > 0.1f || y < -0.1f || y > 0.1f)
             {
-                if (Shared.menu.objects.TryGetValue(Utils.CreateID("Orbit", (int)Menu.PageIndex.toggles1), out Menu.MenuObject obj))
-                    obj.toggle.SetState(false);
+                (KiraiLib.UI.elements[Utils.CreateID("Orbit", (int)Shared.PageIndex.toggles1)] as KiraiLib.UI.Toggle)?.SetState(false);
+
                 SetState(false);
                 return;
             }
