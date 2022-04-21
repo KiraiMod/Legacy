@@ -19,7 +19,7 @@ namespace KiraiMod.Modules
 		};
 
 		public List<string> kmodders = new List<string>();
-		public List<string> dmodders = new List<string>();
+		public List<string> cmodders = new List<string>();
 #if BETA
 		public string[] fmodders = new string[0];
 
@@ -56,7 +56,7 @@ namespace KiraiMod.Modules
 		public override void OnPlayerLeft(Player player)
 		{
 			kmodders.Remove(player.field_Private_APIUser_0.displayName);
-			dmodders.Remove(player.field_Private_APIUser_0.displayName);
+			cmodders.Remove(player.field_Private_APIUser_0.displayName);
 
 			if (state) MelonCoroutines.Start(DelayedRefresh());
 		}
@@ -64,7 +64,7 @@ namespace KiraiMod.Modules
 		public override void OnLevelWasLoaded()
 		{
 			kmodders.Clear();
-			dmodders.Clear();
+			cmodders.Clear();
 		}
 
 		public override void OnAvatarInitialized(GameObject avatar, VRCAvatarManager manager)
@@ -131,7 +131,7 @@ namespace KiraiMod.Modules
 			if (player.IsMod()) SetTag(ref stack, stats, contents, Utils.Colors.red, "Moderator");
 			if (player.IsMaster()) SetTag(ref stack, stats, contents, Utils.Colors.highlight, "Master");
 			if (player.IsKModder()) SetTag(ref stack, stats, contents, Utils.Colors.highlight, "KiraiMod");
-            //if (player.IsDModder()) SetTag(ref stack, stats, contents, Color.yellow, "DayClient");
+            if (player.IsCModder()) SetTag(ref stack, stats, contents, Color.cyan, "Cartridge");
 #if BETA
 			if (player.IsFModder()) SetTag(ref stack, stats, contents, Color.white, "FClient");
 #endif

@@ -242,10 +242,10 @@ namespace KiraiMod
         {
             MelonLogger.Log(player.field_Private_VRCPlayerApi_0.displayName + " left");
 
+            Shared.modules.OnPlayerLeft(player);
+            
             if (Shared.TargetPlayer == player)
                 Shared.TargetPlayer = null;
-            
-            Shared.modules.OnPlayerLeft(player);
         }
 
         private static void OnAvatarInitialized(GameObject __0, ref VRCAvatarManager __instance)

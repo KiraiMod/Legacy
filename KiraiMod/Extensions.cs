@@ -64,10 +64,10 @@ namespace KiraiMod
             return Shared.modules.nameplates.kmodders.Contains(player.field_Private_APIUser_0.displayName);
         }
 
-        //public static bool IsDModder(this Player player)
-        //{
-        //    return Shared.modules.nameplates.dmodders.Contains(player.field_Private_APIUser_0.displayName);
-        //}
+        public static bool IsCModder(this Player player)
+        {
+            return Shared.modules.nameplates.cmodders.Contains(player.field_Private_APIUser_0.displayName);
+        }
 
 #if BETA
         public static bool IsFModder(this Player player)

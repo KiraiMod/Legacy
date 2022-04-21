@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using VRC;
 using VRC.SDKBase;
 
 namespace KiraiMod.Modules
@@ -52,7 +53,13 @@ namespace KiraiMod.Modules
                 puppet.transform.Rotate(new Vector3(0, 360 / cached.Length, 0));
             }
 
-            UnityEngine.Object.Destroy(puppet);
+            Object.Destroy(puppet);
+        }
+
+        public override void OnPlayerLeft(Player player)
+        {
+            if (Shared.TargetPlayer == player)
+                (KiraiLib.UI.elements[Utils.CreateID("Item Orbit", (int)Shared.PageIndex.toggles1)] as KiraiLib.UI.Toggle).SetState(false);
         }
 
         public void Recache()

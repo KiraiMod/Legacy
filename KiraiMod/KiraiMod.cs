@@ -83,7 +83,8 @@ namespace KiraiMod
                 MelonLogger.Log("Found KiraiRPC, using it");
                 new Action(() =>
                 {
-                    var SendRPC = KiraiRPC.GetSendRPC("KiraiMod");
+                    var KiraiSendRPC = KiraiRPC.GetSendRPC("KiraiMod");
+                    var CartridgeSendRPC = KiraiRPC.GetSendRPC("CartridgeMod");
                     KiraiRPC.callbackChain += (data) =>
                     {
                         if (data.target == "KiraiRPC")
@@ -91,7 +92,11 @@ namespace KiraiMod
                             switch (data.id)
                             {
                                 case (int)KiraiRPC.RPCEventIDs.OnInit:
-                                    SendRPC(0x000, data.sender);
+                                    KiraiSendRPC(0x000, data.sender);
+
+                                    if (data.sender != VRC.Core.APIUser.CurrentUser.displayName) 
+                                        CartridgeSendRPC(0x002, data.sender);
+                                    
                                     break;
                             }
                         }
@@ -106,27 +111,35 @@ namespace KiraiMod
                                         Shared.modules.nameplates.kmodders.Add(data.sender);
                                         Shared.modules.nameplates.Refresh();
                                         if (data.id == 0x000)
-                                            SendRPC(0x001, data.sender);
+                                            KiraiSendRPC(0x001, data.sender);
                                     }
                                     break;
+                                case 0x002:
+                                    if (data.payload == VRC.Player.prop_Player_0.field_Private_APIUser_0.displayName)
+                                        KiraiSendRPC(0x001, data.sender);
+                                    break;
                             }
-                        } 
-                        //else if (data.target == "DayMod")
-                        //{
-                        //    switch (data.id)
-                        //    {
-                        //        case 0x000:
-                        //        case 0x001:
-                        //            if (data.payload == VRC.Player.prop_Player_0.field_Private_APIUser_0.displayName)
-                        //            {
-                        //                Shared.modules.nameplates.dmodders.Add(data.sender);
-                        //                Shared.modules.nameplates.Refresh();
-                        //                if (data.id == 0x000)
-                        //                    SendRPC(0x001, data.sender);
-                        //            }
-                        //            break;
-                        //    }
-                        //}
+                        }
+                        else if (data.target == "CartridgeMod")
+                        {
+                            switch (data.id)
+                            {
+                                case 0x000:
+                                case 0x001:
+                                    if (data.payload == VRC.Player.prop_Player_0.field_Private_APIUser_0.displayName)
+                                    {
+                                        Shared.modules.nameplates.cmodders.Add(data.sender);
+                                        Shared.modules.nameplates.Refresh();
+                                        if (data.id == 0x000)
+                                            CartridgeSendRPC(0x001, data.sender);
+                                    }
+                                    break;
+                                case 0x002:
+                                    if (data.payload == VRC.Player.prop_Player_0.field_Private_APIUser_0.displayName)
+                                        CartridgeSendRPC(0x001, data.sender);
+                                    break;
+                            }
+                        }
                     };
                     KiraiRPC.Config.primary = "KiraiMod";
                 }).Invoke();

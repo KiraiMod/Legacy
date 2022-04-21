@@ -110,6 +110,8 @@ namespace KiraiMod.Modules
 
         public static void Log()
         {
+            KiraiLib.Logger.Log(Shared.modules.xutils.hit.collider.gameObject.name);
+            KiraiLib.Logger.Log("More info in console");
             KiraiLib.LogGameObject(Shared.modules.xutils.hit.collider.gameObject);
         }
 

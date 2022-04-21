@@ -11,6 +11,7 @@ namespace KiraiMod.Modules
         public bool bAnnoyance;
         public bool bPersistantQuickMenu;
         public string newAvtr;
+        public float throwSpeed;
 
         public bool WorldCrash;
         public bool BindsNumpad;
@@ -40,6 +41,7 @@ namespace KiraiMod.Modules
             new ModuleInfo("High Step", "Step up objects larger than you normally can", ButtonType.Toggle, 0, Shared.PageIndex.toggles2, nameof(HighStep)),
             new ModuleInfo("Spawn\nPrefab", "Spawns the first dynamic prefab in the world", ButtonType.Button, 8, Shared.PageIndex.buttons2, nameof(SpawnDynamicPrefab)),
             new ModuleInfo("World\nCrash", "Change your avatar to a world crasher safely", ButtonType.Toggle, 6, Shared.PageIndex.toggles3, nameof(WorldCrash)),
+            new ModuleInfo("Throw Speed", ButtonType.Slider, 9, Shared.PageIndex.sliders1, nameof(throwSpeed), 1, 20),
         };
 
         public override void OnConfigLoaded()
@@ -86,7 +88,7 @@ namespace KiraiMod.Modules
             VRC_Pickup[] pickups = UnityEngine.Object.FindObjectsOfType<VRC_Pickup>();
             for (int i = 0; i < pickups.Length; i++)
             {
-                pickups[i].ThrowVelocityBoostScale = 5f;
+                pickups[i].ThrowVelocityBoostScale = throwSpeed;
             }
         }
 
