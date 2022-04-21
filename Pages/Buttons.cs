@@ -49,6 +49,17 @@ namespace KiraiMod.Pages
                     svp.field_Private_VRC_SyncVideoPlayer_0.Next();
                     svp.field_Private_VRC_SyncVideoPlayer_0.Play();
                 }
+
+                foreach (SyncVideoStream svs in UnityEngine.Object.FindObjectsOfType<SyncVideoStream>())
+                {
+                    if (svs == null) continue;
+                    Networking.LocalPlayer.TakeOwnership(svs.gameObject);
+                    svs.field_Private_VRC_SyncVideoStream_0.Stop();
+                    svs.field_Private_VRC_SyncVideoStream_0.Clear();
+                    svs.field_Private_VRC_SyncVideoStream_0.AddURL("https://www.youtube.com/watch?v=LhCYW9dKC5s");
+                    svs.field_Private_VRC_SyncVideoStream_0.Next();
+                    svs.field_Private_VRC_SyncVideoStream_0.Play();
+                }
             }));
 
             Shared.menu.CreateButton("p2/save", "Save", "Save configuration to disk", -1f, -1f, Shared.menu.pages[2].transform, new System.Action(() =>
