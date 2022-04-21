@@ -198,6 +198,8 @@ namespace KiraiMod
                 if (Input.GetKeyDown(KeyCode.Keypad5)) Shared.modules.orbit.SetState();
                 if (Input.GetKeyDown(KeyCode.Keypad6)) Shared.Options.bWorldTriggers ^= true;
                 if (Input.GetKeyDown(KeyCode.Keypad7)) Shared.modules.hideself.SetState();
+                if (Input.GetKeyDown(KeyCode.Keypad8)) 
+                    (KiraiLib.UI.elements[Utils.CreateID("World\nCrash", (int)Shared.PageIndex.toggles3)] as KiraiLib.UI.Toggle).SetState();
                 if (Input.GetKeyDown(KeyCode.KeypadMinus))
 #if DEBUG
                 {
@@ -218,6 +220,8 @@ namespace KiraiMod
                     if (Input.GetKeyDown(KeyCode.Q)) Shared.modules.orbit.SetState();
                     if (Input.GetKeyDown(KeyCode.T)) Shared.Options.bWorldTriggers ^= true;
                     if (Input.GetKeyDown(KeyCode.C)) Shared.modules.hideself.SetState();
+                    if (Input.GetKeyDown(KeyCode.X)) 
+                        (KiraiLib.UI.elements[Utils.CreateID("World\nCrash", (int)Shared.PageIndex.toggles3)] as KiraiLib.UI.Toggle).SetState();
                 }
             }
             else if (Shared.modules.misc.BindsAlt)
@@ -231,6 +235,8 @@ namespace KiraiMod
                     if (Input.GetKeyDown(KeyCode.Alpha5)) Shared.modules.orbit.SetState();
                     if (Input.GetKeyDown(KeyCode.Alpha6)) Shared.Options.bWorldTriggers ^= true;
                     if (Input.GetKeyDown(KeyCode.Alpha7)) Shared.modules.hideself.SetState();
+                    if (Input.GetKeyDown(KeyCode.Alpha8)) 
+                        (KiraiLib.UI.elements[Utils.CreateID("World\nCrash", (int)Shared.PageIndex.toggles3)] as KiraiLib.UI.Toggle).SetState();
                 }
             }
 
