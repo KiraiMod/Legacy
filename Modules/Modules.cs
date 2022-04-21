@@ -1,6 +1,7 @@
 ﻿using MelonLoader;
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 using VRC;
 
 namespace KiraiMod.Modules
@@ -20,6 +21,7 @@ namespace KiraiMod.Modules
         public Headlight headlight;
         public Aliases aliases;
         public Mute mute;
+        public Invis invis;
 
         public List<ModuleBase> modules = new List<ModuleBase>();
 
@@ -38,6 +40,7 @@ namespace KiraiMod.Modules
             modules.Add(headlight = new Headlight());
             modules.Add(aliases = new Aliases());
             modules.Add(mute = new Mute());
+            modules.Add(invis = new Invis());
         }
 
         public void StartCoroutines()
@@ -85,11 +88,11 @@ namespace KiraiMod.Modules
             }
         }
 
-        internal void OnAvatarInitialized(VRCAvatarManager instance)
+        internal void OnAvatarInitialized(GameObject avatar, VRCAvatarManager instance)
         {
             for (int i = 0; i < modules.Count; i++)
             {
-                modules[i].OnAvatarInitialized(instance);
+                modules[i].OnAvatarInitialized(avatar, instance);
             }
         }
     }

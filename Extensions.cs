@@ -21,6 +21,11 @@ namespace KiraiMod
             return Shared.modules.kos.kosList.Contains(Utils.SHA256(player.field_Private_VRCPlayerApi_0.displayName));
         }
 
+        public static bool IsKOS(this APIUser player)
+        {
+            return Shared.modules.kos.kosList.Contains(Utils.SHA256(player.displayName));
+        }
+
         public static bool IsMaster(this Player player)
         {
             return player.field_Private_VRCPlayerApi_0.isMaster;

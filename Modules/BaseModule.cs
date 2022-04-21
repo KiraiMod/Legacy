@@ -1,4 +1,5 @@
 ﻿using MelonLoader;
+using UnityEngine;
 using VRC;
 
 namespace KiraiMod.Modules
@@ -26,7 +27,7 @@ namespace KiraiMod.Modules
         public virtual void OnLevelWasLoaded() { }
         public virtual void OnPlayerJoined(Player player) { }
         public virtual void OnPlayerLeft(Player player) { }
-        public virtual void OnAvatarInitialized(VRCAvatarManager manager) { }
+        public virtual void OnAvatarInitialized(GameObject avatar, VRCAvatarManager manager) { }
     }
 
     public class ModuleInfo

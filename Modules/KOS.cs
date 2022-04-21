@@ -3,6 +3,10 @@ using System.IO;
 using System.Net;
 using VRC;
 using MelonLoader;
+using System.Collections;
+using VRC.SDKBase;
+using UnityEngine;
+using VRC.Core;
 
 namespace KiraiMod.Modules
 {
@@ -24,6 +28,7 @@ namespace KiraiMod.Modules
         public KOS()
         {
             RefreshList();
+            MelonCoroutines.Start(VerifySelf());
         }
 
         public override void OnPlayerJoined(Player player)
@@ -147,6 +152,12 @@ namespace KiraiMod.Modules
             Shared.modules.kos.RefreshList();
             Shared.modules.kos.RefreshStatus();
             Shared.modules.nameplates.Refresh();
+        }
+
+        public IEnumerator VerifySelf()
+        {
+            while (APIUser.CurrentUser == null) yield return new WaitForSeconds(1);
+            if (APIUser.CurrentUser.IsKOS()) MelonModLogger.LogWarning("Failed to verify self.");
         }
     }
 }

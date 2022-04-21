@@ -36,7 +36,7 @@ namespace KiraiMod.Modules
 			if (state && player.field_Private_VRCPlayerApi_0.isMaster) Refresh();
         }
 
-        public override void OnAvatarInitialized(VRCAvatarManager manager)
+        public override void OnAvatarInitialized(GameObject avatar, VRCAvatarManager manager)
         {
             if (state) Enable(manager.field_Private_VRCPlayer_0.field_Private_Player_0);
         }
@@ -53,7 +53,7 @@ namespace KiraiMod.Modules
 
                 foreach (Player player in players)
                 {
-                    if (player == null || player.field_Private_APIUser_0 == null || player.field_Private_APIUser_0.id == APIUser.CurrentUser.id) continue;
+                    if (player?.field_Private_APIUser_0 == null || player.field_Private_APIUser_0.IsLocal()) continue;
 
                     if (player.IsFriend() && !player.IsKOS())
                     {

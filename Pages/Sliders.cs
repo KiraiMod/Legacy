@@ -6,7 +6,7 @@
         {
             Shared.menu.CreateButton("p3/close-p3", "Previous", "Opens KiraiMod's previous page", -2f, 0f, Shared.menu.pages[3].transform, new System.Action(() =>
             {
-                Shared.menu.selected = 1;
+                Shared.menu.selected = 2;
             }));
 
             Shared.menu.CreateSlider("p3/walk-speed", "Walk Speed", -1f, 1.25f, 0f, 32f, Shared.modules.speed.speedWalk, Shared.menu.pages[3].transform, new System.Action<float>(value =>
@@ -24,7 +24,7 @@
                 Shared.modules.flight.speed = value;
             }));
 
-            Shared.menu.CreateSlider("p3/portal-distance", "Portal Distance", -1f, -0.25f, 0, 8f, Shared.modules.portal.distance, Shared.menu.pages[3].transform, new System.Action<float>(value =>
+            Shared.menu.CreateSlider("p3/portal-distance", "Portal Distance", -1f, -0.25f, 1, 8f, Shared.modules.portal.distance, Shared.menu.pages[3].transform, new System.Action<float>(value =>
             {
                 Shared.modules.portal.distance = value;
             }));

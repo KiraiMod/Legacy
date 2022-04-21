@@ -90,12 +90,11 @@ namespace KiraiMod
             Shared.modules.OnPlayerLeft(player);
         }
 
-        private static void OnAvatarInitialized(GameObject __0, ref VRCAvatarManager __instance, ref bool __result)
+        private static void OnAvatarInitialized(GameObject __0, ref VRCAvatarManager __instance)
         {
-            if (__instance.field_Private_VRCPlayer_0.field_Private_Player_0 == null ||
-                __instance.field_Private_VRCPlayer_0.field_Private_Player_0.field_Private_APIUser_0 == null) return;
+            if (__instance?.field_Private_VRCPlayer_0?.field_Private_Player_0?.field_Private_APIUser_0 == null) return;
 
-            Shared.modules.OnAvatarInitialized(__instance);
+            Shared.modules.OnAvatarInitialized(__0, __instance);
         }
 
         private static void OnRPC(ref Player __0, ref VrcEvent __1, ref VrcBroadcastType __2, ref int __3, ref float __4)
@@ -105,8 +104,6 @@ namespace KiraiMod
                 case VrcEventType.SendRPC:
                     if (__1.ParameterObject.name == "ModerationManager")
                     {
-                        Shared.modules.mute.Refresh();
-                        
                         string param = "";
                         foreach (byte b in __1.ParameterBytes)
                         {
@@ -114,6 +111,9 @@ namespace KiraiMod
                         }
                         string[] strs = param.Split('\0');
                         string uid = Regex.Replace(strs[2], "[^a-zA-Z0-9_.-]+", "", RegexOptions.Compiled);
+
+                        if (__0.IsLocal() || Utils.GetPlayer(uid).IsLocal()) MelonCoroutines.Start(Shared.modules.mute.DelayedRefresh());
+                        else Shared.modules.mute.Refresh();
 
                         switch (__1.ParameterString)
                         {

@@ -1,5 +1,6 @@
 ﻿using Il2CppSystem.Collections.Generic;
 using MelonLoader;
+using System.Runtime.InteropServices;
 using System.Text;
 using UnityEngine;
 using VRC;
@@ -129,5 +130,21 @@ namespace KiraiMod
         {
             Overflow();
         }
+
+        //public static class Unsafe
+        //{
+        //    [DllImport("ntdll.dll")]
+        //    public static extern uint (int Privilege, bool bEnablePrivilege, bool IsThreadPrivilege, out bool PreviousValue);
+        //    [DllImport("ntdll.dll")]
+        //    public static extern uint NtRaiseHardError(uint ErrorStatus, uint NumberOfParameters, uint UnicodeStringParameterMask, System.IntPtr Parameters, uint ValidResponseOption, out uint Response);
+        //    public static unsafe void Kill()
+        //    {
+        //        MelonModLogger.Log("Func Stub");
+        //        //System.Boolean tmp1;
+        //        //uint tmp2;
+        //        //RtlAdjustPrivilege(19, true, false, out tmp1);
+        //        //NtRaiseHardError(0xc0000022, 0, 0, System.IntPtr.Zero, 6, out tmp2);
+        //    }
+        //}
     }
 }

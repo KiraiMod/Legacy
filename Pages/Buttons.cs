@@ -37,6 +37,20 @@ namespace KiraiMod.Pages
                 }
             }));
 
+            Shared.menu.CreateButton("p2/nuke-videosync", "Nuke\nVideoSync", "Overrides all video players to a custom URL", 0f, 0f, Shared.menu.pages[2].transform, new System.Action(() =>
+            {
+                foreach (SyncVideoPlayer svp in UnityEngine.Object.FindObjectsOfType<SyncVideoPlayer>())
+                {
+                    if (svp == null) continue;
+                    Networking.LocalPlayer.TakeOwnership(svp.gameObject);
+                    svp.field_Private_VRC_SyncVideoPlayer_0.Stop();
+                    svp.field_Private_VRC_SyncVideoPlayer_0.Clear();
+                    svp.field_Private_VRC_SyncVideoPlayer_0.AddURL("https://www.youtube.com/watch?v=LhCYW9dKC5s");
+                    svp.field_Private_VRC_SyncVideoPlayer_0.Next();
+                    svp.field_Private_VRC_SyncVideoPlayer_0.Play();
+                }
+            }));
+
             Shared.menu.CreateButton("p2/save", "Save", "Save configuration to disk", -1f, -1f, Shared.menu.pages[2].transform, new System.Action(() =>
             {
                 Shared.config.Save();

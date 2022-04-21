@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using MelonLoader;
+using System.Collections;
+using UnityEngine;
 using VRC;
 
 namespace KiraiMod.Modules
@@ -19,7 +21,7 @@ namespace KiraiMod.Modules
             Refresh();
         }
 
-        public override void OnAvatarInitialized(VRCAvatarManager manager)
+        public override void OnAvatarInitialized(GameObject avatar, VRCAvatarManager manager)
         {
             Refresh();
         }
@@ -39,6 +41,12 @@ namespace KiraiMod.Modules
             {
                 Apply(PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0[i]);
             }
+        }
+
+        public IEnumerator DelayedRefresh()
+        {
+            yield return new WaitForSeconds(1);
+            Refresh();
         }
 
         public void Apply(Player player)

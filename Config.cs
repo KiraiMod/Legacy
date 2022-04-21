@@ -79,7 +79,11 @@ namespace KiraiMod
                 Move(load, ref Shared.modules.orbit.distance,   ref fOrbitDistance );
                 Move(load, ref Utils.fRGBSpeed,                 ref fRGBSpeed      );
 
-                if (load) Shared.modules.OnConfigLoaded();
+                if (load)
+                {
+                    Shared.modules.OnConfigLoaded();
+                }
+
             }
 
             public void Move(bool load, ref float prop1, ref float prop2)
