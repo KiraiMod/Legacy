@@ -314,7 +314,9 @@ namespace KiraiMod
                         Mathf.Abs(portal.transform.position.y) > 10000 ||
                         Mathf.Abs(portal.transform.position.z) > 10000)
                     {
-                        KiraiLib.Logger.Log($"Blocked invalid portal from {VRC.SDKBase.Networking.GetOwner(portal.gameObject).displayName}");
+                        var owner = VRC.SDKBase.Networking.GetOwner(portal.gameObject);
+
+                        KiraiLib.Logger.Log($"Blocked invalid portal from <color={Utils.GetPlayer(owner.displayName).field_Private_APIUser_0.GetTrustColor().ToHex()}>{owner.displayName}</color>");
                         portal.gameObject.active = false;
                     }
                     else if (!Shared.unloaded)

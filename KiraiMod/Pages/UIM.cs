@@ -8,12 +8,12 @@ namespace KiraiMod.Pages
         {
             KiraiLib.UI.Button.Create("uim/portal", "Target", "Sets the selected player as the current target.", 0f, -3f, KiraiLib.UI.UserInteractMenu.transform, new System.Action(() =>
             {
-                Shared.TargetPlayer = Utils.GetPlayer(QuickMenu.prop_QuickMenu_0.field_Private_APIUser_0.id);
+                Shared.TargetPlayer = Utils.GetPlayer(QuickMenu.prop_QuickMenu_0.field_Private_APIUser_0.displayName);
             }));
 
             KiraiLib.UI.Button.Create("uim/info", "View\nInfo", "View info about this player", 2, -1, KiraiLib.UI.UserInteractMenu.transform, new System.Action(() =>
             {
-                VRC.Player player = Utils.GetPlayer(QuickMenu.prop_QuickMenu_0.field_Private_APIUser_0.id);
+                VRC.Player player = Utils.GetPlayer(QuickMenu.prop_QuickMenu_0.field_Private_APIUser_0.displayName);
 
                 MelonLogger.Log(System.ConsoleColor.Blue, QuickMenu.prop_QuickMenu_0.field_Private_APIUser_0.displayName);
                 KiraiLib.Logger.Log($"<color=#00f>{QuickMenu.prop_QuickMenu_0.field_Private_APIUser_0.displayName}</color>", 10);
@@ -35,7 +35,7 @@ namespace KiraiMod.Pages
 
             KiraiLib.UI.Button.Create("uim/local-clone", "Local\nClone", "Copy their current avatar to your local list", 3, -3, KiraiLib.UI.UserInteractMenu.transform, new System.Action(() =>
             {
-                VRC.Player player = Utils.GetPlayer(QuickMenu.prop_QuickMenu_0.field_Private_APIUser_0.id);
+                VRC.Player player = Utils.GetPlayer(QuickMenu.prop_QuickMenu_0.field_Private_APIUser_0.displayName);
                 Shared.http.GetAsync(player.prop_ApiAvatar_0.assetUrl)
                     .ContinueWith(new System.Action<System.Threading.Tasks.Task<System.Net.Http.HttpResponseMessage>>(async (resp) =>
                     {

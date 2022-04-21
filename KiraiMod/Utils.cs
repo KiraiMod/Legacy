@@ -66,13 +66,13 @@ namespace KiraiMod
             MelonLogger.Log($"Found {i} objects and {j} keywords");
         }
 
-        public static Player GetPlayer(string id)
+        public static Player GetPlayer(string name)
         {
             List<Player> players = PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0;
 
             for (int i = 0; i < players.Count; i++)
             {
-                if (players[i].field_Private_APIUser_0.id == id)
+                if (players[i].field_Private_APIUser_0.displayName == name)
                 {
                     return players[i];
                 }
