@@ -134,7 +134,7 @@ namespace KiraiMod
 
         private static void OnRPC(ref Player __0, ref VrcEvent __1, ref VrcBroadcastType __2)
         {
-            //if (__0?.field_Private_VRCPlayerApi_0?.isLocal ?? true) return;
+            if (__0?.field_Private_VRCPlayerApi_0 == null) return;
 
             if (__1?.EventType == VrcEventType.ActivateCustomTrigger)
             {
