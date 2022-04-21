@@ -4,8 +4,12 @@ namespace KiraiMod.Modules
 {
     public static class FreezePickups
     {
-        [ModuleLoader.UIToggle("Freeze\nPickups", "Prevent anyone from moving pickups", Shared.PageIndex.toggles2, 3, nameof(OnStateChange))]
         public static bool active;
+        [ModuleLoader.UIToggle("Freeze\nPickups", "Prevent anyone from moving pickups", Shared.PageIndex.toggles2, 3)]
+        public static bool Active {
+            get => active;
+            set => OnStateChange(active = value);
+        }
 
         private static VRC_Pickup[] pickups;
 

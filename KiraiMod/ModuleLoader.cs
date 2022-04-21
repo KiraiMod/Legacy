@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -15,7 +16,7 @@ namespace KiraiMod
         {
             Type[] modules = Assembly.GetExecutingAssembly()
                 .GetTypes()
-                .Where(t => t.Namespace == "KiraiMod.Modules")
+                .Where(t => t.Namespace.StartsWith("KiraiMod.Modules"))
                 .Where(t => t.IsAbstract && t.IsSealed)
                 .ToArray();
 
@@ -30,6 +31,11 @@ namespace KiraiMod
                     elements.Add((field, field.GetCustomAttribute<UIToggleAttribute>()));
                     elements.Add((field, field.GetCustomAttribute<UISliderAttribute>()));
                 }
+                foreach (PropertyInfo prop in module.GetProperties(BindingFlags.Public | BindingFlags.Static))
+                {
+                    elements.Add((prop, prop.GetCustomAttribute<UIToggleAttribute>()));
+                    elements.Add((prop, prop.GetCustomAttribute<UISliderAttribute>()));
+                }
             }
         }
 
@@ -42,37 +48,40 @@ namespace KiraiMod
                     UIToggleAttribute attrib = element.Item2 as UIToggleAttribute;
 
                     Action<bool> action;
+                    bool cval;
 
-                    FieldInfo info = element.Item1 as FieldInfo;
-                    bool cval = (bool)info.GetValue(null);
-
-                    if (attrib.listener != null)
+                    if (element.Item1 is FieldInfo)
                     {
-                        MethodInfo _callback = info.DeclaringType.GetMethod(attrib.listener, BindingFlags.Public | BindingFlags.Static);
+                        FieldInfo info = element.Item1 as FieldInfo;
+                        cval = (bool)info.GetValue(null);
 
-                        if (_callback is null)
+                        action = (bool state) =>
                         {
-                            KiraiLib.Logger.Warn($"Failed to find {info.DeclaringType.Name}.{attrib.listener}");
-                            return;
-                        }
-                        else
-                        {
-                            Action<bool> callback = (Action<bool>)Delegate.CreateDelegate(typeof(Action<bool>), _callback);
-                            action = (bool state) =>
-                            {
-                                if (state == cval) return;
+                            if (state == cval) return;
 
-                                cval = !cval;
+                            cval = !cval;
 
-                                KiraiLib.Logger.Debug($"{info.DeclaringType.Name}.{attrib.reference} {(cval ? "On" : "Off")}");
+                            KiraiLib.Logger.Debug($"{info.DeclaringType.Name}.{attrib.reference} {(cval ? "On" : "Off")}");
 
-                                info.SetValue(null, state);
-
-                                callback(cval);
-                            };
-                        }
+                            info.SetValue(null, state);
+                        };
                     }
-                    else action = (bool state) => info.SetValue(null, state);
+                    else
+                    {
+                        PropertyInfo info = element.Item1 as PropertyInfo;
+                        cval = (bool)info.GetValue(null);
+
+                        action = (bool state) =>
+                        {
+                            if (state == cval) return;
+
+                            cval = !cval;
+
+                            KiraiLib.Logger.Debug($"{info.DeclaringType.Name}.{attrib.reference} {(cval ? "On" : "Off")}");
+
+                            info.SetValue(null, state);
+                        };
+                    }   
 
                     KiraiLib.UI.Toggle.Create(
                         Utils.CreateID(attrib.label, (int)attrib.page),
@@ -103,20 +112,20 @@ namespace KiraiMod
 
                     Action<float> action;
 
-                    FieldInfo info = element.Item1 as FieldInfo;
-                    float cval = (float)info.GetValue(null);
-
-                    if (attrib.listener != null)
+                    float cval;
+                    
+                    if (element.Item1 is FieldInfo)
                     {
-                        MethodInfo method = info.DeclaringType.GetMethod(attrib.listener, BindingFlags.Public | BindingFlags.Static);
-                        if (method is null)
-                        {
-                            KiraiLib.Logger.Warn($"Failed to find {info.DeclaringType.Name}.{attrib.listener}");
-                            return;
-                        }
-                        else action = (float value) => method.Invoke(null, new object[] { value });
+                        FieldInfo info = element.Item1 as FieldInfo;
+                        cval = (float)info.GetValue(null);
+                        action = (float value) => info.SetValue(null, value);
                     }
-                    else action = (float value) => info.SetValue(null, value);
+                    else
+                    {
+                        PropertyInfo info = element.Item1 as PropertyInfo;
+                        cval = (float)info.GetValue(null);
+                        action = (float value) => info.SetValue(null, value);
+                    }
 
                     KiraiLib.UI.Slider.Create(
                         Utils.CreateID(attrib.label, (int)attrib.page),
@@ -132,7 +141,7 @@ namespace KiraiMod
             }
         }
 
-        [AttributeUsage(AttributeTargets.Field)]
+        [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
         public class UIToggleAttribute : Attribute
         {
             public string label;
@@ -141,9 +150,8 @@ namespace KiraiMod
             public float x;
             public float y;
             public string reference;
-            public string listener;
 
-            public UIToggleAttribute(string label, string description, Shared.PageIndex page, float x, float y, [Optional] string listener, [CallerMemberName] string reference = null)
+            public UIToggleAttribute(string label, string description, Shared.PageIndex page, float x, float y, [CallerMemberName] string reference = null)
             {
                 this.label = label;
                 this.description = description;
@@ -151,10 +159,9 @@ namespace KiraiMod
                 this.x = x;
                 this.y = y;
                 this.reference = reference;
-                this.listener = listener;
             }
 
-            public UIToggleAttribute(string label, string description, Shared.PageIndex page, int index, [Optional] string listener, [CallerMemberName] string reference = null)
+            public UIToggleAttribute(string label, string description, Shared.PageIndex page, int index, [CallerMemberName] string reference = null)
             {
                 this.label = label;
                 this.description = description;
@@ -165,7 +172,6 @@ namespace KiraiMod
                 this.y = y;
 
                 this.reference = reference;
-                this.listener = listener;
             }
         }
 
@@ -203,7 +209,7 @@ namespace KiraiMod
             }
         }
 
-        [AttributeUsage(AttributeTargets.Field)]
+        [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
         public class UISliderAttribute : Attribute
         {
             public string label;
@@ -211,11 +217,10 @@ namespace KiraiMod
             public float x;
             public float y;
             public string reference;
-            public string listener;
             public float min;
             public float max;
 
-            public UISliderAttribute(string label, Shared.PageIndex page, float x, float y, float min, float max, [Optional] string listener, [CallerMemberName] string reference = null)
+            public UISliderAttribute(string label, Shared.PageIndex page, float x, float y, float min, float max, [CallerMemberName] string reference = null)
             {
                 this.label = label;
                 this.page = page;
@@ -224,10 +229,9 @@ namespace KiraiMod
                 this.min = min;
                 this.max = max;
                 this.reference = reference;
-                this.listener = listener;
             }
 
-            public UISliderAttribute(string label, Shared.PageIndex page, int index, float min, float max, [Optional] string listener, [CallerMemberName] string reference = null)
+            public UISliderAttribute(string label, Shared.PageIndex page, int index, float min, float max, [CallerMemberName] string reference = null)
             {
                 this.label = label;
                 this.page = page;
@@ -239,7 +243,6 @@ namespace KiraiMod
                 this.min = min;
                 this.max = max;
                 this.reference = reference;
-                this.listener = listener;
             }
         }
     }

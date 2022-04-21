@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Harmony;
+using System;
 using System.Linq;
+using System.Reflection;
 using UnityEngine;
 using VRC.SDKBase;
 
@@ -18,6 +20,7 @@ namespace KiraiMod.Modules
         public bool BindsTab;
         public bool BindsAlt;
         public bool HighStep;
+        public bool EventSpam;
 
         private VRC_SceneDescriptor descriptor;
         private string[] cachedPrefabs;
@@ -44,6 +47,7 @@ namespace KiraiMod.Modules
             new ModuleInfo("Spawn\nPrefab", "Spawns the first dynamic prefab in the world", ButtonType.Button, 8, Shared.PageIndex.buttons2, nameof(SpawnDynamicPrefab)),
             new ModuleInfo("World\nCrash", "Change your avatar to a world crasher safely", ButtonType.Toggle, 6, Shared.PageIndex.toggles3, nameof(WorldCrash)),
             new ModuleInfo("Throw Speed", ButtonType.Slider, 9, Shared.PageIndex.sliders1, nameof(throwSpeed), 1, 20),
+            new ModuleInfo("World Lag", "Spam events to lag the world", ButtonType.Toggle, 7, Shared.PageIndex.toggles3, nameof(EventSpam))
         };
 
         public override void OnConfigLoaded()
@@ -244,6 +248,52 @@ namespace KiraiMod.Modules
                     }
                 }
             }.ChangeToSelectedAvatar();
+        }
+
+        static MethodInfo onEmoji;
+        static HarmonyMethod onEmojiHook;
+        static object eventSpamToken;
+        private static bool NoOp() => false;
+        public void OnStateChangeEventSpam(bool state)
+        {
+            if (onEmoji is null)
+                onEmoji = typeof(VRCPlayer).GetMethod(nameof(VRCPlayer.SpawnEmojiRPC), BindingFlags.Public | BindingFlags.Instance);
+
+            if (onEmojiHook is null)
+                onEmojiHook = new HarmonyMethod(typeof(Misc).GetMethod(nameof(Misc.NoOp), BindingFlags.NonPublic | BindingFlags.Static));
+
+            if (state)
+            {
+                Shared.harmony.Patch(onEmoji, onEmojiHook);
+                eventSpamToken = MelonLoader.MelonCoroutines.Start(EventSpamEx());
+            }
+            else
+            {
+                Shared.harmony.Unpatch(onEmoji, onEmojiHook.method);
+                MelonLoader.MelonCoroutines.Stop(eventSpamToken);
+            }
+        }
+
+        private static System.Collections.IEnumerator EventSpamEx()
+        {
+            for (;;)
+            {
+                for (int i = 0; i < 3; i++)
+                {
+                    Networking.RPC(
+                         RPC.Destination.All,
+                         VRCPlayer.field_Internal_Static_VRCPlayer_0.gameObject,
+                         "SpawnEmojiRPC",
+                         new Il2CppSystem.Object[] {
+                            new Il2CppSystem.Int32
+                            {
+                                m_value = -2147483647
+                            }.BoxIl2CppObject()
+                         });
+                }
+
+                yield return null;
+            }
         }
     }
 }
