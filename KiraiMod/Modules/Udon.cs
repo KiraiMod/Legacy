@@ -85,14 +85,14 @@ namespace KiraiMod.Modules
             {
                 hasSet = true;
 
-                collider.extents += new Vector3(0, 420, 0);
-                collider.center += new Vector3(0, 420, 0);
+                collider.extents += new Vector3(0, 80, 0);
+                collider.center += new Vector3(0, -30, 0);
             } else if (!expand && hasSet)
             {
                 hasSet = false;
 
-                collider.extents -= new Vector3(0, 420, 0);
-                collider.center -= new Vector3(0, 420, 0);
+                collider.extents -= new Vector3(0, 80, 0);
+                collider.center -= new Vector3(0, -30, 0);
             }
         }
 
