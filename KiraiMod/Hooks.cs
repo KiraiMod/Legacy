@@ -67,15 +67,15 @@ namespace KiraiMod
             //}
             //catch { MelonLogger.LogWarning("Hooking SendOperationPrefix... Failed"); }
 
-            try
-            {
-                Shared.harmony.Patch(typeof(ObjectPublicIPhotonPeerListenerObStBoStObCoDiBo2ObUnique)
-                    .GetMethod(nameof(ObjectPublicIPhotonPeerListenerObStBoStObCoDiBo2ObUnique.OnEvent), BindingFlags.Public | BindingFlags.Instance),
-                    new HarmonyMethod(typeof(Hooks).GetMethod(nameof(OnEvent), BindingFlags.NonPublic | BindingFlags.Static)));
+            //try
+            //{
+            //    Shared.harmony.Patch(typeof(ObjectPublicIPhotonPeerListenerObStBoStObCoDiBo2ObUnique)
+            //        .GetMethod(nameof(ObjectPublicIPhotonPeerListenerObStBoStObCoDiBo2ObUnique.OnEvent), BindingFlags.Public | BindingFlags.Instance),
+            //        new HarmonyMethod(typeof(Hooks).GetMethod(nameof(OnEvent), BindingFlags.NonPublic | BindingFlags.Static)));
 
-            MelonLogger.Log("Hooking OnEvent... Passed");
-        }
-            catch { MelonLogger.LogWarning("Hooking OnEvent... Failed"); }
+            //    MelonLogger.Log("Hooking OnEvent... Passed");
+            //}
+            //catch { MelonLogger.LogWarning("Hooking OnEvent... Failed"); }
 
             try
             {
@@ -123,8 +123,17 @@ namespace KiraiMod
             Shared.modules.OnAvatarInitialized(__0, __instance);
         }
 
-        private static void OnRPC(ref Player __0, ref VrcEvent __1, ref VrcBroadcastType __2)
+        private static bool OnRPC(ref Player __0, ref VrcEvent __1, ref VrcBroadcastType __2)
         {
+            if (__1.ParameterObject != null &&
+                __0.field_Private_APIUser_0.id != VRC.Core.APIUser.CurrentUser.id &&
+                (float.IsNaN(__1.ParameterObject.transform.position.x) || 
+                float.IsNaN(__1.ParameterObject.transform.position.y) || 
+                float.IsNaN(__1.ParameterObject.transform.position.z)))
+            {
+                MelonLogger.Log($"Prevented ${__0.field_Private_APIUser_0.displayName} ({__0.field_Private_APIUser_0.id}) from using Love's camera crash on you.");
+            }
+
             if (Shared.Options.bWorldTriggers && __2 == VrcBroadcastType.Local) __2 = VrcBroadcastType.AlwaysUnbuffered;
 
             switch (__1.EventType)
@@ -172,6 +181,8 @@ namespace KiraiMod
                     }
                     break;
             }
+
+            return true;
         }
 
         private static void SendOperationPrefix(ref byte __0, ref Il2CppSystem.Object __1, ref ObjectPublicObByObInByObObUnique __2, ref ExitGames.Client.Photon.SendOptions __3)
