@@ -44,12 +44,17 @@ namespace KiraiMod
             public bool bInfinitePortals;
             public bool bAutoKOS;
 
+            public bool bESP;
             public bool bModLog;
             public bool bNameplates;
             public bool bNameplatesRGB;
             public bool bHeadlight;
             public bool bAliases;
             public bool bDirectionalFlight;
+
+            public bool bMuteSelfFriends;
+            public bool bMuteSelfTargeted;
+            public bool bMuteSelfFavorited;
 
             public float fRun;
             public float fWalk;
@@ -81,6 +86,10 @@ namespace KiraiMod
                 Move(load, ref Shared.modules.headlight.state,    ref bHeadlight        );
                 Move(load, ref Shared.modules.aliases.state,      ref bAliases          );
                 Move(load, ref Shared.modules.flight.directional, ref bDirectionalFlight);
+                Move(load, ref Shared.modules.esp.state,          ref bESP              );
+                Move(load, ref Shared.modules.mute.Friends,       ref bMuteSelfFriends  );
+                Move(load, ref Shared.modules.mute.Targeted,      ref bMuteSelfTargeted );
+                Move(load, ref Shared.modules.mute.Favorited,     ref bMuteSelfFavorited);
 
                 Move(load, ref Shared.modules.speed.speedRun,     ref fRun              );
                 Move(load, ref Shared.modules.speed.speedWalk,    ref fWalk             );

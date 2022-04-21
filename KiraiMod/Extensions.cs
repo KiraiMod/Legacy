@@ -16,6 +16,13 @@ namespace KiraiMod
                 APIUser.CurrentUser.friendIDs.Contains(player.field_Private_APIUser_0.id);
         }
 
+        public static bool IsFavorite(this Player player)
+        {
+            if (player.field_Private_APIUser_0 == null) return false;
+
+            return player.IsLocal() || APIUser.CurrentUser.IsFavorite(player.field_Private_APIUser_0.id);
+        }
+
         public static bool IsKOS(this Player player)
         {
             if (player == null || Shared.modules?.kos?.kosList == null) return false;
