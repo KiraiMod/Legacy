@@ -60,7 +60,6 @@ namespace KiraiMod
             public bool bPlayerList;
             public bool bUseClipboard;
             public bool bPersistantQM;
-            public bool bAntiUCB;
 
             public bool bMuteSelfFriends;
             public bool bMuteSelfTargeted;
@@ -121,7 +120,6 @@ namespace KiraiMod
                 Move(load, ref Shared.modules.itemOrbit.size,     ref fItemOrbitSpeed   );
 
                 Move(load, ref Shared.modules.misc.bUseClipboard, ref bUseClipboard     );
-                Move(load, ref Shared.modules.misc.AntiUCB,       ref bAntiUCB          );
                 Move(load, ref General.bPersistantQuickMenu,      ref bPersistantQM     );
                 Move(load, ref General.fRGBSpeed,                 ref fRGBSpeed         );
 

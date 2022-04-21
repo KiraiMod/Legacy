@@ -18,7 +18,7 @@ namespace KiraiMod.Modules
 
         public new ModuleInfo[] info =
         {
-            new ModuleInfo("Hide Self", "Hide your nameplate and make yourself unclickable", ButtonType.Toggle, 6, Menu.PageIndex.options1, nameof(state))
+            new ModuleInfo("Hide Self", "Hide your nameplate and make yourself unclickable", ButtonType.Toggle, 6, Menu.PageIndex.toggles1, nameof(state))
         };
 
         bool changed;

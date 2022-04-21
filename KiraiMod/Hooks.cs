@@ -131,22 +131,6 @@ namespace KiraiMod
                 LogWithPadding("OnMenuClosed", true);
             }
             catch { LogWithPadding("OnMenuClosed", false); }
-
-            try
-            {
-            NetworkManager.
-                field_Internal_Static_NetworkManager_0
-                .Method_Public_add_Void_Action_1_EnumPublicSealedvaNoExSeExClDiInDiCuUnique_PDM_1(new Action<EnumPublicSealedvaNoExSeExClDiInDiCuUnique>((reasonForDisconnect) =>
-                {
-                    if (Shared.modules.misc.AntiUCB && reasonForDisconnect == EnumPublicSealedvaNoExSeExClDiInDiCuUnique.DisconnectByServerLogic)
-                    {
-                        Helper.JoinWorldById($"{RoomManager.field_Internal_Static_ApiWorld_0.id}:{RoomManager.field_Internal_Static_ApiWorld_0.currentInstanceIdWithTags}");
-                    }
-                    MelonLogger.Log($"Disconnected due to {Enum.GetName(typeof(EnumPublicSealedvaNoExSeExClDiInDiCuUnique), reasonForDisconnect)}");
-                }));
-            LogWithPadding("OnDisconnect", true);
-            } 
-            catch { LogWithPadding("OnDisconnect", false); }
         }
 
 #if DEBUG

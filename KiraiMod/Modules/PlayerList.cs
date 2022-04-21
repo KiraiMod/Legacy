@@ -17,7 +17,7 @@ namespace KiraiMod.Modules
         private GameObject baseObject;
 
         public new ModuleInfo[] info = {
-            new ModuleInfo("Player List", "Show the players in your instance", ButtonType.Toggle, 8, Menu.PageIndex.options2, nameof(state))
+            new ModuleInfo("Player List", "Show the players in your instance", ButtonType.Toggle, 8, Menu.PageIndex.toggles2, nameof(state))
         };
 
         public PlayerList()
@@ -65,7 +65,7 @@ namespace KiraiMod.Modules
 
         public override void OnLevelWasLoaded()
         {
-            if (state && !Shared.menu.qm.prop_Boolean_0 && Shared.menu != null)
+            if (state && Shared.menu != null && !Shared.menu.qm.prop_Boolean_0)
                 parent.active = false;
         }
 

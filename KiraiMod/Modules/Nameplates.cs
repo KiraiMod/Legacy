@@ -13,11 +13,11 @@ namespace KiraiMod.Modules
 		public bool RGB = false;
 
 		public new ModuleInfo[] info = {
-			new ModuleInfo("Nameplates", "Custom nameplates. Highlight for friends and red for KOS", ButtonType.Toggle, 1, Menu.PageIndex.options2, nameof(state)),
-			new ModuleInfo("RGB Nameplates", "Rainbow nameplates for friends", ButtonType.Toggle, 2, Menu.PageIndex.options2, nameof(RGB)),
+			new ModuleInfo("Nameplates", "Custom nameplates. Highlight for friends and red for KOS", ButtonType.Toggle, 1, Menu.PageIndex.toggles2, nameof(state)),
+			new ModuleInfo("RGB Nameplates", "Rainbow nameplates for friends", ButtonType.Toggle, 2, Menu.PageIndex.toggles2, nameof(RGB)),
 		};
 
-		public List<string> users;
+		public List<string> users = new List<string>();
 
 		public override void OnStateChange(bool state)
 		{
@@ -190,6 +190,7 @@ namespace KiraiMod.Modules
 			Transform rank = Object.Instantiate(stats, stats.parent, false);
 			rank.name = $"KiraiModTag{index}";
 			rank.localPosition = new Vector3(0, 30 * (index + 1), 0);
+			rank.gameObject.active = true;
 			Transform textGO = null;
 
 			for (int i = rank.childCount; i > 0; i--)

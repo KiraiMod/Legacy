@@ -15,8 +15,8 @@ namespace KiraiMod.Modules
         public bool directional = false;
 
         public new ModuleInfo[] info = {
-            new ModuleInfo("Flight", "Allows you to fly around with no gravity", ButtonType.Toggle, 1, Menu.PageIndex.options1, nameof(state)),
-            new ModuleInfo("3D Flight", "Fly in the direction you are looking", ButtonType.Toggle, 4, Menu.PageIndex.options2, nameof(directional)),
+            new ModuleInfo("Flight", "Allows you to fly around with no gravity", ButtonType.Toggle, 1, Menu.PageIndex.toggles1, nameof(state)),
+            new ModuleInfo("3D Flight", "Fly in the direction you are looking", ButtonType.Toggle, 4, Menu.PageIndex.toggles2, nameof(directional)),
             new ModuleInfo("Flight Speed", ButtonType.Slider, 2, Menu.PageIndex.sliders1, nameof(speed), 0, 32)
         };
 

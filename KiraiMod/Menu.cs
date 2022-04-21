@@ -11,9 +11,9 @@ namespace KiraiMod
     {
         public enum PageIndex
         {
-            options1 = 0,
-            options2,
-            options3,
+            toggles1 0,
+            toggles2,
+            toggles3,
             buttons1,
             buttons2,
             sliders1,

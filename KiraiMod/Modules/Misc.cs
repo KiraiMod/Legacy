@@ -5,8 +5,6 @@ namespace KiraiMod.Modules
 {
     public class Misc : ModuleBase
     {
-        public bool AntiUCB;
-
         public bool bUseClipboard;
 
         public new ModuleInfo[] info =
@@ -17,15 +15,9 @@ namespace KiraiMod.Modules
             new ModuleInfo("Bring\nPickups", "Brings all pickups in the scene", ButtonType.Button, 6, Menu.PageIndex.buttons1, nameof(BringPickups)),
             new ModuleInfo("Drop\nTarget", "Forget the current target", ButtonType.Button, 7, Menu.PageIndex.buttons1, nameof(DropTarget)),
             new ModuleInfo("Change\nPedestals", "Change all pedestals to an avatar ID", ButtonType.Button, 3, Menu.PageIndex.buttons2, nameof(ChangePedestals)),
-            new ModuleInfo("Join World\nvia ID", "Join a world using a ", ButtonType.Button, 6, Menu.PageIndex.buttons2, nameof(JoinWorldByID)),
-            new ModuleInfo("Clipboard", "Use the clipboard instead of a popup input", ButtonType.Toggle, 10, Menu.PageIndex.options2, nameof(bUseClipboard)),
-            new ModuleInfo("Anti UCB", "Reconnect on Unusual Client Behaviour disconnect.", ButtonType.Toggle, 2, Menu.PageIndex.options3, nameof(AntiUCB)),
+            new ModuleInfo("Join World\nvia ID", "Join a world using a full instance id", ButtonType.Button, 6, Menu.PageIndex.buttons2, nameof(JoinWorldByID)),
+            new ModuleInfo("Clipboard", "Use the clipboard instead of a popup input", ButtonType.Toggle, 10, Menu.PageIndex.toggles2, nameof(bUseClipboard)),
         };
-
-        public void OnStateChangeAntiUCB(bool state)
-        {
-            if (state) Utils.HUDMessage("When you get disconnected do not click the \"Okay\" button.\nWait for it to auto accept.");
-        }
 
         public void ForcePickups()
         {
@@ -82,7 +74,7 @@ namespace KiraiMod.Modules
             if (bUseClipboard)
                 Helper.JoinWorldById(System.Windows.Forms.Clipboard.GetText().Trim());
             else
-                Utils.HUDInput("Avatar ID", "Set Pedestals", "wrld_*:?????~*()~nonce()", "", new System.Action<string>((resp) =>
+                Utils.HUDInput("World ID", "Join", "wrld_*:?????~*()~nonce()", "", new System.Action<string>((resp) =>
                 {
                     Helper.JoinWorldById(resp.Trim());
                 }));

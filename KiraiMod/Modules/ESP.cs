@@ -9,7 +9,7 @@ namespace KiraiMod.Modules
     {
         public new ModuleInfo[] info =
         {
-            new ModuleInfo("ESP", "Allows you to see players through walls", ButtonType.Toggle, 3, Menu.PageIndex.options1, nameof(state))
+            new ModuleInfo("ESP", "Allows you to see players through walls", ButtonType.Toggle, 3, Menu.PageIndex.toggles1, nameof(state))
         };
 
         public override void OnStateChange(bool state)

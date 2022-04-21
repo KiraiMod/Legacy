@@ -10,8 +10,8 @@ namespace KiraiMod.Modules
         public float size = 1;
 
         public new ModuleInfo[] info = {
-            new ModuleInfo("Item Orbit", "Orbit all items around target", ButtonType.Toggle, 8, Menu.PageIndex.options1, nameof(state)),
-            new ModuleInfo("Item Orbit Annoyance", "Orbit items around the head to block vision and cause haptic feedback.", ButtonType.Toggle, 9, Menu.PageIndex.options2, nameof(annoy)),
+            new ModuleInfo("Item Orbit", "Orbit all items around target", ButtonType.Toggle, 8, Menu.PageIndex.toggles1, nameof(state)),
+            new ModuleInfo("Item Orbit Annoyance", "Orbit items around the head to block vision and cause haptic feedback.", ButtonType.Toggle, 9, Menu.PageIndex.toggles2, nameof(annoy)),
             new ModuleInfo("Item Orbit Speed", ButtonType.Slider, 6, Menu.PageIndex.sliders1, nameof(speed), 0, 4),
             new ModuleInfo("Item Orbit Size", ButtonType.Slider, 8, Menu.PageIndex.sliders1, nameof(size), 0, 4)
     };

@@ -109,28 +109,6 @@ namespace KiraiMod
             pickup.position = new Vector3(pickup.position.x, Vector3.positiveInfinity.y, pickup.rotation.z);
         }
 
-        public static System.Collections.IEnumerator RunawayChairSpamCrash(VRCStation[] stations)
-        {
-            for (int i = 0; i < 4; i++)
-            {
-                MelonCoroutines.Start(ChairSpamCrash(stations));
-                yield return null;
-                yield return null;
-            }
-        }
-
-        public static System.Collections.IEnumerator ChairSpamCrash(VRCStation[] stations)
-        {
-            foreach (VRCStation station in stations)
-            {
-                if (station?.gameObject is null) continue;
-                if (Shared.targetPlayer is null) yield break;
-                Networking.SetOwner(Shared.targetPlayer.field_Private_VRCPlayerApi_0, station.gameObject);
-                station.GetComponent<UdonBehaviour>().SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner, "_interact");
-                yield return null;
-            }
-        }
-
         public static void SetPedestals(string id)
         {
             if (!id.StartsWith("avtr_"))

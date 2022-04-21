@@ -11,7 +11,7 @@
 
         public new ModuleInfo[] info =
         {
-            new ModuleInfo("Speed", "Change movement speed", ButtonType.Toggle, 0, Menu.PageIndex.options1, nameof(state)),
+            new ModuleInfo("Speed", "Change movement speed", ButtonType.Toggle, 0, Menu.PageIndex.toggles1, nameof(state)),
             new ModuleInfo("Run Speed", ButtonType.Slider, 0, Menu.PageIndex.sliders1, nameof(SpeedRun), 0, 32),
             new ModuleInfo("Walk Speed", ButtonType.Slider, 1, Menu.PageIndex.sliders1, nameof(SpeedWalk), 0, 32)
         };
@@ -63,7 +63,7 @@
 
         public void OnValueChangeSpeedWalk(float value)
         {
-            LocomotionInputController movement = VRCPlayer.field_Internal_Static_VRCPlayer_0.GetComponentInChildren<LocomotionInputController>();
+            LocomotionInputController movement = VRCPlayer.field_Internal_Static_VRCPlayer_0?.GetComponentInChildren<LocomotionInputController>();
 
             if (movement == null) return;
 
@@ -76,7 +76,7 @@
 
         public void OnValueChangeSpeedRun(float value)
         {
-            LocomotionInputController movement = VRCPlayer.field_Internal_Static_VRCPlayer_0.GetComponentInChildren<LocomotionInputController>();
+            LocomotionInputController movement = VRCPlayer.field_Internal_Static_VRCPlayer_0?.GetComponentInChildren<LocomotionInputController>();
 
             if (movement == null) return;
 

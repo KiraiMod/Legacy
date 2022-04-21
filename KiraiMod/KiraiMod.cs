@@ -180,15 +180,10 @@ namespace KiraiMod
                 }).Invoke();
             }
 
-            Shared.menu.CreatePage("kiraimod_options1");
-            Shared.menu.CreatePage("kiraimod_options2");
-            Shared.menu.CreatePage("kiraimod_options3");
-            Shared.menu.CreatePage("kiraimod_buttons1");
-            Shared.menu.CreatePage("kiraimod_buttons2");
-            Shared.menu.CreatePage("kiraimod_sliders1");
-            Shared.menu.CreatePage("kiraimod_xutils");
-            Shared.menu.CreatePage("kiraimod_udon1");
-            Shared.menu.CreatePage("kiraimod_udon2");
+            foreach (string name in System.Enum.GetNames(typeof(Menu.PageIndex)))
+            {
+                Shared.menu.CreatePage($"kiraimod_{name.ToLower()}");
+            }
 
             new Pages.Pages();
 
