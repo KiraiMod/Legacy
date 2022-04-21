@@ -22,7 +22,7 @@ namespace KiraiMod.Modules
 
             if (x < -0.1f || x > 0.1f || y < -0.1f || y > 0.1f)
             {
-                if (Shared.menu.objects.TryGetValue(Utils.CreateID("Orbit", 0), out Menu.MenuObject obj))
+                if (Shared.menu.objects.TryGetValue(Utils.CreateID("Orbit", (int)Menu.PageIndex.toggles1), out Menu.MenuObject obj))
                     obj.toggle.SetState(false);
                 SetState(false);
                 return;

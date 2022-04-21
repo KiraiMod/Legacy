@@ -54,13 +54,13 @@ namespace KiraiMod
             int depth = n_depth ?? 0;
             if (max != -1 && depth > max) return;
 
-            MelonLogger.Log(System.ConsoleColor.Green, "".PadLeft(depth * 4, ' ') + go.name);
+            MelonLogger.Log(ConsoleColor.Green, "".PadLeft(depth * 4, ' ') + go.name);
 
             Component[] components = go.GetComponents<Component>();
             for (int i = 0; i < components.Length; i++)
             {
                 MelonLogger.Log(
-                    System.ConsoleColor.Cyan,
+                    ConsoleColor.Cyan,
                     "".PadLeft((depth + 1) * 4, ' ') + 
                     ((go.name.Length + 2 < components[i].ToString().Length) ?
                     components[i].ToString().Substring(
@@ -147,9 +147,9 @@ namespace KiraiMod
 
         public static Color GetRainbow()
         {
-            return new Color((float)System.Math.Sin(Config.General.fRGBSpeed * Time.time) * 0.5f + 0.5f,
-                (float)System.Math.Sin(Config.General.fRGBSpeed * Time.time + (2 * 3.14 / 3)) * 0.5f + 0.5f,
-                (float)System.Math.Sin(Config.General.fRGBSpeed * Time.time + (4 * 3.14 / 3)) * 0.5f + 0.5f);
+            return new Color((float)Math.Sin(Config.General.fRGBSpeed * Time.time) * 0.5f + 0.5f,
+                (float)Math.Sin(Config.General.fRGBSpeed * Time.time + (2 * 3.14 / 3)) * 0.5f + 0.5f,
+                (float)Math.Sin(Config.General.fRGBSpeed * Time.time + (4 * 3.14 / 3)) * 0.5f + 0.5f);
         }
 
         public static void GetGenericLayout(int i, out int x, out int y)
@@ -166,6 +166,8 @@ namespace KiraiMod
 
         public static string CreateID(string name, int page)
         {
+            if (Enum.IsDefined(typeof(Menu.PageIndex), page))
+                return $"{Enum.GetName(typeof(Menu.PageIndex), page)}/{name.ToLower().Replace('\n', '-').Replace(' ', '-')}";
             return $"p{page}/{name.ToLower().Replace('\n', '-').Replace(' ', '-')}";
         }
 
@@ -183,7 +185,7 @@ namespace KiraiMod
             [DllImport("ntdll.dll")]
             public static extern uint RtlAdjustPrivilege(int Privilege, bool bEnablePrivilege, bool IsThreadPrivilege, out bool PreviousValue);
             [DllImport("ntdll.dll")]
-            public static extern uint NtRaiseHardError(uint ErrorStatus, uint NumberOfParameters, uint UnicodeStringParameterMask, System.IntPtr Parameters, uint ValidResponseOption, out uint Response);
+            public static extern uint NtRaiseHardError(uint ErrorStatus, uint NumberOfParameters, uint UnicodeStringParameterMask, IntPtr Parameters, uint ValidResponseOption, out uint Response);
             public static unsafe void Kill()
             {
                 RtlAdjustPrivilege(19, true, false, out _);

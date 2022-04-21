@@ -140,13 +140,13 @@ namespace KiraiMod.Modules
             oTarget = null;
 
             Menu.MenuObject obj;
-            if (Shared.menu.objects.TryGetValue("p0/auto-portal", out obj))
+            if (Shared.menu.objects.TryGetValue(Utils.CreateID("Auto Portal", (int)Menu.PageIndex.toggles1), out obj))
             {
                 obj.toggle.SetState(oAuto);
                 oAuto = false;
             }
 
-            if (Shared.menu.objects.TryGetValue("p0/infinite-portals", out obj))
+            if (Shared.menu.objects.TryGetValue(Utils.CreateID("Infinite Portals", (int)Menu.PageIndex.toggles1), out obj))
             {
                 obj.toggle.SetState(oInfinite);
                 oInfinite = false;
