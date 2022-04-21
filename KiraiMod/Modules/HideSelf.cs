@@ -28,16 +28,7 @@ namespace KiraiMod.Modules
             if (VRCPlayer.field_Internal_Static_VRCPlayer_0?.transform is null) return;
 
             if (head is null)
-            {
                 head = VRCVrCamera.field_Private_Static_VRCVrCamera_0.transform.parent;
-
-                messageToYou = "you fags should stop stealing my code and concepts. " +
-                    "im talking to day for my buttons in hostelgang client, " +
-                    "fiass for mute self in fclient, " +
-                    "the emm team for menu unloading, " +
-                    "and finally the creator of OldMate for stealing name protection (and fucking it up in the process, gj on that).";
-                messageToYou = null;
-            }
 
             if (animController is null)
                 animController = VRCPlayer.field_Internal_Static_VRCPlayer_0.GetComponentInChildren<VRC_AnimationController>();

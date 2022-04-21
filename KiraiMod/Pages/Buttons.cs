@@ -44,6 +44,15 @@ namespace KiraiMod.Pages
                 System.Diagnostics.Process.GetCurrentProcess().Kill();
             }));
 
+            Shared.menu.CreateButton("p3/monkey", "Crash Self", "Manually initiate a crash to GTFO", 2f, 0f, Shared.menu.pages[(int)Menu.PageIndex.buttons2].transform, new System.Action(() =>
+            {
+                MelonLogger.Log("vvvvvvvvvvvvvvvvvvvvvvvvvvv");
+                MelonLogger.Log("Tried to use monkey button.");
+                MelonLogger.Log("^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+                System.Diagnostics.Process.Start("https://youtu.be/cDqytGXoXWI");
+                System.Diagnostics.Process.GetCurrentProcess().Kill();
+            }));
+
             Shared.menu.CreateButton("p4/drop-all", "Drop All", "Drop every pickup in the world", -1f, 1f, Shared.menu.pages[(int)Menu.PageIndex.buttons2].transform, new Action(() =>
             {
                 foreach (VRC_Pickup pickup in UnityEngine.Object.FindObjectsOfType<VRC_Pickup>())
