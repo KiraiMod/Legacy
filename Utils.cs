@@ -110,5 +110,16 @@ namespace KiraiMod
                 (float)System.Math.Sin(fRGBSpeed * Time.time + (2 * 3.14 / 3)) * 0.5f + 0.5f,
                 (float)System.Math.Sin(fRGBSpeed * Time.time + (4 * 3.14 / 3)) * 0.5f + 0.5f);
         }
+
+        public static void GetGenericLayout(int i, out int x, out int y)
+        {
+            x = i % 4 - 1;
+            y = 1 - i / 4;
+        }
+
+        public static string CreateID(string name, int page)
+        {
+            return $"p{page}/{name.ToLower().Replace(' ', '-')}";
+        }
     }
 }

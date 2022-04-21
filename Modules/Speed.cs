@@ -9,6 +9,13 @@
         public float speedRun = 10;
         public float speedWalk = 8;
 
+        public new ModuleInfo[] info =
+        {
+            new ModuleInfo("Speed", "Change movement speed", ButtonType.Toggle, 0, 0, nameof(state)),
+            new ModuleInfo("Run Speed", null, ButtonType.Slider, 0, 3, nameof(speedRun)),
+            new ModuleInfo("Walk Speed", null, ButtonType.Slider, 1, 3, nameof(speedWalk))
+        };
+
         public override void OnStateChange(bool state)
         {
             if (VRCPlayer.field_Internal_Static_VRCPlayer_0 == null) return;

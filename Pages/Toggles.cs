@@ -35,7 +35,7 @@
             //    }
             //}
 
-            Shared.menu.CreateToggle( "Speed",     "Toggle movement speed", -1, 1, 0, Shared.modules.speed );
+            //Shared.menu.CreateToggle( "Speed",     "Toggle movement speed", -1, 1, 0, Shared.modules.speed );
             Shared.menu.CreateToggle("Flight",             "Toggle flight",  0, 1, 0, Shared.modules.flight);
             Shared.menu.CreateToggle("Noclip",             "Toggle noclip",  1, 1, 0, Shared.modules.noclip);
             Shared.menu.CreateToggle(   "ESP", "See players through walls",  2, 1, 0, Shared.modules.esp   );

@@ -1,4 +1,5 @@
 ﻿using MelonLoader;
+using System.Reflection;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -98,6 +99,46 @@ namespace KiraiMod
             Shared.menu.CreatePage("kiraimod_xutils");
 
             new Pages.Pages();
+
+            foreach(Modules.ModuleBase module in Shared.modules.modules)
+            {
+                foreach (Modules.ModuleInfo info in (Modules.ModuleInfo[])module.GetType()
+                    .GetField(nameof(Modules.ModuleBase.info), BindingFlags.Public | BindingFlags.Instance).GetValue(module))
+                {
+                    if (info.type == Modules.ButtonType.Toggle)
+                    {
+                        FieldInfo reference = module.GetType().GetField(info.reference, BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
+                        if (reference == null)
+                        {
+                            MelonModLogger.LogWarning($"Failed to find property {info.reference} on {module.GetType()}");
+                            continue;
+                        }
+                        Utils.GetGenericLayout(info.index, out int x, out int y);
+                        Shared.menu.CreateToggle(Utils.CreateID(info.label, info.page), (bool)reference.GetValue(module),
+                            info.label, info.description, x, y, Shared.menu.pages[info.page].transform, (info.reference == nameof(module.state)) ? 
+                            new System.Action<bool>(state => 
+                            {
+                                module.SetState(state);
+                            }) : 
+                            new System.Action<bool>(state =>
+                            {
+                                reference.SetValue(module, state);
+                            }));
+                    }
+                    else if (info.type == Modules.ButtonType.Button)
+                    {
+
+                    }
+                    else if (info.type == Modules.ButtonType.Slider)
+                    {
+
+                    }
+                    else
+                    {
+                        MelonModLogger.LogWarning($"[UI] Unknown object {info.label} on {module.GetType()}");
+                    }
+                }
+            }
 
             Shared.menu.CreateToggle("p0/spoof-name", false, "Spoof Name", "Spoofs name in quick menu", -1f, 0f, Shared.menu.pages[0].transform, new System.Action<bool>((state) =>
             {

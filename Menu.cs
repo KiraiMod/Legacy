@@ -29,8 +29,7 @@ namespace KiraiMod
 
         public bool? GetBool(string id)
         {
-            MenuObject obj;
-            if (Shared.menu.objects.TryGetValue(id, out obj))
+            if (Shared.menu.objects.TryGetValue(id, out MenuObject obj))
             {
                 return obj.toggle.state;
             }
@@ -39,8 +38,7 @@ namespace KiraiMod
 
         public float? GetFloat(string id)
         {
-            MenuObject obj;
-            if (Shared.menu.objects.TryGetValue(id, out obj))
+            if (Shared.menu.objects.TryGetValue(id, out MenuObject obj))
             {
                 return obj.slider.value;
             }
@@ -49,18 +47,17 @@ namespace KiraiMod
 
         public bool Set(string id, bool value)
         {
-            MenuObject obj;
-            if (Shared.menu.objects.TryGetValue(id, out obj))
+            if (Shared.menu.objects.TryGetValue(id, out MenuObject obj))
             {
                 obj.toggle.SetState(value);
                 return true;
-            } else return false;
+            }
+            else return false;
         }
 
         public bool Set(string id, float value)
         {
-            MenuObject obj;
-            if (Shared.menu.objects.TryGetValue(id, out obj))
+            if (Shared.menu.objects.TryGetValue(id, out MenuObject obj))
             {
                 obj.slider.SetValue(value);
                 return true;
