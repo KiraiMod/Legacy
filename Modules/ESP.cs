@@ -23,10 +23,10 @@ namespace KiraiMod.Modules
 
         public override void OnPlayerJoined(Player player)
         {
-            MelonCoroutines.Start(DelayHighlight(player));
+            MelonCoroutines.Start(Delay(player));
         }
 
-        public IEnumerator DelayHighlight(Player player)
+        public IEnumerator Delay(Player player)
         {
             if (player == null) yield break;
 
@@ -38,23 +38,46 @@ namespace KiraiMod.Modules
                 timeout++;
             }
 
-            HighlightBubble(player.gameObject, state);
+            Renderer renderer = GetBubbleRenderer(player.gameObject);
+            HighlightBubble(renderer, state);
+            SetBubbleColor(renderer);
         }
 
-
-        public static void HighlightBubble(GameObject player, bool state)
+        public static Renderer GetBubbleRenderer(GameObject player)
         {
-            if (player == null) return;
+            if (player == null) return null;
 
             Transform bubble = player.transform.Find("SelectRegion");
 
-            if (bubble == null) return;
+            if (bubble == null) return null;
 
             Renderer renderer = bubble.GetComponent<Renderer>();
 
-            if (renderer == null) return;
+            return renderer ?? null;
+        }
 
-            HighlightsFX.prop_HighlightsFX_0.Method_Public_Void_Renderer_Boolean_0(renderer, state);
+        public static void HighlightBubble(GameObject player, bool state)
+        {
+            Renderer renderer = GetBubbleRenderer(player);
+
+            if (renderer != null) HighlightsFX.prop_HighlightsFX_0.Method_Public_Void_Renderer_Boolean_0(renderer, state);
+        }
+
+        public static void HighlightBubble(Renderer renderer, bool state)
+        {
+            if (renderer != null) HighlightsFX.prop_HighlightsFX_0.Method_Public_Void_Renderer_Boolean_0(renderer, state);
+        }
+
+        public static void SetBubbleColor(GameObject player)
+        {
+            Renderer renderer = GetBubbleRenderer(player);
+
+            if (renderer != null) renderer.sharedMaterial.color = Utils.Colors.primary;
+        }
+
+        public static void SetBubbleColor(Renderer renderer)
+        {
+            if (renderer != null) renderer.sharedMaterial.color = Utils.Colors.primary;
         }
     }
 }
