@@ -14,6 +14,8 @@ namespace KiraiMod
         public bool hasLoaded = false;
         public bool isApplied = false;
 
+        public string version = "";
+
         public static class Config
         {
             public static Color primary = new Color(0.34f, 0f, 0.65f);
@@ -42,6 +44,20 @@ namespace KiraiMod
         public override void OnApplicationStart()
         {
             instance = this;
+
+            MelonMod mod = MelonHandler.Mods.FirstOrDefault(m => m.Assembly.GetName().Name == "KiraiMod");
+
+            string location;
+
+            if (mod is null) location = Location;
+            else location = mod.Location;
+
+            CRC32 crc = new CRC32();
+            
+            foreach(byte b in crc.ComputeHash(System.IO.File.ReadAllBytes(location)))
+            {
+                version += b.ToString("X");
+            }
         }
 
         public override void VRChat_OnUiManagerInit()
@@ -229,13 +245,51 @@ namespace KiraiMod
                 if (op == 0)
                 {
                     ddt.enabled = false;
-                    tmp4.text = $"Version {VRCApplicationSetup.prop_VRCApplicationSetup_0.buildNumber}";
+                    tmp4.text = $"Version {VRCApplicationSetup.prop_VRCApplicationSetup_0.buildNumber}                                          {version}";
                 }
                 else if (op == 2) ddt.enabled = true;
             }
 
             if (op == 1) Memory.EarlyAccessText = EarlyAccessText.text;
             else if (op == 2) EarlyAccessText.text = Memory.EarlyAccessText;
+        }
+
+        public class CRC32
+        {
+            private readonly uint[] ChecksumTable;
+            private readonly uint Polynomial = 0xEDB88320;
+
+            public CRC32()
+            {
+                ChecksumTable = new uint[0x100];
+
+                for (uint index = 0; index < 0x100; ++index)
+                {
+                    uint item = index;
+                    for (int bit = 0; bit < 8; ++bit)
+                        item = ((item & 1) != 0) ? (Polynomial ^ (item >> 1)) : (item >> 1);
+                    ChecksumTable[index] = item;
+                }
+            }
+
+            public byte[] ComputeHash(System.IO.Stream stream)
+            {
+                uint result = 0xFFFFFFFF;
+
+                int current;
+                while ((current = stream.ReadByte()) != -1)
+                    result = ChecksumTable[(result & 0xFF) ^ (byte)current] ^ (result >> 8);
+
+                byte[] hash = BitConverter.GetBytes(~result);
+                Array.Reverse(hash);
+                return hash;
+            }
+
+            public byte[] ComputeHash(byte[] data)
+            {
+                using (System.IO.MemoryStream stream = new System.IO.MemoryStream(data))
+                    return ComputeHash(stream);
+            }
         }
     }
 }
