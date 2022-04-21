@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using MelonLoader;
 
-[assembly: MelonInfo(typeof(KiraiMod.KiraiTools), "KiraiTools", "0.0.0", "Kirai Chan#8315", "discord.gg/jsuHmcK")]
+[assembly: MelonInfo(typeof(KiraiMod.KiraiTools), "KiraiTools", "0.0.0", "Kirai Chan#8315")]
 [assembly: MelonGame("VRChat", "VRChat")]
 
 // General Information about an assembly is controlled through the following

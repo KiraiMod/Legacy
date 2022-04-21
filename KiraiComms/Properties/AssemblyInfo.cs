@@ -1,6 +1,10 @@
-﻿using System.Reflection;
+﻿using MelonLoader;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+
+[assembly: MelonInfo(typeof(KiraiMod.KiraiComms), "KiraiComms", "0.0.0", "Kirai Chan#8315 & Brass")]
+[assembly: MelonGame("VRChat", "VRChat")]
 
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information

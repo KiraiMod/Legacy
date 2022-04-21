@@ -150,13 +150,13 @@ namespace KiraiMod
                         VRC.SDKBase.Networking.RPC(VRC.SDKBase.RPC.Destination.All, a.gameObject, "SwitchAvatar", new Il2CppSystem.Object[] { text });
                     }
             }
-            if (Input.GetKeyDown(KeyCode.KeypadMinus)) /*MelonLogger.Log("Alive");*/
+            if (Input.GetKeyDown(KeyCode.KeypadMinus))
+#if DEBUG
             {
-                foreach (var a in Object.FindObjectsOfType<VRC.Udon.UdonBehaviour>())
-                {
-                    a.SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "SyncVotedFor3");
-                }
             }
+#else
+                MelonLogger.Log("Alive");
+#endif
             if (Input.GetKeyDown(KeyCode.KeypadMultiply)) Helper.Teleport(new Vector3(0, 0, 0));
             if (Input.GetKeyDown(KeyCode.Delete)) Unload();
         }
