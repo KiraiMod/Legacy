@@ -65,9 +65,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Lib\KiraiLibLoader.dll</HintPath>
     </Reference>
-    <Reference Include="KiraiRPC, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="KiraiRPC, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\VRChat\Mods\KiraiRPC.dll</HintPath>
+      <HintPath>..\..\KiraiLib\Dist\KiraiRPC.dll</HintPath>
     </Reference>
     <Reference Include="MelonLoader, Version=0.3.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

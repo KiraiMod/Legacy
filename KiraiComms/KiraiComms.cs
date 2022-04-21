@@ -1,21 +1,21 @@
-﻿using MelonLoader;
+﻿using KiraiLibs;
+using MelonLoader;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography;
-using UnityEngine;
-using UnityEngine.UI;
 using VRC;
 
-[assembly: MelonInfo(typeof(KiraiMod.KiraiComms), "KiraiComms", "1", "Kirai Chan#8315 & Brass")]
+[assembly: MelonInfo(typeof(KiraiMod.KiraiComms), "KiraiComms", "0.2.0", "Kirai Chan#8315 & Brass")]
 [assembly: MelonGame("VRChat", "VRChat")]
 
 namespace KiraiMod
 {
     public class KiraiComms : MelonMod
     {
+        private static bool bOSLPush;
+
         static KiraiComms()
         {
             Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(
@@ -31,109 +31,24 @@ namespace KiraiMod
 
             Assembly.Load(mem.ToArray());
 
-            new Action(() =>
-#if DEBUG
-                KiraiLib.NoOp()
-#else
-                KiraiLibLoader.Load()
+#if !DEBUG
+            new Action(() => KiraiLibLoader.Load())();
 #endif
-            )();
         }
 
-        private Action<int, string> SendRPC;
-        private Dictionary<string, RSA> encryptors = new Dictionary<string, RSA>();
-        private RSA ourRSA;
-        private bool halt = false;
+        private static Dictionary<string, RSA> encryptors = new Dictionary<string, RSA>();
+        private static RSA ourRSA;
+        private static bool halt = false;
 
         public override void OnApplicationStart()
         {
-            if (MelonHandler.Mods.Any(m => m.Assembly.GetName().Name == "KiraiRPC"))
-            {
-                ourRSA = RSA.Create();
+            KiraiLib.Libraries.LoadLibrary("KiraiRPC").ContinueWith((res) => Offloader.Initialize(res.Result));
 
-                new Action(() =>
-                {
-                    SendRPC = KiraiRPC.GetSendRPC("KiraiComms");
-                    KiraiRPC.callbackChain += new Action<KiraiRPC.RPCData>((data) =>
-                    {
-                        if (data.target == "KiraiRPC")
-                        {
-                            if (data.id == (int)KiraiRPC.RPCEventIDs.OnInit)
-                            {
-                                RSAParameters rsadata = ourRSA.ExportParameters(false);
-                                string exponent = Convert.ToBase64String(rsadata.Exponent);
-                                string modulus = Convert.ToBase64String(rsadata.Modulus);
-                                SendRPC(0x000, data.sender.Length.ToString("X").PadLeft(2, '0') + data.sender + exponent.Length.ToString("X") + exponent + modulus);
-                            }
-                        }
-                        else if (data.target == "KiraiComms")
-                        {
-                            switch (data.id)
-                            {
-                                case 0x000:
-                                case 0x001:
-                                    {
-                                        if (int.TryParse(data.payload.Substring(0, 2), System.Globalization.NumberStyles.HexNumber, null, out int len))
-                                        {
-                                            if (data.payload.Substring(2, len) == VRC.Core.APIUser.CurrentUser.displayName)
-                                            {
-                                                if (int.TryParse(data.payload.Substring(2 + len, 1), System.Globalization.NumberStyles.HexNumber, null, out int len2))
-                                                {
-                                                    // we recieved their rsa public
-                                                    RSAParameters rsadata = new RSAParameters
-                                                    {
-                                                        Exponent = Convert.FromBase64String(data.payload.Substring(3 + len, len2)),
-                                                        Modulus = Convert.FromBase64String(data.payload.Substring(3 + len + len2))
-                                                    };
+            ourRSA = RSA.Create();
 
-                                                    RSA rsa = RSA.Create();
-                                                    rsa.ImportParameters(rsadata);
+            KiraiLib.Callbacks.OnUIReload += () => VRChat_OnUiManagerInit();
 
-                                                    encryptors[data.sender] = rsa;
-
-                                                    if (data.id == 0x000 && data.sender != VRC.Core.APIUser.CurrentUser.displayName)
-                                                    {
-                                                        // send our rsa public
-                                                        RSAParameters rsadata2 = ourRSA.ExportParameters(false);
-                                                        string exponent = Convert.ToBase64String(rsadata2.Exponent);
-                                                        string modulus = Convert.ToBase64String(rsadata2.Modulus);
-                                                        SendRPC(0x001, data.sender.Length.ToString("X").PadLeft(2, '0') + data.sender + exponent.Length.ToString("X") + exponent + modulus);
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                    break;
-                                case 0x002:
-                                    {
-                                        if (int.TryParse(data.payload.Substring(0, 2), System.Globalization.NumberStyles.HexNumber, null, out int len))
-                                        {
-                                            if (data.payload.Substring(2, len) == VRC.Core.APIUser.CurrentUser.displayName)
-                                            {
-                                                string str = System.Text.Encoding.UTF8.GetString(ourRSA.DecryptValue(Convert.FromBase64String(data.payload.Substring(2 + len)))).Replace("\0", "");
-
-                                                KiraiLib.Logger.Log($"<color={NameToPlayer(data.sender).field_Private_APIUser_0.GetTrustColor().ToHex()}>{data.sender}</color>: {str}", 10);
-                                            }
-                                        }
-                                        break;
-                                    }
-                            }
-                        }
-                    });
-                }).Invoke();
-
-                KiraiLib.Callbacks.OnUIReload += () =>
-                {
-                    VRChat_OnUiManagerInit();
-                };
-
-                MelonCoroutines.Start(WaitForNetworkManager());
-            }
-            else
-            {
-                halt = true;
-                MelonLogger.Error("Didn't find KiraiRPC, stopping...");
-            }
+            MelonCoroutines.Start(WaitForNetworkManager());
         }
 
         private System.Collections.IEnumerator WaitForNetworkManager()
@@ -170,12 +85,17 @@ namespace KiraiMod
                             (val) =>
                     {
                         if (val.Length <= 128)
-                            SendRPC(0x002, name.Length.ToString("X").PadLeft(2, '0') + name + Convert.ToBase64String(rsa.EncryptValue(System.Text.Encoding.UTF8.GetBytes(val))));
+                            Offloader.SendRPC("KiraiComms", 0x002, name, Convert.ToBase64String(rsa.EncryptValue(System.Text.Encoding.UTF8.GetBytes(val))));
                         else KiraiLib.Logger.Log("Messages can only be 128 characters long.");
                     }));
                 }
                 else KiraiLib.Logger.Log($"{QuickMenu.prop_QuickMenu_0.field_Private_APIUser_0.displayName} is not using KiraiComms");
             }));
+        }
+
+        public override void OnSceneWasLoaded(int buildIndex, string sceneName)
+        {
+            if (bOSLPush) KiraiLib.SDK.Events.OnSceneLoad(buildIndex, sceneName);
         }
 
         private void OnPlayerLeft(Player player)
@@ -197,6 +117,76 @@ namespace KiraiMod
             }
 
             return null;
+        }
+
+        internal static class Offloader
+        {
+            internal static void Initialize(short res)
+            {
+                if (res > 0)
+                {
+                    KiraiRPC.Callback += new Action<KiraiRPC.RPCData>((data) =>
+                    {
+                        if (data.target == "KiraiRPC")
+                        {
+                            if (data.id == (int)KiraiRPC.RPCEventIDs.OnInit)
+                            {
+                                RSAParameters rsadata = ourRSA.ExportParameters(false);
+                                string exponent = Convert.ToBase64String(rsadata.Exponent);
+                                string modulus = Convert.ToBase64String(rsadata.Modulus);
+
+                                KiraiRPC.SendRPC("KiraiComms", 0x000, data.sender, exponent, modulus);
+                            }
+                        }
+                        else if (data.target == "KiraiComms")
+                        {
+                            switch (data.id)
+                            {
+                                case 0x000:
+                                case 0x001:
+                                    {
+                                        if (data.parameters[0] == VRC.Core.APIUser.CurrentUser.displayName)
+                                        {
+                                            // we recieved their rsa public
+                                            RSAParameters rsadata = new RSAParameters
+                                            {
+                                                Exponent = Convert.FromBase64String(data.parameters[1]),
+                                                Modulus = Convert.FromBase64String(data.parameters[2])
+                                            };
+
+                                            RSA rsa = RSA.Create();
+                                            rsa.ImportParameters(rsadata);
+
+                                            encryptors[data.sender] = rsa;
+
+                                            if (data.id == 0x000 && data.sender != VRC.Core.APIUser.CurrentUser.displayName)
+                                            {
+                                                // send our rsa public
+                                                RSAParameters rsadata2 = ourRSA.ExportParameters(false);
+                                                KiraiRPC.SendRPC("KiraiComms", 0x001, data.sender, Convert.ToBase64String(rsadata2.Exponent), Convert.ToBase64String(rsadata2.Modulus));
+                                            }
+                                        }
+                                    }
+                                    break;
+                                case 0x002:
+                                    {
+                                        if (data.parameters[0] == VRC.Core.APIUser.CurrentUser.displayName)
+                                        {
+                                            string str = System.Text.Encoding.UTF8.GetString(ourRSA.DecryptValue(Convert.FromBase64String(data.parameters[1]))).Replace("\0", "");
+
+                                            KiraiLib.Logger.Display($"<color={NameToPlayer(data.sender).field_Private_APIUser_0.GetTrustColor().ToHex()}>{data.sender}</color>: {str}", 10);
+                                        }
+                                        break;
+                                    }
+                            }
+                        }
+                    });
+                }
+
+                if (res == 1) bOSLPush = true;
+            }
+
+            internal static void SendRPC(string name, int id, params string[] payload) => KiraiRPC.SendRPC(name, id, payload); 
         }
     }
 }
