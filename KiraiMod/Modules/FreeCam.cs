@@ -39,8 +39,16 @@ namespace KiraiMod.Modules
                 {
                     KiraiLib.UI.Toggle toggle = element as KiraiLib.UI.Toggle;
 
-                    oNoclip = toggle.state;
-                    toggle.SetState(!state);
+                    if (state)
+                    {
+                        oNoclip = toggle.state;
+                        toggle.SetState(false);
+                    }
+                    else
+                    {
+                        toggle.SetState(oNoclip);
+                        oNoclip = false;
+                    }
                 }
             }
 
@@ -49,8 +57,16 @@ namespace KiraiMod.Modules
                 {
                     KiraiLib.UI.Toggle toggle = element as KiraiLib.UI.Toggle;
 
-                    oFlight = toggle.state;
-                    toggle.SetState(!state);
+                    if (state)
+                    {
+                        oFlight = toggle.state;
+                        toggle.SetState(false);
+                    }
+                    else
+                    {
+                        toggle.SetState(oFlight);
+                        oFlight = false;
+                    }
                 }
             }
         }
