@@ -119,7 +119,7 @@ namespace KiraiMod
 
         public static string CreateID(string name, int page)
         {
-            return $"p{page}/{name.ToLower().Replace(' ', '-')}";
+            return $"p{page}/{name.ToLower().Replace('\n', '-').Replace(' ', '-')}";
         }
 
         public static void Overflow()

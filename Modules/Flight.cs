@@ -8,6 +8,10 @@ namespace KiraiMod.Modules
         public Vector3 oGravity;
         public float speed = 8;
 
+        public new ModuleInfo[] info = {
+            new ModuleInfo("Flight", "Allows you to fly around with no gravity", ButtonType.Toggle, 1, 0, nameof(state))
+        };
+
         public override void OnStateChange(bool state)
         {
             if (VRCPlayer.field_Internal_Static_VRCPlayer_0 == null) return;

@@ -11,6 +11,11 @@ namespace KiraiMod.Modules
     {
         public bool rgb = false;
 
+        public new ModuleInfo[] info = {
+            new ModuleInfo("Nameplates", "Custom nameplates. Highlight for friends and red for KOS", ButtonType.Toggle, 1, 1, nameof(state)),
+            new ModuleInfo("RGB Nameplates", "Rainbow nameplates for friends", ButtonType.Toggle, 2, 1, nameof(state)),
+        };
+
 		public override void OnStateChange(bool state)
 		{
             Refresh();

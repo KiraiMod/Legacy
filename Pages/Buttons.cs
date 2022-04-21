@@ -28,22 +28,7 @@ namespace KiraiMod.Pages
                 }
             }));
 
-            Shared.menu.CreateButton("p2/portal", "Portal", "Portals the targeted player", 0f, 1f, Shared.menu.pages[2].transform, new System.Action(() =>
-            {
-                Helper.PortalPlayer(Shared.targetPlayer, Shared.modules.portal.distance, Shared.modules.portal.infinite);
-            }));
-            
-            Shared.menu.CreateButton("p2/delete-portals", "Delete\nPortals", "Deletes all non-static portals", 1f, 1f, Shared.menu.pages[2].transform, new System.Action(() =>
-            {
-                Helper.DeletePortals();
-            }));
-
-            Shared.menu.CreateButton("p2/save", "Save", "Save configuration to disk", 2f, 1f, Shared.menu.pages[2].transform, new System.Action(() =>
-            {
-                Shared.config.Save();
-            }));
-
-            Shared.menu.CreateButton("p2/fast-pickups", "Fast Pickups", "Thrown pickups are very fast", -1f, 0f, Shared.menu.pages[2].transform, new System.Action(() =>
+            Shared.menu.CreateButton("p2/fast-pickups", "Fast Pickups", "Thrown pickups are very fast", 0f, 1f, Shared.menu.pages[2].transform, new System.Action(() =>
             {
                 VRC_Pickup[] pickups = UnityEngine.Object.FindObjectsOfType<VRC_Pickup>();
                 for (int i = 0; i < pickups.Length; i++)
@@ -52,19 +37,17 @@ namespace KiraiMod.Pages
                 }
             }));
 
-            Shared.menu.CreateButton("p2/refresh-kos", "Refresh KOS", "Refreshes KOS list and scans lobby", 0f, 0f, Shared.menu.pages[2].transform, new System.Action(() => 
+            Shared.menu.CreateButton("p2/save", "Save", "Save configuration to disk", -1f, -1f, Shared.menu.pages[2].transform, new System.Action(() =>
             {
-                Shared.modules.kos.RefreshList();
-                Shared.modules.kos.RefreshStatus();
-                Shared.modules.nameplates.Refresh();
+                Shared.config.Save();
             }));
 
-            Shared.menu.CreateButton("p2/load", "Load", "Load configuration from disk", 2f, 0f, Shared.menu.pages[2].transform, new System.Action(() =>
+            Shared.menu.CreateButton("p2/load", "Load", "Load configuration from disk", 0f, -1f, Shared.menu.pages[2].transform, new System.Action(() =>
             {
                 Shared.config.Load();
             }));
 
-            Shared.menu.CreateButton("p2/crash", "Crash", "Manually initiate a crash to GTFO", 1f, -1f, Shared.menu.pages[2].transform, new System.Action(() =>
+            Shared.menu.CreateButton("p2/crash", "Crash", "Manually initiate a crash to GTFO", 2f, -1f, Shared.menu.pages[2].transform, new System.Action(() =>
             {
                 MelonModLogger.Log("vvvvvvvvvvvvvvvvvvvvvvvvv");
                 MelonModLogger.Log("Manually Initiated Crash.");

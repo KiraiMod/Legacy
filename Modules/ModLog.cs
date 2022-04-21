@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using VRC;
 using VRC.Core;
 
 namespace KiraiMod.Modules
@@ -11,6 +10,10 @@ namespace KiraiMod.Modules
     {
         UnityEngine.UI.Text text;
         List<string> names = new List<string>();
+
+        public new ModuleInfo[] info = {
+            new ModuleInfo("Mod Log", "Moderation log for block, mute, and avatars", ButtonType.Toggle, 0, 1, nameof(state))
+        };
 
         public ModLog()
         {

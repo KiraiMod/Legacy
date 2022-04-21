@@ -16,6 +16,11 @@ namespace KiraiMod.Modules
         public string[] kosList = new string[0];
         public List<Player> players = new List<Player>();
 
+        public new ModuleInfo[] info = {
+            new ModuleInfo("Auto KOS", "Auto targets and portals players on the KOS list", ButtonType.Toggle, 11, 0, nameof(state)),
+            new ModuleInfo("Refresh KOS", "Refreshes KOS list and scans lobby", ButtonType.Button, 4, 2, nameof(Refresh))
+        };
+
         public KOS()
         {
             RefreshList();
@@ -135,6 +140,13 @@ namespace KiraiMod.Modules
             }
 
             Helper.DeletePortals();
+        }
+
+        public void Refresh()
+        {
+            Shared.modules.kos.RefreshList();
+            Shared.modules.kos.RefreshStatus();
+            Shared.modules.nameplates.Refresh();
         }
     }
 }

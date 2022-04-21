@@ -82,7 +82,7 @@ namespace KiraiMod
             if (HighlightsFX.prop_HighlightsFX_0 != null && HighlightsFX.prop_HighlightsFX_0.field_Protected_Material_0 != null)
                 HighlightsFX.prop_HighlightsFX_0.field_Protected_Material_0.SetColor("_HighlightColor", new Color(0.34f, 0f, 0.65f));
 
-            Shared.modules.speed.Reapply();
+            Shared.modules.OnLevelWasLoaded();
         }
 
         public override void VRChat_OnUiManagerInit()
@@ -157,8 +157,9 @@ namespace KiraiMod
                 ToggleSpoof(state);
             }));
 
-            Shared.menu.CreateButton("p2/unload", "Unload", "Reverses most KiraiMod changes", 2f, -1f, Shared.menu.pages[2].transform, new System.Action(() =>
+            Shared.menu.CreateButton("p2/unload", "Unload", "Reverses most KiraiMod changes", 1f, -1f, Shared.menu.pages[2].transform, new System.Action(() =>
             {
+                Utils.HUDMessage("Press INSERT to reload");
                 Unload();
             }));
         }
@@ -171,15 +172,10 @@ namespace KiraiMod
             bUnload = true;
 
             Shared.config.Save();
-            Shared.modules.flight.SetState(false);
-            Shared.modules.speed.SetState(false);
-            Shared.modules.noclip.SetState(false);
-            Shared.modules.esp.SetState(false);
-            Shared.modules.nameplates.SetState(false);
-            Shared.modules.kos.SetState(false);
-            Shared.modules.portal.SetState(false);
-            Shared.modules.modlog.SetState(false);
-            Shared.modules.orbit.SetState(false);
+
+            for (int i = 0; i < Shared.modules.modules.Count; i++) {
+                Shared.modules.modules[i].SetState(false);
+            }
             ToggleSpoof(false);
 
             Helper.DeletePortals();

@@ -7,6 +7,11 @@ namespace KiraiMod.Modules
 {
     public class ESP : ModuleBase
     {
+        public new ModuleInfo[] info =
+        {
+            new ModuleInfo("ESP", "Allows you to see players through walls", ButtonType.Toggle, 3, 0, nameof(state))
+        };
+
         public override void OnStateChange(bool state)
         {
             GameObject[] players = GameObject.FindGameObjectsWithTag("Player");

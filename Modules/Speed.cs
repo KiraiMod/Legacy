@@ -34,6 +34,19 @@
             } else Disable(movement);
         }
 
+        public override void OnLevelWasLoaded()
+        {
+            if (!state) return;
+
+            if (VRCPlayer.field_Internal_Static_VRCPlayer_0 == null) return;
+
+            LocomotionInputController movement = VRCPlayer.field_Internal_Static_VRCPlayer_0.GetComponentInChildren<LocomotionInputController>();
+
+            if (movement == null) return;
+
+            Enable(movement);
+        }
+
         public void Enable(LocomotionInputController movement)
         {
             movement.runSpeed = speedRun;
@@ -71,19 +84,6 @@
 
             speedRun = value;
             if (state) Enable(movement);
-        }
-
-        public void Reapply()
-        {
-            if (!state) return;
-
-            if (VRCPlayer.field_Internal_Static_VRCPlayer_0 == null) return;
-
-            LocomotionInputController movement = VRCPlayer.field_Internal_Static_VRCPlayer_0.GetComponentInChildren<LocomotionInputController>();
-
-            if (movement == null) return;
-
-            Enable(movement);
         }
     }
 }
