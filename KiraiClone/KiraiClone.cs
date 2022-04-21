@@ -29,7 +29,7 @@ namespace KiraiMod
             Stream stream;
             MemoryStream mem;
 
-            if (!AppDomain.CurrentDomain.GetAssemblies().Any(a => a.GetName().Name == "KiraiLib" || a.GetName().Name == "KiraiLibLoader"))
+            if (!AppDomain.CurrentDomain.GetAssemblies().Any(a => a.GetName().Name == "KiraiLibLoader"))
             {
                 stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("KiraiMod.KiraiLibLoader.dll");
                 mem = new MemoryStream((int)stream.Length);
