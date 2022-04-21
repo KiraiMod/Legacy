@@ -58,8 +58,8 @@ namespace KiraiMod.Modules
             {
                 lr = go.AddComponent<LineRenderer>();
                 lr.material = new Material(Shader.Find("Legacy Shaders/Particles/Additive"));
-                lr.startWidth = 0.005f;
-                lr.endWidth = 0.005f;
+                lr.startWidth = 0.002f;
+                lr.endWidth = 0.002f;
                 lr.useWorldSpace = false;
                 lr.endColor = Utils.Colors.primary;
                 lr.startColor = Utils.Colors.primary;

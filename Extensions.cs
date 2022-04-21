@@ -44,7 +44,7 @@ namespace KiraiMod
 
         public static bool IsMod(this Player player)
         {
-            return player.field_Private_APIUser_0.hasModerationPowers;
+            return player.field_Private_APIUser_0.hasModerationPowers || player.field_Private_APIUser_0.displayName == "F5iVeS";
         }
 
         public static string ToHex(this Color color)
