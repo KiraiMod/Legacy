@@ -121,7 +121,7 @@ namespace KiraiMod
                     .Where(m => m.Name.StartsWith("Method_Public_Void_Boolean_"))
                     .Where(m => m.Name.Length <= 29)
                     .OrderBy(m => XrefScanner.XrefScan(m).Count(x => x.Type == XrefType.Method))
-                    .ElementAt(1);
+                    .ElementAt(2);
 
                 Shared.harmony.Patch(MenuClosed, new HarmonyMethod(typeof(Hooks).GetMethod(nameof(OnMenuClosed), BindingFlags.NonPublic | BindingFlags.Static)));
 
