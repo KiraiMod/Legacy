@@ -71,7 +71,7 @@ namespace KiraiMod.Modules
 
             foreach (Player player in PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0)
                 if (player.IsFriend())
-                    player.field_Internal_VRCPlayer_0.field_Public_PlayerNameplate_0.field_Public_TextMeshProUGUI_0.color = KiraiLib.GetRainbow(Config.General.fRGBSpeed);
+                    player.field_Internal_VRCPlayer_0.field_Public_PlayerNameplate_0.field_Public_TextMeshProUGUI_0.color = KiraiLib.GetRainbow(Config.options.fRGBSpeed);
 		}
 
 		public void OnStateChangeRGB(bool state)

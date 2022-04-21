@@ -49,7 +49,7 @@ namespace KiraiMod.Modules
                                 Shared.modules.portal.distance,
                                 Shared.modules.portal.infinite);
 
-                            KiraiLib.Logger.Log($"Placing portal on <color={player.field_Private_APIUser_0.GetTrustColor().ToHex()}>{player.field_Private_APIUser_0.displayName}</color>", 1);
+                            KiraiLib.Logger.Display($"Placing portal on <color={player.field_Private_APIUser_0.GetTrustColor().ToHex()}>{player.field_Private_APIUser_0.displayName}</color>", 1);
                         }
                         else Helper.PortalPlayer(Shared.TargetPlayer, Shared.modules.portal.distance, Shared.modules.portal.infinite);
                     }

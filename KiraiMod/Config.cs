@@ -6,27 +6,24 @@ using System.Windows.Forms;
 
 namespace KiraiMod
 {
-    public class Config
+    public static class Config
     {
-        public class General
-        {
-            public static float fRGBSpeed = 1f;
-        }
+        static Config() => Load();
 
-        private Options options = new Options();
+        public static Options options = new Options();
 
         public static readonly string config = "kiraimod.config.json";
         public static readonly string alias = "kiraimod.alias.json";
         public static readonly string menu = "kiraimod.buttons.json";
-        public List<string[]> aliases = new List<string[]>();
+        public static List<string[]> aliases = new List<string[]>();
 
-        public void Save()
+        public static void Save()
         {
             MelonLogger.Msg("Saving to config");
             System.IO.File.WriteAllText(config, JSON.Dump(options, EncodeOptions.PrettyPrint));
         }
 
-        public void Load()
+        public static void Load()
         {
             MelonLogger.Msg("Loading from config");
 
@@ -44,10 +41,11 @@ namespace KiraiMod
                     .ToList().ForEach(x => KiraiLib.UI.overrides[x.Key] = x.Value.ToArray());
         }
 
-        internal sealed class Options
+        public class Options
         {
             public bool bInfinitePortals;
             public bool bAutoKOS = true;
+            public bool bUseRPC = true;
 
             public bool bESP;
             public bool bNameplates;
@@ -73,7 +71,7 @@ namespace KiraiMod
             public float fPortalDistance;
             public float fOrbitSpeed;
             public float fOrbitDistance;
-            public float fRGBSpeed;
+            public float fRGBSpeed = 1;
             public float fItemOrbitSize;
             public float fItemOrbitSpeed;
             public float fThrowSpeed;
@@ -81,16 +79,9 @@ namespace KiraiMod
             public string szWorldCrash = "avtr_f3739df2-b502-4728-ba19-3099772c2de3";
 
             [BeforeEncode]
-            public void BeforeEncode()
-            {
-                Set(false);
-            }
-
+            public void BeforeEncode() => Set(false);
             [AfterDecode]
-            public void AfterDecode()
-            {
-                Set(true);
-            }
+            public void AfterDecode() => Set(true);
 
             public void Set(bool load)
             {
@@ -122,7 +113,6 @@ namespace KiraiMod
                 Move(load, ref Shared.modules.orbit.distance,            ref fOrbitDistance    );
                 Move(load, ref Shared.modules.itemOrbit.speed,           ref fItemOrbitSize    );
                 Move(load, ref Shared.modules.itemOrbit.size,            ref fItemOrbitSpeed   );
-                Move(load, ref General.fRGBSpeed,                        ref fRGBSpeed         );
                 Move(load, ref Shared.modules.misc.throwSpeed,           ref fThrowSpeed       );
                 #endregion
                 #region string
@@ -148,12 +138,6 @@ namespace KiraiMod
             {
                 if (load) prop1 = prop2;
                 else prop2 = prop1;
-            }
-
-            public void LOSS(bool load, Modules.ModuleBase module, bool state) // Load Only SetState
-            {
-                if (load) module.SetState(state);
-                else return;
             }
         }
     }

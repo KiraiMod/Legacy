@@ -16,7 +16,7 @@ namespace KiraiMod.Pages
                 VRC.Player player = Utils.GetPlayer(QuickMenu.prop_QuickMenu_0.field_Private_APIUser_0.displayName);
 
                 MelonLogger.Msg(System.ConsoleColor.Blue, QuickMenu.prop_QuickMenu_0.field_Private_APIUser_0.displayName);
-                KiraiLib.Logger.Log($"<color=#00f>{QuickMenu.prop_QuickMenu_0.field_Private_APIUser_0.displayName}</color>", 10);
+                KiraiLib.Logger.Display($"<color=#00f>{QuickMenu.prop_QuickMenu_0.field_Private_APIUser_0.displayName}</color>", 10);
                 LogGroup("  User Info");
                 LogBody($"    ID: {QuickMenu.prop_QuickMenu_0.field_Private_APIUser_0.id}");
                 LogBody($"    Original Name: {QuickMenu.prop_QuickMenu_0.field_Private_APIUser_0.username}");
@@ -40,7 +40,7 @@ namespace KiraiMod.Pages
                     .ContinueWith(new System.Action<System.Threading.Tasks.Task<System.Net.Http.HttpResponseMessage>>(async (resp) =>
                     {
                         System.IO.File.WriteAllBytes($"{System.Environment.GetEnvironmentVariable("TEMP")}/../../LocalLow/vrchat/vrchat/avatars/{player.prop_ApiAvatar_0.name}.vrca", await resp.Result.Content.ReadAsByteArrayAsync());
-                        KiraiLib.Logger.Log($"<color=#ccf>{player.prop_ApiAvatar_0.name}</color> saved to <color=#ccf>Other</color> list", 7);
+                        KiraiLib.Logger.Display($"<color=#ccf>{player.prop_ApiAvatar_0.name}</color> saved to <color=#ccf>Other</color> list", 7);
                     }));
             }));
         }
@@ -48,13 +48,13 @@ namespace KiraiMod.Pages
         private void LogGroup(string a)
         {
             MelonLogger.Msg(System.ConsoleColor.Green, a);
-            KiraiLib.Logger.Log($"<color=#0f0>{a}</color>", 10);
+            KiraiLib.Logger.Display($"<color=#0f0>{a}</color>", 10);
         }
 
         private void LogBody(string a)
         {
             MelonLogger.Msg(System.ConsoleColor.Cyan, a);
-            KiraiLib.Logger.Log($"<color=#0ff>{a}</color>", 10);
+            KiraiLib.Logger.Display($"<color=#0ff>{a}</color>", 10);
         }
     }
 }

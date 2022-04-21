@@ -16,7 +16,6 @@ namespace KiraiMod
             } 
         }
 
-        public static Config config;
         public static Modules.Modules modules;
         public static Hooks hooks;
         public static HarmonyInstance harmony;
@@ -26,6 +25,7 @@ namespace KiraiMod
         public static class Options
         {
             public static bool bWorldTriggers;
+            public static bool bOSLPush;
         }
 
         public static bool unloaded;

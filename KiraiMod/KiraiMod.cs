@@ -33,9 +33,7 @@ namespace KiraiMod
             Assembly.Load(mem.ToArray());
 
 #if !DEBUG
-            new Action(() =>
-                KiraiLibLoader.Load()
-            )();
+            new Action(() => KiraiLibLoader.Load())();
 #endif
         }
 
@@ -69,74 +67,10 @@ namespace KiraiMod
             Shared.http = new HttpClient();
 
             Shared.modules = new Modules.Modules();
-            Shared.config = new Config();
-            Shared.config.Load();
             Shared.ipc = new IPC();
             Shared.hooks = new Hooks();
 
             Shared.modules.StartCoroutines();
-
-            if (MelonHandler.Mods.Any(mod => mod.Assembly.GetName().Name.Contains("KiraiRPC")))
-            {
-                MelonLogger.Msg("Found KiraiRPC, using it");
-                new Action(() =>
-                {
-                    var KiraiSendRPC = KiraiRPC.GetSendRPC("KiraiMod");
-                    var CartridgeSendRPC = KiraiRPC.GetSendRPC("CartridgeMod");
-                    KiraiRPC.callbackChain += (data) =>
-                    {
-                        if (data.target == "KiraiRPC")
-                        {
-                            switch (data.id)
-                            {
-                                case (int)KiraiRPC.RPCEventIDs.OnInit:
-                                    KiraiSendRPC(0x000, data.sender);
-
-                                    if (data.sender != VRC.Core.APIUser.CurrentUser.displayName) 
-                                        CartridgeSendRPC(0x002, data.sender);
-                                    
-                                    break;
-                            }
-                        }
-                        else if (data.target == "KiraiMod")
-                        {
-                            switch (data.id)
-                            {
-                                case 0x000:
-                                case 0x001:
-                                    if (data.payload == VRC.Player.prop_Player_0.field_Private_APIUser_0.displayName)
-                                    {
-                                        Shared.modules.nameplates.kmodders.Add(data.sender);
-                                        Shared.modules.nameplates.Refresh();
-                                        Shared.modules.playerlist.Refresh();
-                                        if (data.id == 0x000)
-                                            KiraiSendRPC(0x001, data.sender);
-                                    }
-                                    break;
-                                case 0x002:
-                                    if (data.payload == VRC.Player.prop_Player_0.field_Private_APIUser_0.displayName)
-                                        KiraiSendRPC(0x001, data.sender);
-                                    break;
-                            }
-                        }
-                        else if (data.target == "CartridgeMod")
-                        {
-                            switch (data.id)
-                            {
-                                case 0x000:
-                                case 0x001:
-                                    if (data.payload == VRC.Player.prop_Player_0.field_Private_APIUser_0.displayName)
-                                    {
-                                        Shared.modules.nameplates.cmodders.Add(data.sender);
-                                        Shared.modules.nameplates.Refresh();
-                                        Shared.modules.playerlist.Refresh();
-                                    }
-                                    break;
-                            }
-                        }
-                    };
-                }).Invoke();
-            }
 
             KiraiLib.Callbacks.OnUIUnload += () =>
             {
@@ -154,19 +88,18 @@ namespace KiraiMod
 
                 Shared.unloaded = false;
             };
+
+            Integrations.Initialize();
         }
 
         public override void OnApplicationQuit()
         {
-            if (!bUnload) Shared.config.Save();
+            if (!bUnload) Config.Save();
         }
 
         public override void OnUpdate()
         {
-            if (Input.GetKeyDown(KeyCode.Insert))
-            {
-                Reload();
-            }
+            if (Input.GetKeyDown(KeyCode.Insert)) Reload();
              
             if (bUnload) return;
 
@@ -201,7 +134,7 @@ namespace KiraiMod
                 if (Input.GetKeyDown(KeyCode.KeypadMinus))
 #if DEBUG
                 {
-                    //KiraiLib.Libraries.LoadLibrary("KiraiRPC").Wait();
+
                 }
 #else
                     MelonLogger.Msg("Alive");
@@ -256,10 +189,14 @@ namespace KiraiMod
         {
             if (bUnload) return;
 
+            KiraiLib.SDK.Events.OnSceneLoad(buildIndex, sceneName);
+
             if (HighlightsFX.prop_HighlightsFX_0 != null && HighlightsFX.prop_HighlightsFX_0.field_Protected_Material_0 != null)
                 HighlightsFX.prop_HighlightsFX_0.field_Protected_Material_0.SetColor("_HighlightColor", new Color(0.34f, 0f, 0.65f));
 
             Shared.modules.OnLevelWasLoaded();
+
+            if (Shared.Options.bOSLPush) KiraiLib.SDK.Events.OnSceneLoad(buildIndex, sceneName);
         }
 
         public override void VRChat_OnUiManagerInit()
@@ -418,7 +355,7 @@ namespace KiraiMod
 
             bUnload = true;
 
-            Shared.config.Save();
+            Config.Save();
 
             for (int i = 0; i < Shared.modules.modules.Count; i++) {
                 Shared.modules.modules[i].SetState(false);
@@ -438,7 +375,7 @@ namespace KiraiMod
 
             bUnload = false;
             MelonLogger.Msg("Reloading");
-            Shared.config.Load();
+            Config.Load();
 
             KiraiLib.UI.Reload();
         }

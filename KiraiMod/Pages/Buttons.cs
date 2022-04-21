@@ -27,12 +27,12 @@ namespace KiraiMod.Pages
 
             KiraiLib.UI.Button.Create("p3/save", "Save", "Save configuration to disk", -1f, -1f, KiraiLib.UI.pages[Shared.PageRemap[(int)Shared.PageIndex.buttons1]].transform, new System.Action(() =>
             {
-                Shared.config.Save();
+                Config.Save();
             }));
 
             KiraiLib.UI.Button.Create("p3/load", "Load", "Load configuration from disk", 0f, -1f, KiraiLib.UI.pages[Shared.PageRemap[(int)Shared.PageIndex.buttons1]].transform, new System.Action(() =>
             {
-                Shared.config.Load();
+                Config.Load();
             }));
 
             KiraiLib.UI.Button.Create("p3/crash-self", "Crash Self", "Manually initiate a crash to GTFO", 2f, -1f, KiraiLib.UI.pages[Shared.PageRemap[(int)Shared.PageIndex.buttons1]].transform, new System.Action(() =>

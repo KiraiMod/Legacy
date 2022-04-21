@@ -14,10 +14,7 @@ namespace KiraiMod
 {
     public class Hooks
     {
-        public Hooks()
-        {
-            MelonCoroutines.Start(Initialize());
-        }
+        public Hooks() => MelonCoroutines.Start(Initialize());
 
         private static IEnumerator Initialize()
         {
