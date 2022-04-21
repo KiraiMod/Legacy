@@ -31,6 +31,7 @@ namespace KiraiMod.Modules
             new ModuleInfo("Bring\nPickups", "Brings all pickups in the scene", ButtonType.Button, 6, Shared.PageIndex.buttons1, nameof(BringPickups)),
             new ModuleInfo("Drop\nTarget", "Forget the current target", ButtonType.Button, 7, Shared.PageIndex.buttons1, nameof(DropTarget)),
             new ModuleInfo("Change\nPedestals", "Change all pedestals to an avatar ID", ButtonType.Button, 9, Shared.PageIndex.buttons2, nameof(ChangePedestals)),
+            new ModuleInfo("Respawn\nPickups", "Respawns all pickups", ButtonType.Button, 10, Shared.PageIndex.buttons2, nameof(RespawnPickups)),
             new ModuleInfo("Join World\nvia ID", "Join a world using a full instance id", ButtonType.Button, 6, Shared.PageIndex.buttons2, nameof(JoinWorldByID)),
             new ModuleInfo("Clipboard", "Use the clipboard instead of a popup input", ButtonType.Toggle, 10, Shared.PageIndex.toggles2, nameof(bUseClipboard)),
             new ModuleInfo("Annoyance Mode", "Orbit things around the targets head instead of their feet", ButtonType.Toggle, 9, Shared.PageIndex.toggles2, nameof(bAnnoyance)),
@@ -90,6 +91,15 @@ namespace KiraiMod.Modules
             {
                 pickups[i].ThrowVelocityBoostScale = throwSpeed;
             }
+        }
+
+        public void RespawnPickups()
+        {
+            foreach (VRC_Pickup pickup in UnityEngine.Object.FindObjectsOfType<VRC_Pickup>())
+            {
+                Networking.LocalPlayer.TakeOwnership(pickup.gameObject);
+                pickup.transform.position = new Vector3(0, -10000000, 0);
+            };
         }
 
         public void NukeVideoSync()
