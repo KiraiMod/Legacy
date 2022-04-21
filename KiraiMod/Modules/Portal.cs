@@ -30,14 +30,14 @@ namespace KiraiMod.Modules
                         if (Shared.modules.misc.bAnnoyance)
                         {
                             var player = VRC.PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0[
-                                    UnityEngine.Random.Range(0, VRC.PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0.Count - 1)];
+                                    UnityEngine.Random.Range(0, VRC.PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0.Count)];
 
                             Helper.PortalPlayer(
                                 player,
                                 Shared.modules.portal.distance, 
                                 Shared.modules.portal.infinite);
 
-                            MelonLogger.Log(player.field_Private_APIUser_0.displayName);
+                            KiraiLib.Logger.Log($"Placing portal on <color={player.field_Private_APIUser_0.GetTrustColor().ToHex()}>{player.field_Private_APIUser_0.displayName}</color>", 1);
                         }
                         else
 #endif

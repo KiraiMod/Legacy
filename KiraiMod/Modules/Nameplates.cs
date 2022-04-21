@@ -20,6 +20,7 @@ namespace KiraiMod.Modules
 
 		public List<string> kmodders = new List<string>();
 		public List<string> dmodders = new List<string>();
+#if BETA
 		public string[] fmodders = new string[0];
 
 		public Nameplates()
@@ -35,6 +36,7 @@ namespace KiraiMod.Modules
 				.ToArray();
 			}));
         }
+#endif
 
 		public override void OnStateChange(bool state)
 		{
@@ -129,9 +131,11 @@ namespace KiraiMod.Modules
 			if (player.IsMod()) SetTag(ref stack, stats, contents, Utils.Colors.red, "Moderator");
 			if (player.IsMaster()) SetTag(ref stack, stats, contents, Utils.Colors.highlight, "Master");
 			if (player.IsKModder()) SetTag(ref stack, stats, contents, Utils.Colors.highlight, "KiraiMod");
-			//if (player.IsDModder()) SetTag(ref stack, stats, contents, Color.yellow, "DayClient");
+            //if (player.IsDModder()) SetTag(ref stack, stats, contents, Color.yellow, "DayClient");
+#if BETA
 			if (player.IsFModder()) SetTag(ref stack, stats, contents, Color.white, "FClient");
-			if (player.IsKOS()) SetTag(ref stack, stats, contents, Utils.Colors.red, "KOS");
+#endif
+            if (player.IsKOS()) SetTag(ref stack, stats, contents, Utils.Colors.red, "KOS");
 			if (player == Shared.TargetPlayer) SetTag(ref stack, stats, contents, Utils.Colors.highlight, "Targeted");
 
 			stats.localPosition = new Vector3(0, (stack + 1) * 30, 0);

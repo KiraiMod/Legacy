@@ -69,10 +69,12 @@ namespace KiraiMod
         //    return Shared.modules.nameplates.dmodders.Contains(player.field_Private_APIUser_0.displayName);
         //}
 
+#if BETA
         public static bool IsFModder(this Player player)
         {
             return Shared.modules.nameplates.fmodders.Contains(player.field_Private_APIUser_0.id);
         }
+#endif
 
         public static string ToHex(this Color color)
         {
