@@ -68,8 +68,13 @@ namespace KiraiMod.Pages
                 {
                     Networking.LocalPlayer.TakeOwnership(pickup.gameObject);
                     pickup.transform.localPosition = new Vector3(0, 0, 0);
-                    pickup.transform.position = VRCPlayer.field_Internal_Static_VRCPlayer_0.transform.position + new Vector3(0, 0.1f, 0);
+                    pickup.transform.position = (Shared.targetPlayer?.transform.position ?? VRCPlayer.field_Internal_Static_VRCPlayer_0.transform.position) + new Vector3(0, 0.1f, 0);
                 }
+            }));
+
+            Shared.menu.CreateButton("p2/drop-target", "Drop\nTarget", "Forget the current target", 2f, 0f, Shared.menu.pages[2].transform, new System.Action(() =>
+            {
+                Shared.targetPlayer = null;
             }));
 
             Shared.menu.CreateButton("p2/save", "Save", "Save configuration to disk", -1f, -1f, Shared.menu.pages[2].transform, new System.Action(() =>

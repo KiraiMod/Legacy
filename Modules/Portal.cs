@@ -26,7 +26,7 @@ namespace KiraiMod.Modules
 
         public void PortalTarget()
         {
-            if (Shared.targetPlayer != null) Helper.PortalPlayer(Shared.targetPlayer, Shared.modules.portal.distance, Shared.modules.portal.infinite);
+            Helper.PortalPlayer(Shared.targetPlayer ?? VRCPlayer.field_Internal_Static_VRCPlayer_0.field_Private_Player_0, Shared.modules.portal.distance, Shared.modules.portal.infinite);
         }
 
         public void DeletePortals()
