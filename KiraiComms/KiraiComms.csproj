@@ -79,10 +79,12 @@
   <ItemGroup>
     <Compile Include="KiraiComms.cs" />
     <Compile Include="Menu.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy $(TargetPath) "C:\Program Files (x86)\Steam\steamapps\common\VRChat\Mods\$(TargetFileName)"</PostBuildEvent>
+    <PostBuildEvent>copy "$(TargetPath)" "C:\Program Files (x86)\Steam\steamapps\common\VRChat\Mods\$(TargetFileName)"</PostBuildEvent>
   </PropertyGroup>
 </Project>

@@ -4,6 +4,9 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
+[assembly: MelonInfo(typeof(KiraiMod.KiraiUI), "KiraiUI", "0.0.0", "Kirai Chan#8315")]
+[assembly: MelonGame("VRChat", "VRChat")]
+
 namespace KiraiMod
 {
     public class KiraiUI : MelonMod

@@ -10,6 +10,9 @@ using UnityEngine;
 using VRC;
 using VRC.SDKBase;
 
+[assembly: MelonInfo(typeof(KiraiMod.HostelClient), "HostelClient", null, "Kirai Chan")]
+[assembly: MelonGame("VRChat", "VRChat")]
+
 namespace KiraiMod
 {
     public class HostelClient : MelonMod
