@@ -62,7 +62,7 @@ namespace KiraiMod.Modules
             get => buttonPage;
             set
             {
-                if ((value < 0 || value > (selected?._eventTable?.Count ?? 0) / 12 - 1) && value != 0) return;
+                if ((value < 0 || value > (selected?._eventTable?.Count ?? 0) / 12) && value != 0) return;
                 buttonPage = value;
                 HandleButtonPage();
             }
@@ -264,20 +264,9 @@ namespace KiraiMod.Modules
             });
         }
 
-        public void Refresh()
-        {
-            Shared.modules.udon.OnLevelWasLoaded();
-        }
-
-        public void Up()
-        {
-            CurrentPage--;
-        }
-
-        public void Down()
-        {
-            CurrentPage++;
-        }
+        public void Refresh() => Shared.modules.udon.OnLevelWasLoaded();
+        public void Up() => CurrentPage--;
+        public void Down() => CurrentPage++;
 
         public void Broadcast()
         {
