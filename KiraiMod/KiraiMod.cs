@@ -1,4 +1,5 @@
-﻿using MelonLoader;
+﻿//#define TESTING
+using MelonLoader;
 using System.Linq;
 using System.Reflection;
 using UnhollowerRuntimeLib;
@@ -164,18 +165,35 @@ namespace KiraiMod
                             }));
                         } else
                         {
+                            MethodInfo onStateChange = module.GetType().GetMethod($"OnStateChange{(/*info.reference == "state" ? "" :*/ info.reference)}", BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
                             FieldInfo reference = module.GetType().GetField(info.reference, BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
                             if (reference == null)
                             {
                                 MelonLogger.LogWarning($"Failed to find property {info.reference} on {module.GetType()}");
                                 continue;
                             }
-                            Shared.menu.CreateToggle(Utils.CreateID(info.label, info.page), (bool)reference.GetValue(module),
+                            bool cval = (bool)reference.GetValue(module);
+                            Shared.menu.CreateToggle(Utils.CreateID(info.label, info.page), cval,
                                 info.label, info.description, x, y, Shared.menu.pages[info.page].transform,
-                                new System.Action<bool>(state =>
+                                onStateChange == null
+                                ? new System.Action<bool>(state =>
                                 {
                                     reference.SetValue(module, state);
+                                })
+                                : new System.Action<bool>(state =>
+                                {
+                                    if (state == cval) return;
+
+                                    cval = !cval;
+
+                                    MelonLogger.Log($"{module.GetType().Name}.{info.reference} {(cval ? "On" : "Off")}");
+
+                                    onStateChange.Invoke(module, new object[] { cval });
                                 }));
+
+#if TESTING
+                            MelonLogger.Log($"{module.GetType().Name}.{info.reference}: {(onStateChange == null ? "Acchi" : "Kocchi")}");
+#endif
                         }
                     }
                     else if (info.type == Modules.ButtonType.Button)

@@ -9,11 +9,11 @@ namespace KiraiMod.Modules
 {
 	public class Nameplates : ModuleBase
 	{
-		public bool rgb = false;
+		public bool RGB = false;
 
 		public new ModuleInfo[] info = {
 			new ModuleInfo("Nameplates", "Custom nameplates. Highlight for friends and red for KOS", ButtonType.Toggle, 1, 1, nameof(state)),
-			new ModuleInfo("RGB Nameplates", "Rainbow nameplates for friends", ButtonType.Toggle, 2, 1, nameof(rgb)),
+			new ModuleInfo("RGB Nameplates", "Rainbow nameplates for friends", ButtonType.Toggle, 2, 1, nameof(RGB)),
 		};
 
 		public Dictionary<string, string> users = new Dictionary<string, string>();
@@ -52,7 +52,7 @@ namespace KiraiMod.Modules
 
 		public override void OnUpdate()
 		{
-			if (state && rgb)
+			if (state && RGB)
 			{
 				if (PlayerManager.field_Private_Static_PlayerManager_0?.field_Private_List_1_Player_0 == null) return;
 
@@ -151,5 +151,10 @@ namespace KiraiMod.Modules
 				(player.IsMaster() ? $"<color={Utils.Colors.highlight.ToHex()}>Master</color>\n" : "") + 
 				$"<color={player.field_Private_APIUser_0.GetTrustColor().ToHex()}>{player.field_Private_APIUser_0.GetTrustLevel()}</color>";
 		}
+
+		public void OnStateChangeRGB(bool state)
+        {
+			if (!state) Refresh();
+        }
 	}
 }

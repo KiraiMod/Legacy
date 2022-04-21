@@ -77,7 +77,7 @@ namespace KiraiMod
                 Move(load, ref Shared.modules.kos.state,          ref bAutoKOS          );
                 Move(load, ref Shared.modules.modlog.state,       ref bModLog           );
                 Move(load, ref Shared.modules.nameplates.state,   ref bNameplates       );
-                Move(load, ref Shared.modules.nameplates.rgb,     ref bNameplatesRGB    );
+                Move(load, ref Shared.modules.nameplates.RGB,     ref bNameplatesRGB    );
                 Move(load, ref Shared.modules.headlight.state,    ref bHeadlight        );
                 Move(load, ref Shared.modules.aliases.state,      ref bAliases          );
                 Move(load, ref Shared.modules.flight.directional, ref bDirectionalFlight);
