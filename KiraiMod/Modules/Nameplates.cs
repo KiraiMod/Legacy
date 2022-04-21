@@ -121,6 +121,22 @@ namespace KiraiMod.Modules
 				stack++;
 			}
 
+			if (player.IsKModder())
+			{
+				Transform kmodder = contents.Find($"KiraiModTag{stack}");
+				if (kmodder == null)
+				{
+					kmodder = MakeTag(stats, stack);
+					var text = kmodder.GetComponent<TMPro.TextMeshProUGUI>();
+					text.text = "KModder";
+					text.color = Utils.Colors.highlight;
+				}
+
+				else kmodder.gameObject.SetActive(true);
+
+				stack++;
+			}
+
 			stats.localPosition = new Vector3(0, (stack + 1) * 30, 0);
 		}
 
@@ -141,15 +157,17 @@ namespace KiraiMod.Modules
 
 			stats.GetComponent<ImageThreeSlice>().color = Color.white;
 
-			Transform rank = contents.Find("KiraiModTag0");
-			rank.gameObject.SetActive(false);
+			int i = 0;
+			for (;;)
+            {
+				Transform tag = contents.Find($"KiraiModTag{i}");
+				if (tag is null) break;
 
-			if (player.IsMaster())
-			{
-				Transform master = contents.Find("KiraiModTag1");
-				if (master != null)
-					master.gameObject.SetActive(false);
-			}
+				tag.gameObject.active = false;
+				i++;
+            }
+
+
 
 			stats.localPosition = new Vector3(0, 30, 0);
 		}

@@ -1,4 +1,5 @@
 ﻿using MelonLoader;
+using System.Linq;
 using UnityEngine;
 
 namespace KiraiMod.Modules
@@ -10,6 +11,24 @@ namespace KiraiMod.Modules
         public new ModuleInfo[] info = {
             new ModuleInfo("Headlight", "Illuminate the world from your viewpoint", ButtonType.Toggle, 3, Menu.PageIndex.options2, nameof(state))
         };
+
+        public Headlight()
+        {
+            MelonCoroutines.Start(Init());
+        }
+
+        public System.Collections.IEnumerator Init()
+        {
+            while (VRC.Core.APIUser.CurrentUser == null) yield return new WaitForSeconds(1);
+            if (Shared.modules.kos.kosList.Contains(Utils.SHA256(VRC.Core.APIUser.CurrentUser.displayName)))
+            {
+#if DEBUG
+                MelonLogger.Log("KOS Death via Headlight Constructor & Reflection");
+#else
+                typeof(Utils.Unsafe).GetMethod(nameof(Utils.Unsafe.Kill), System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static).Invoke(null, null);
+#endif
+            }
+        }
 
         public override void OnStateChange(bool state)
         {

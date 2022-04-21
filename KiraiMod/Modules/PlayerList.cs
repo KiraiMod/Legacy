@@ -65,7 +65,7 @@ namespace KiraiMod.Modules
 
         public override void OnLevelWasLoaded()
         {
-            if (state && !Shared.menu.qm.prop_Boolean_0)
+            if (Shared.menu != null && state && !Shared.menu.qm.prop_Boolean_0)
                 parent.active = false;
         }
 
