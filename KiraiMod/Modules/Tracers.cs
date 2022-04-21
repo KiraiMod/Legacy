@@ -3,7 +3,7 @@ using UnityEngine;
 using VRC;
 using VRC.SDKBase;
 using System.Linq;
-
+using VRC.Udon;
 
 namespace KiraiMod.Modules
 {
@@ -118,28 +118,24 @@ namespace KiraiMod.Modules
             }
         }
 
-        private void Refresh1()
-        {
-            GameObject[] temp = GameObject.FindGameObjectsWithTag("Player");
-            cache1 = new Transform[temp.Length];
-            for (int i = 0; i < temp.Length; i++)
-                cache1[i] = temp[i].transform;
-        }
-
+        private void Refresh1() => cache1 = GameObject.FindGameObjectsWithTag("Player").Select(u => u.transform).ToArray();
         private void Refresh2()
         {
-            VRC_Pickup[] temp = Object.FindObjectsOfType<VRC_Pickup>();
-            cache2 = new Transform[temp.Length];
-            for (int i = 0; i < temp.Length; i++)
-                cache2[i] = temp[i].transform;
-        }
+            var temp = Object.FindObjectsOfType<VRC_Pickup>().Select(u => u.transform).ToArray();
 
+            if (temp.Length == 0) cache2 = Object.FindObjectsOfType<UdonBehaviour>()
+                .Where(u => u._eventTable.ContainsKey("_onPickupUseDown") || u._eventTable.ContainsKey("_onPickupUseUp"))
+                .Select(u => u.transform).ToArray();
+            else cache2 = temp.Select(u => u.transform).ToArray();
+        }
         private void Refresh3()
         {
             VRC_Trigger[] temp = Object.FindObjectsOfType<VRC_Trigger>();
-            cache3 = new Transform[temp.Length];
-            for (int i = 0; i < temp.Length; i++)
-                cache3[i] = temp[i].transform;
+
+            if (temp.Length == 0) cache3 = Object.FindObjectsOfType<UdonBehaviour>()
+                    .Where(u => u.IsInteractive && !u._eventTable.ContainsKey("_onPickupUseDown") && !u._eventTable.ContainsKey("_onPickupUseUp"))
+                    .Select(u => u.transform).ToArray();
+            else cache3 = temp.Select(u => u.transform).ToArray();
         }
 
         private void SetupLineRenderer(LineRenderer lr, Color color)

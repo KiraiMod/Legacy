@@ -244,10 +244,10 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Condition=" '$(Configuration)' == 'Release' " Include="Lib\KiraiLibLoader.dll" />
+    <EmbeddedResource Condition=" '$(Configuration)' != 'Debug' " Include="Lib\KiraiLibLoader.dll" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Condition=" '$(Configuration)' != 'Release' " Include="Lib\KiraiLib.dll" />
+    <EmbeddedResource Condition=" '$(Configuration)' == 'Debug' " Include="Lib\KiraiLib.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
