@@ -39,12 +39,12 @@ namespace KiraiMod.Modules
         public int page = -1;
         public string reference = null;
 
-        public ModuleInfo (string label, string description, ButtonType type, int index, int page, string reference) {
+        public ModuleInfo (string label, string description, ButtonType type, int index, Menu.PageIndex page, string reference) {
             this.label = label;
             this.description = description;
             this.type = type;
             this.index = index;
-            this.page = page;
+            this.page = (int)page;
             this.reference = reference;
         }
     }

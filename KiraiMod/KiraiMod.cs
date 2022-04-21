@@ -142,11 +142,12 @@ namespace KiraiMod
                 }).Invoke();
             }
 
-            Shared.menu.CreatePage("kiraimod_options");
+            Shared.menu.CreatePage("kiraimod_options1");
             Shared.menu.CreatePage("kiraimod_options2");
-            Shared.menu.CreatePage("kiraimod_buttons");
+            Shared.menu.CreatePage("kiraimod_options3");
+            Shared.menu.CreatePage("kiraimod_buttons1");
             Shared.menu.CreatePage("kiraimod_buttons2");
-            Shared.menu.CreatePage("kiraimod_sliders");
+            Shared.menu.CreatePage("kiraimod_sliders1");
             Shared.menu.CreatePage("kiraimod_xutils");
 
             new Pages.Pages();
@@ -231,7 +232,7 @@ namespace KiraiMod
                 }
             }
 
-            Shared.menu.CreateButton("p2/unload", "Unload", "Reverses most KiraiMod changes", 1f, -1f, Shared.menu.pages[2].transform, new System.Action(() =>
+            Shared.menu.CreateButton("p2/unload", "Unload", "Reverses most KiraiMod changes", 1f, -1f, Shared.menu.pages[(int)Menu.PageIndex.buttons1].transform, new System.Action(() =>
             {
                 Utils.HUDMessage("Press INSERT to reload");
                 Unload();

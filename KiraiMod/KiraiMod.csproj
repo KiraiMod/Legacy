@@ -175,7 +175,7 @@
     <Compile Include="Modules\FreeCam.cs" />
     <Compile Include="Modules\GodMode.cs" />
     <Compile Include="Modules\Headlight.cs" />
-    <Compile Include="Modules\ItemESP.cs" />
+    <Compile Include="Modules\Tracers.cs" />
     <Compile Include="Modules\ItemOrbit.cs" />
     <Compile Include="Modules\KOS.cs" />
     <Compile Include="Modules\ModLog.cs" />
@@ -190,7 +190,6 @@
     <Compile Include="Modules\XUtils.cs" />
     <Compile Include="Pages\Buttons.cs" />
     <Compile Include="Pages\Sliders.cs" />
-    <Compile Include="Pages\XUtils.cs" />
     <Compile Include="Pages\SM.cs" />
     <Compile Include="Pages\UIM.cs" />
     <Compile Include="Pages\Toggles.cs" />

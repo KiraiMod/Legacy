@@ -5,6 +5,16 @@ namespace KiraiMod.Modules
 {
     public class XUtils : ModuleBase
     {
+        public new ModuleInfo[] info =
+        {
+            new ModuleInfo("Disable", "Disables the selected collider", ButtonType.Button, 0, Menu.PageIndex.xutils, nameof(Disable)),
+            new ModuleInfo("Enable", "Enables all child colliders", ButtonType.Button, 1, Menu.PageIndex.xutils, nameof(Enable)),
+            new ModuleInfo("Destroy", "Destroys selected object", ButtonType.Button, 2, Menu.PageIndex.xutils, nameof(Destroy)),
+            new ModuleInfo("Log", "Logs GameObject to logs", ButtonType.Button, 3, Menu.PageIndex.xutils, nameof(Log)),
+            new ModuleInfo("Portal", "Place portal at hit location", ButtonType.Button, 4, Menu.PageIndex.xutils, nameof(Portal)),
+            new ModuleInfo("Teleport", "Teleport to the hit location", ButtonType.Button, 5, Menu.PageIndex.xutils, nameof(Teleport)),
+        };
+
         public RaycastHit hit;
         public bool state2;
 
@@ -49,6 +59,45 @@ namespace KiraiMod.Modules
                     Shared.menu.selected = 5;
                 }
             }
+        }
+
+        public static void Disable()
+        {
+            Shared.modules.xutils.hit.collider.enabled = false;
+
+        }
+
+        public static void Enable()
+        {
+            Collider[] colliders = Shared.modules.xutils.hit.collider.gameObject.GetComponentsInChildren<Collider>();
+            for (int i = 0; i < colliders.Length; i++)
+            {
+                colliders[i].enabled = true;
+            }
+        }
+
+        public static void Destroy()
+        {
+            Object.Destroy(Shared.modules.xutils.hit.collider.gameObject);
+            Shared.modules.xutils.state2 = false;
+            Shared.menu.selected = 0;
+        }
+
+        public static void Log()
+        {
+            Utils.LogGO(Shared.modules.xutils.hit.collider.gameObject);
+
+        }
+
+        public static void Portal()
+        {
+            Helper.PortalPosition(Shared.modules.xutils.hit.point, Quaternion.Euler(0, 0, 0), Shared.modules.portal.infinite);
+
+        }
+
+        public static void Teleport()
+        {
+            Helper.Teleport(Shared.modules.xutils.hit.point);
         }
     }
 }

@@ -12,10 +12,10 @@ namespace KiraiMod.Modules
         public bool Favorited = false;
 
         public new ModuleInfo[] info = {
-            new ModuleInfo("Mute Self", "Mutes yourself for certain people", ButtonType.Toggle, 6, 0, nameof(state)),
-            new ModuleInfo("Mute Self Friends", "Only friends can hear you", ButtonType.Toggle, 8, 1, nameof(Friends)),
-            new ModuleInfo("Mute Self Targeted", "Only your targeted player can hear you", ButtonType.Toggle, 9, 1, nameof(Targeted)),
-            new ModuleInfo("Mute Self Favorited", "Only favorited friends can hear you", ButtonType.Toggle, 10, 1, nameof(Favorited))
+            new ModuleInfo("Mute Self", "Mutes yourself for certain people", ButtonType.Toggle, 6, Menu.PageIndex.options1, nameof(state)),
+            new ModuleInfo("Mute Self Friends", "Only friends can hear you", ButtonType.Toggle, 8, Menu.PageIndex.options2, nameof(Friends)),
+            new ModuleInfo("Mute Self Targeted", "Only your targeted player can hear you", ButtonType.Toggle, 9, Menu.PageIndex.options2, nameof(Targeted)),
+            new ModuleInfo("Mute Self Favorited", "Only favorited friends can hear you", ButtonType.Toggle, 10, Menu.PageIndex.options2, nameof(Favorited))
         };
 
         public override void OnStateChange(bool state)

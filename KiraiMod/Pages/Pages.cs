@@ -7,7 +7,6 @@
         public Toggles toggles;
         public Buttons buttons;
         public Sliders sliders;
-        public XUtils xutils;
 
         public Pages()
         {
@@ -16,7 +15,6 @@
             toggles = new Toggles();
             buttons = new Buttons();
             sliders = new Sliders();
-            xutils = new XUtils();
         }
     }
 }

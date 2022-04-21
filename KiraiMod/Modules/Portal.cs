@@ -9,10 +9,10 @@ namespace KiraiMod.Modules
 
         public new ModuleInfo[] info =
         {
-            new ModuleInfo("Auto Portal", "Drops portals on target every second", ButtonType.Toggle, 9, 0, nameof(state)),
-            new ModuleInfo("Infinite Portals", "Dropped portals will not be deleted", ButtonType.Toggle, 10, 0, nameof(infinite)),
-            new ModuleInfo("Portal", "Portals the targeted player", ButtonType.Button, 2, 2, nameof(PortalTarget)),
-            new ModuleInfo("Delete\nPortals", "Delete all non-static portals", ButtonType.Button, 3, 2, nameof(DeletePortals))
+            new ModuleInfo("Auto Portal", "Drops portals on target every second", ButtonType.Toggle, 9, Menu.PageIndex.options1, nameof(state)),
+            new ModuleInfo("Infinite Portals", "Dropped portals will not be deleted", ButtonType.Toggle, 7, Menu.PageIndex.options2, nameof(infinite)),
+            new ModuleInfo("Portal", "Portals the targeted player", ButtonType.Button, 2, Menu.PageIndex.buttons1, nameof(PortalTarget)),
+            new ModuleInfo("Delete\nPortals", "Delete all non-static portals", ButtonType.Button, 3, Menu.PageIndex.buttons1, nameof(DeletePortals))
         };
 
         public System.Collections.IEnumerator AutoPortal()

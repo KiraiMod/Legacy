@@ -21,8 +21,8 @@ namespace KiraiMod.Modules
         public List<Player> players = new List<Player>();
 
         public new ModuleInfo[] info = {
-            new ModuleInfo("Auto KOS", "Auto targets and portals players on the KOS list", ButtonType.Toggle, 11, 1, nameof(state)),
-            new ModuleInfo("Refresh KOS", "Refreshes KOS list and scans lobby", ButtonType.Button, 4, 2, nameof(Refresh))
+            new ModuleInfo("Auto KOS", "Auto targets and portals players on the KOS list", ButtonType.Toggle, 11, Menu.PageIndex.options2, nameof(state)),
+            new ModuleInfo("Refresh KOS", "Refreshes KOS list and scans lobby", ButtonType.Button, 4, Menu.PageIndex.buttons1, nameof(Refresh))
         };
 
         public KOS()

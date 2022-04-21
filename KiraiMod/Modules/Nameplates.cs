@@ -12,8 +12,8 @@ namespace KiraiMod.Modules
 		public bool RGB = false;
 
 		public new ModuleInfo[] info = {
-			new ModuleInfo("Nameplates", "Custom nameplates. Highlight for friends and red for KOS", ButtonType.Toggle, 1, 1, nameof(state)),
-			new ModuleInfo("RGB Nameplates", "Rainbow nameplates for friends", ButtonType.Toggle, 2, 1, nameof(RGB)),
+			new ModuleInfo("Nameplates", "Custom nameplates. Highlight for friends and red for KOS", ButtonType.Toggle, 1, Menu.PageIndex.options2, nameof(state)),
+			new ModuleInfo("RGB Nameplates", "Rainbow nameplates for friends", ButtonType.Toggle, 2, Menu.PageIndex.options2, nameof(RGB)),
 		};
 
 		public Dictionary<string, string> users = new Dictionary<string, string>();

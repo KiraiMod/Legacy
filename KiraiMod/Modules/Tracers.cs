@@ -5,10 +5,10 @@ using VRC.SDKBase;
 
 namespace KiraiMod.Modules
 {
-    public class ItemESP : ModuleBase
+    public class Tracers : ModuleBase
     {
         public new ModuleInfo[] info = {
-            new ModuleInfo("ItemESP", "See all items in the world", ButtonType.Toggle, 7, 1, nameof(state))
+            new ModuleInfo("Tracers", "Draw lines from your hand to selected types", ButtonType.Toggle, 10, Menu.PageIndex.options1, nameof(state))
         };
 
         private VRC_Pickup[] cache;

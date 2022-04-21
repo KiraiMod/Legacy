@@ -9,7 +9,7 @@ namespace KiraiMod.Modules
     public class FreeCam : ModuleBase
     {
         public new ModuleInfo[] info = {
-            new ModuleInfo("FreeCam", "Move your camera without moving your player", ButtonType.Toggle, 11, 0, nameof(state))
+            new ModuleInfo("FreeCam", "Move your camera without moving your player", ButtonType.Toggle, 11, Menu.PageIndex.options1, nameof(state))
         };
 
         private Quaternion oRot;

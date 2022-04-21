@@ -9,6 +9,17 @@ namespace KiraiMod
 {
     public class Menu
     {
+        public enum PageIndex
+        {
+            options1 = 0,
+            options2,
+            options3,
+            buttons1,
+            buttons2,
+            sliders1,
+            xutils
+        }
+
         public QuickMenu qm;
         public GameObject sm;
         public GameObject um;
@@ -68,7 +79,7 @@ namespace KiraiMod
         public void CreatePage(string name)
         {
             GameObject page = UnityEngine.Object.Instantiate(sm.gameObject);
-            page.transform.name = name;
+            page.name = name;
             for (int i = 0; i < page.transform.childCount; i++)
             {
                 Utils.DestroyRecursive(page.transform.GetChild(i));

@@ -8,7 +8,7 @@ namespace KiraiMod.Modules
         private Light light;
 
         public new ModuleInfo[] info = {
-            new ModuleInfo("Headlight", "Illuminate the world from your viewpoint", ButtonType.Toggle, 3, 1, nameof(state))
+            new ModuleInfo("Headlight", "Illuminate the world from your viewpoint", ButtonType.Toggle, 3, Menu.PageIndex.options2, nameof(state))
         };
 
         public override void OnStateChange(bool state)

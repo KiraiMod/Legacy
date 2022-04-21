@@ -12,7 +12,7 @@ namespace KiraiMod.Modules
         List<string> names = new List<string>();
 
         public new ModuleInfo[] info = {
-            new ModuleInfo("Mod Log", "Moderation log for block, mute, and avatars", ButtonType.Toggle, 0, 1, nameof(state))
+            new ModuleInfo("Mod Log", "Moderation log for block, mute, and avatars", ButtonType.Toggle, 0, Menu.PageIndex.options2, nameof(state))
         };
 
         public ModLog()

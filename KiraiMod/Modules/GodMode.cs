@@ -6,7 +6,7 @@ namespace KiraiMod.Modules
     public class GodMode : ModuleBase
     {
         public new ModuleInfo[] info = {
-            new ModuleInfo("God Mode", "Prevent dying in Murder 2/3", ButtonType.Toggle, 6, 1, nameof(state))
+            new ModuleInfo("God Mode", "Prevent dying in Murder 2/3", ButtonType.Toggle, 6, Menu.PageIndex.options2, nameof(state))
         };
 
         private VRC_Trigger cached;

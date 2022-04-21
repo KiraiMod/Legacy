@@ -10,7 +10,7 @@ namespace KiraiMod.Modules
     public class ItemOrbit : ModuleBase
     {
         public new ModuleInfo[] info = {
-            new ModuleInfo("Item Orbit", "Orbit all items around target", ButtonType.Toggle, 8, 0, nameof(state))
+            new ModuleInfo("Item Orbit", "Orbit all items around target", ButtonType.Toggle, 8, Menu.PageIndex.options1, nameof(state))
         };
 
         VRC_Pickup[] cached;

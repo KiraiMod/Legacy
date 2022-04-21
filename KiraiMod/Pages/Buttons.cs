@@ -10,22 +10,22 @@ namespace KiraiMod.Pages
     {
         public Buttons()
         {
-            Shared.menu.CreateButton("p2/open-p3", "More", "Reveal more options", -2f, 2f, Shared.menu.pages[2].transform, new System.Action(() =>
-            {
-                Shared.menu.selected = 3;
-            }));
-
-            Shared.menu.CreateButton("p2/open-p4", "Next", "Opens KiraiMod's next page", -2f, 1f, Shared.menu.pages[2].transform, new System.Action(() =>
+            Shared.menu.CreateButton("p3/open-p4", "More", "Reveal more options", -2f, 2f, Shared.menu.pages[(int)Menu.PageIndex.buttons1].transform, new System.Action(() =>
             {
                 Shared.menu.selected = 4;
             }));
 
-            Shared.menu.CreateButton("p2/close-p2", "Previous", "Opens KiraiMod's previous page", -2f, 0f, Shared.menu.pages[2].transform, new System.Action(() =>
+            Shared.menu.CreateButton("p3/open-p5", "Next", "Opens KiraiMod's next page", -2f, 1f, Shared.menu.pages[(int)Menu.PageIndex.buttons1].transform, new System.Action(() =>
+            {
+                Shared.menu.selected = 5;
+            }));
+
+            Shared.menu.CreateButton("p3/close-p3", "Previous", "Opens KiraiMod's previous page", -2f, 0f, Shared.menu.pages[(int)Menu.PageIndex.buttons1].transform, new System.Action(() =>
             {
                 Shared.menu.selected = 0;
             }));
 
-            Shared.menu.CreateButton("p2/force-pickups", "Force\nPickups", "Enabled theft on all pickups", -1f, 1f, Shared.menu.pages[2].transform, new System.Action(() =>
+            Shared.menu.CreateButton("p3/force-pickups", "Force\nPickups", "Enabled theft on all pickups", -1f, 1f, Shared.menu.pages[(int)Menu.PageIndex.buttons1].transform, new System.Action(() =>
             {
                 VRC_Pickup[] pickups = UnityEngine.Object.FindObjectsOfType<VRC_Pickup>();
                 for (int i = 0; i < pickups.Length; i++)
@@ -34,7 +34,7 @@ namespace KiraiMod.Pages
                 }
             }));
 
-            Shared.menu.CreateButton("p2/fast-pickups", "Fast Pickups", "Thrown pickups are very fast", 0f, 1f, Shared.menu.pages[2].transform, new System.Action(() =>
+            Shared.menu.CreateButton("p3/fast-pickups", "Fast Pickups", "Thrown pickups are very fast", 0f, 1f, Shared.menu.pages[(int)Menu.PageIndex.buttons1].transform, new System.Action(() =>
             {
                 VRC_Pickup[] pickups = UnityEngine.Object.FindObjectsOfType<VRC_Pickup>();
                 for (int i = 0; i < pickups.Length; i++)
@@ -43,7 +43,7 @@ namespace KiraiMod.Pages
                 }
             }));
 
-            Shared.menu.CreateButton("p2/nuke-videosync", "Nuke\nVideoSync", "Overrides all video players to a custom URL", 0f, 0f, Shared.menu.pages[2].transform, new System.Action(() =>
+            Shared.menu.CreateButton("p3/nuke-videosync", "Nuke\nVideoSync", "Overrides all video players to a custom URL", 0f, 0f, Shared.menu.pages[(int)Menu.PageIndex.buttons1].transform, new System.Action(() =>
             {
                 foreach (SyncVideoPlayer svp in UnityEngine.Object.FindObjectsOfType<SyncVideoPlayer>())
                 {
@@ -68,27 +68,27 @@ namespace KiraiMod.Pages
                 }
             }));
 
-            Shared.menu.CreateButton("p2/bring-pickups", "Bring\nPickups", "Brings all pickups in the scene", 1f, 0f, Shared.menu.pages[2].transform, new System.Action(() =>
+            Shared.menu.CreateButton("p3/bring-pickups", "Bring\nPickups", "Brings all pickups in the scene", 1f, 0f, Shared.menu.pages[(int)Menu.PageIndex.buttons1].transform, new System.Action(() =>
             {
                 Helper.BringPickups();
             }));
 
-            Shared.menu.CreateButton("p2/drop-target", "Drop\nTarget", "Forget the current target", 2f, 0f, Shared.menu.pages[2].transform, new System.Action(() =>
+            Shared.menu.CreateButton("p3/drop-target", "Drop\nTarget", "Forget the current target", 2f, 0f, Shared.menu.pages[(int)Menu.PageIndex.buttons1].transform, new System.Action(() =>
             {
                 Shared.targetPlayer = null;
             }));
 
-            Shared.menu.CreateButton("p2/save", "Save", "Save configuration to disk", -1f, -1f, Shared.menu.pages[2].transform, new System.Action(() =>
+            Shared.menu.CreateButton("p3/save", "Save", "Save configuration to disk", -1f, -1f, Shared.menu.pages[(int)Menu.PageIndex.buttons1].transform, new System.Action(() =>
             {
                 Shared.config.Save();
             }));
 
-            Shared.menu.CreateButton("p2/load", "Load", "Load configuration from disk", 0f, -1f, Shared.menu.pages[2].transform, new System.Action(() =>
+            Shared.menu.CreateButton("p3/load", "Load", "Load configuration from disk", 0f, -1f, Shared.menu.pages[(int)Menu.PageIndex.buttons1].transform, new System.Action(() =>
             {
                 Shared.config.Load();
             }));
 
-            Shared.menu.CreateButton("p2/crash", "Crash", "Manually initiate a crash to GTFO", 2f, -1f, Shared.menu.pages[2].transform, new System.Action(() =>
+            Shared.menu.CreateButton("p3/crash", "Crash", "Manually initiate a crash to GTFO", 2f, -1f, Shared.menu.pages[(int)Menu.PageIndex.buttons1].transform, new System.Action(() =>
             {
                 MelonLogger.Log("vvvvvvvvvvvvvvvvvvvvvvvvv");
                 MelonLogger.Log("Manually Initiated Crash.");
@@ -96,7 +96,7 @@ namespace KiraiMod.Pages
                 Utils.Overflow();
             }));
 
-            Shared.menu.CreateButton("p3/drop-all", "Drop All", "Drop every pickup in the world", -1f, 1f, Shared.menu.pages[3].transform, new Action(() =>
+            Shared.menu.CreateButton("p4/drop-all", "Drop All", "Drop every pickup in the world", -1f, 1f, Shared.menu.pages[(int)Menu.PageIndex.buttons2].transform, new Action(() =>
             {
                 foreach (VRC_Pickup pickup in UnityEngine.Object.FindObjectsOfType<VRC_Pickup>())
                 {
@@ -105,7 +105,7 @@ namespace KiraiMod.Pages
                 }
             }));
 
-            Shared.menu.CreateButton("p3/use-all", "Use All", "Use all triggers in the world.", 0f, 1f, Shared.menu.pages[3].transform, new Action(() =>
+            Shared.menu.CreateButton("p4/use-all", "Use All", "Use all triggers in the world.", 0f, 1f, Shared.menu.pages[(int)Menu.PageIndex.buttons2].transform, new Action(() =>
             {
                 Vector3 oPos = VRCPlayer.field_Internal_Static_VRCPlayer_0.transform.position;
                 Quaternion oRot = VRCPlayer.field_Internal_Static_VRCPlayer_0.transform.rotation;
@@ -118,19 +118,19 @@ namespace KiraiMod.Pages
                 VRCPlayer.field_Internal_Static_VRCPlayer_0.transform.rotation = oRot;
             }));
 
-            Shared.menu.CreateButton("p3/crash-selected", "Crash Selected", "Crash the selected player using pickups", 1f, 1f, Shared.menu.pages[3].transform, new Action(() =>
+            Shared.menu.CreateButton("p4/crash-selected", "Crash Selected", "Crash the selected player using pickups", 1f, 1f, Shared.menu.pages[(int)Menu.PageIndex.buttons2].transform, new Action(() =>
             {
                 Helper.CrashSelected();
             }));
 
-            Shared.menu.CreateButton("p3/open-p4", "Next", "Opens KiraiMod's next page", -2f, 1f, Shared.menu.pages[3].transform, new System.Action(() =>
+            Shared.menu.CreateButton("p4/open-p5", "Next", "Opens KiraiMod's next page", -2f, 1f, Shared.menu.pages[(int)Menu.PageIndex.buttons2].transform, new System.Action(() =>
             {
-                Shared.menu.selected = 4;
+                Shared.menu.selected = 5;
             }));
 
-            Shared.menu.CreateButton("p3/close-p3", "Back", "Close KiraiMod's extra options", -2f, 0f, Shared.menu.pages[3].transform, new System.Action(() =>
+            Shared.menu.CreateButton("p4/close-p4", "Back", "Close KiraiMod's extra options", -2f, 0f, Shared.menu.pages[(int)Menu.PageIndex.buttons2].transform, new System.Action(() =>
             {
-                Shared.menu.selected = 2;
+                Shared.menu.selected = 3;
             }));
         }
     }

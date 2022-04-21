@@ -8,7 +8,7 @@ namespace KiraiMod.Modules
         public float speed = 2;
 
         public new ModuleInfo[] info = { 
-            new ModuleInfo("Orbit", "Orbits the selected player", ButtonType.Toggle, 7, 0, nameof(state))
+            new ModuleInfo("Orbit", "Orbits the selected player", ButtonType.Toggle, 7, Menu.PageIndex.options1, nameof(state))
         };
 
         public override void OnUpdate()
