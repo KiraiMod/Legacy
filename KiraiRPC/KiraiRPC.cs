@@ -126,11 +126,18 @@ namespace KiraiMod
             switch (id)
             {
                 case "00":
+                case "01":
                     if (payload == Player.prop_Player_0.field_Private_APIUser_0.displayName)
-                        SendRPC(SendType.Post, "00",
+                    {
+                        MelonLogger.Log($"{player.field_Private_APIUser_0.displayName} is using the RPC system.");
+
+                        SendRPC(SendType.Post, "00", // tell them what we are using
                             player.field_Private_APIUser_0.displayName.Length.ToString().PadLeft(2, '0') +
                             player.field_Private_APIUser_0.displayName + Config.modName);
-                        break;
+                        if (id == "00") SendRPC(SendType.Get, "01", player.field_Private_APIUser_0.displayName); // ask them what they are using
+                    }
+                    break;
+
             }
         }
 
@@ -146,9 +153,11 @@ namespace KiraiMod
                 case "00":
                     if (!int.TryParse(payload.Substring(0, 2), out int length)) return;
 
-                    if (payload.Substring(2, length) == Player.prop_Player_0.field_Private_APIUser_0.displayName) 
-                        // we are the intended recipient
+                    if (payload.Substring(2, length) == Player.prop_Player_0.field_Private_APIUser_0.displayName)
+                    {
                         callback.Invoke("PlayerUsingMod", new string[] { player.field_Private_APIUser_0.displayName, payload.Substring(2 + length)});
+                    }
+                        // we are the intended recipient
                     break;
             }
         }
@@ -158,12 +167,7 @@ namespace KiraiMod
             switch (id)
             {
                 case "00": // Who is using KiraiRPC
-                    SendRPC(SendType.Broadcast, "01", player.field_Private_APIUser_0.displayName); // i am using krpc
-                    break;
-                case "01": // I am using KiraiRPC!
-                    MelonLogger.Log($"{player.field_Private_APIUser_0.displayName} is using the RPC system.");
-                    if (payload == Player.prop_Player_0.field_Private_APIUser_0.displayName) // we are the person who requested
-                        SendRPC(SendType.Get, "00", player.field_Private_APIUser_0.displayName); // ask them what they are using
+                    SendRPC(SendType.Get, "00", player.field_Private_APIUser_0.displayName); // ask them what they are using
                     break;
             }
         }

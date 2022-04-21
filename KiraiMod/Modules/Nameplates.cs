@@ -58,12 +58,10 @@ namespace KiraiMod.Modules
 
 				foreach (Player player in PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0)
 				{
-					if (player?.field_Private_APIUser_0 == null || player?.field_Private_VRCPlayerApi_0 == null || player.field_Private_APIUser_0.IsLocal()) continue;
+					if (player?.field_Private_APIUser_0?.IsLocal() ?? true || player?.field_Private_VRCPlayerApi_0 == null) continue;
 
 					if (player.IsFriend() && !player.IsKOS())
-					{
 						player.field_Private_VRCPlayerApi_0.SetNamePlateColor(Utils.GetRainbow());
-					}
 				}
 			}
 		}
@@ -81,12 +79,13 @@ namespace KiraiMod.Modules
 			text.text = $"<color={player.GetTextColor().ToHex()}>{player.field_Private_APIUser_0.displayName}</color>";
 
 			Transform rank = nameplate.Find("KiraiModRank");
-			if (rank == null)
-			{
-				MelonCoroutines.Start(CreateRankText(nameplate, player));
-			}
-			else rank.gameObject.SetActive(true);
-		}
+			if (rank == null) MelonCoroutines.Start(CreateText(nameplate, player));
+            else
+            {
+                rank.gameObject.SetActive(true);
+				UpdateText(rank.Find("KiraiModRank"), player);
+            }
+        }
 
 		public void Disable(Player player)
 		{
@@ -112,27 +111,38 @@ namespace KiraiMod.Modules
 			}
 		}
 
-		public IEnumerator CreateRankText(Transform nameplate, Player player)
+		public IEnumerator CreateText(Transform nameplate, Player player)
 		{
+			if (nameplate == null || player == null) yield break;
+
 			while (Shared.menu == null) yield return null;
 
 			GameObject gameObject = new GameObject("KiraiModRank");
 			UnityEngine.UI.Text text = gameObject.AddComponent<UnityEngine.UI.Text>();
 
 			gameObject.transform.SetParent(nameplate, false);
-			gameObject.transform.GetComponent<RectTransform>().sizeDelta = new Vector2(600, 30);
-			gameObject.transform.localPosition = new Vector3(0, 100);
+			gameObject.transform.GetComponent<RectTransform>().sizeDelta = new Vector2(800, 600);
+			gameObject.transform.localPosition = new Vector3(0, 360);
 
-			text.color = player.field_Private_APIUser_0.GetTrustColor();
+			text.color = Color.white;
 			text.fontStyle = FontStyle.Bold | FontStyle.Italic;
 			text.horizontalOverflow = HorizontalWrapMode.Overflow;
 			text.verticalOverflow = VerticalWrapMode.Overflow;
-			text.alignment = TextAnchor.MiddleCenter;
+			text.alignment = TextAnchor.LowerCenter;
 			text.fontSize = 72;
 			text.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
 			text.supportRichText = true;
 
-			text.text = player.field_Private_APIUser_0.GetTrustLevel();
+			UpdateText(gameObject.transform, player);
+		}
+
+		public void UpdateText(Transform nameplate, Player player)
+        {
+			if (nameplate == null || player == null) return;
+
+			nameplate.GetComponent<UnityEngine.UI.Text>().text =
+				(player.IsMaster() ? $"<color={Utils.Colors.highlight.ToHex()}>Master</color>\n" : "") + 
+				$"<color={player.field_Private_APIUser_0.GetTrustColor().ToHex()}>{player.field_Private_APIUser_0.GetTrustLevel()}</color>";
 		}
 	}
 }

@@ -54,7 +54,7 @@ namespace KiraiMod
                     {
                         switch (type)
                         {
-                            case "ModInUse":
+                            case "PlayerUsingMod":
                                 Shared.modules.nameplates.users.Add(data[0], data[1]);
                                 break;
                         }

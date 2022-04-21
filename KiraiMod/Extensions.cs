@@ -51,6 +51,8 @@ namespace KiraiMod
         {
             bool modder = Shared.modules.nameplates.users.TryGetValue(player.field_Private_APIUser_0.displayName, out string mod);
 
+            if (modder)
+            MelonLoader.MelonLogger.Log(mod);
             return modder && mod == "KiraiMod";
         }
 
@@ -67,8 +69,7 @@ namespace KiraiMod
 
         public static Color GetTextColor(this Player player)
         {
-            return player.IsMod() ? Utils.Colors.aqua :
-                player.IsMaster() ? Utils.Colors.orange : 
+            return player.IsMod() ? Utils.Colors.aqua : 
                 player.IsKModder() ? Utils.Colors.highlight : 
                 Utils.Colors.white;
         }
