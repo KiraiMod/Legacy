@@ -29,7 +29,7 @@ namespace KiraiMod
             if (!System.IO.File.Exists(config))
             {
                 MelonLogger.Log("Config did not exist, creating new one with current values");
-                MessageBox.Show("Join discord.gg/jsuHmcK", "KiraiMod first time config setup");
+                //MessageBox.Show("Join discord.gg/jsuHmcK", "KiraiMod first time config setup");
                 System.IO.File.WriteAllText(config, JSON.Dump(options));
             }
 
