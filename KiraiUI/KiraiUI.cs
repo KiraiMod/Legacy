@@ -39,6 +39,7 @@ namespace KiraiMod
         Transform HUD;
         Transform ActionMenu;
         Transform QuickMenuNewElements;
+        Transform Fireball;
         Text EarlyAccessText;
 
         public override void OnApplicationStart()
@@ -74,6 +75,7 @@ namespace KiraiMod
             SelectionMenu = QuickMenu.prop_QuickMenu_0.transform.Find("ShortcutMenu");
             ActionMenu = UIRoot?.Find("ActionMenu");
             QuickMenuNewElements = QuickMenu.prop_QuickMenu_0.transform.Find("QuickMenu_NewElements");
+            Fireball = GameObject.Find("_Application/CursorManager/BlueFireballMouse").transform;
             EarlyAccessText = SelectionMenu?.Find("EarlyAccessText")?.GetComponent<Text>();
             #endregion
 
@@ -135,16 +137,16 @@ namespace KiraiMod
             PedalGraphic tmp2;
             Transform tmp3;
             Text tmp4;
-
+            ParticleSystem tmp5;
 
             if (CompatibilityModule.NoCompatibility || !CompatibilityModule.NoColors)
             {
                 #region Screen Colors
                 // screen background
-                tmp1 = Screens.Find("Backdrop/Backdrop/Background")?.GetComponent<Image>();
+                tmp1 = Screens.Find("Backdrop/Backdrop/Background").GetComponent<Image>();
                 if (tmp1 != null) Utils.MoveImageColor(op, ref tmp1, ref Memory.screenBackground, Config.primary2);
                 #endregion
-                #region HUD Icon Colors
+                #region HUD Colors
                 // mic off
                 tmp1 = HUD.Find("VoiceDotParent/VoiceDotDisabled").GetComponent<Image>();
                 if (tmp1 != null) Utils.MoveImageColor(op, ref tmp1, ref Memory.micOff, Config.primary);
@@ -152,6 +154,16 @@ namespace KiraiMod
                 // afk
                 tmp1 = HUD.Find("AFK/Icon").GetComponent<Image>();
                 if (tmp1 != null) Utils.MoveImageColor(op, ref tmp1, ref Memory.afkIcon, Config.primary);
+                #endregion
+                #region Cursor Colors
+                tmp5 = Fireball.Find("Ball").GetComponent<ParticleSystem>();
+                if (tmp5 != null) Utils.MoveParticleSystemColor(op, ref tmp5, ref Memory.fireballBall, Config.primary);
+
+                tmp5 = Fireball.Find("Glow").GetComponent<ParticleSystem>();
+                if (tmp5 != null) Utils.MoveParticleSystemColor(op, ref tmp5, ref Memory.fireballGlow, Config.primary);
+
+                tmp5 = Fireball.Find("Trail").GetComponent<ParticleSystem>();
+                if (tmp5 != null) Utils.MoveParticleSystemColor(op, ref tmp5, ref Memory.fireballTrail, Config.primary);
                 #endregion
                 #region Action Menu Colors
                 // action menu main background left

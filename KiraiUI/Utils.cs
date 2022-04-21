@@ -74,5 +74,12 @@ namespace KiraiMod
             else if (op == 1) s = t.text;
             else t.text = s;
         }
+
+        public static void MoveParticleSystemColor(int op, ref ParticleSystem t, ref Color s, Color i)
+        {
+            if (op == 0) t.startColor = i;
+            else if (op == 1) s = t.startColor;
+            else t.startColor = s;
+        }
     }
 }

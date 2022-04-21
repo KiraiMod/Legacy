@@ -28,5 +28,9 @@ namespace KiraiMod
         public static float qmRPPU;
 
         public static string EarlyAccessText;
+
+        public static Color fireballBall;
+        public static Color fireballGlow;
+        public static Color fireballTrail;
     }
 }
