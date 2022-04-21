@@ -15,6 +15,10 @@ namespace KiraiMod
         {
             MelonLogger.Log("Starting");
 
+            if (Random.Range(1, 8192) == 1)
+                MelonLogger.Log(Utils.StringIya);
+
+
 #pragma warning disable 0162
             try
             {
