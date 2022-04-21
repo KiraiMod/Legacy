@@ -25,8 +25,14 @@ namespace KiraiMod.Modules
 
         public override void OnConfigLoaded()
         {
-            KiraiUI.Config.extended = state;
-            KiraiUI.instance.Apply();
+            if (MelonHandler.Mods.Any(mod => mod.Assembly.GetName().Name.Contains("KiraiUI")))
+            {
+                new Action(() =>
+                {
+                    KiraiUI.Config.extended = state;
+                    KiraiUI.instance.Apply();
+                }).Invoke();
+            }
         }
 
         public override void OnStateChange(bool state)

@@ -69,7 +69,7 @@ namespace KiraiMod
         {
             if (!hasLoaded) return;
             SetColors(0);
-            SetQuickMenu(0);
+            if (!disableQM) SetQuickMenu(0);
         }
 
         public void Store()
@@ -77,14 +77,14 @@ namespace KiraiMod
             if (!hasLoaded) return;
             hasStored = true;
             SetColors(1);
-            SetQuickMenu(1);
+            if (!disableQM) SetQuickMenu(1);
         }
 
         public void Restore()
         {
             if (!hasLoaded) return;
             SetColors(2);
-            SetQuickMenu(2);
+            if (!disableQM) SetQuickMenu(2);
         }
 
         private void SetColors(int op)
