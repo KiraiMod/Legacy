@@ -175,7 +175,7 @@ namespace KiraiMod
                         }
                     }
 
-                    if (callbackChain != null) callbackChain.Invoke(len == 0 ? "KiraiRPC" : target, sid + sprotocol, new string[] { __0.field_Private_APIUser_0.displayName, payload });
+                    if (callbackChain != null) callbackChain.Invoke(len == 0 ? "KiraiRPC" : target, sprotocol + sid, new string[] { __0.field_Private_APIUser_0.displayName, payload });
                 }
             }
         }
@@ -253,7 +253,7 @@ namespace KiraiMod
         {
             if (id.Length != 2) return false;
 
-            SendRPC("k" + System.Enum.GetName(typeof(_SendType), protocol) + id + sender.Length + sender + payload);
+            SendRPC("k" + System.Enum.GetName(typeof(_SendType), protocol) + id + sender.Length.ToString("X") + sender + payload);
 
             return true;
         }

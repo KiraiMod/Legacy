@@ -15,27 +15,32 @@ namespace KiraiMod
 
         public override void VRChat_OnUiManagerInit()
         {
+            ///UserInterface/MenuContent/Screens/Avatar/Vertical Scroll View/Viewport/Content/Favorite Avatar List
+            Transform screens = GameObject.Find("MenuContent/Screens").transform;
             // generate menu
 
-            Transform social = GameObject.Find("MenuContent/Screens/Social/Vertical Scroll View/Viewport/Content").transform;
+            Transform social = screens.Find("Social/Vertical Scroll View/Viewport/Content");
+            Transform avalist = screens.Find("Avatar/Vertical Scroll View/Viewport/Content/Favorite Avatar List");
             Transform onlineFriends = social.Find("OnlineFriends");
 
-            Transform kiraiFriends = Object.Instantiate(onlineFriends, onlineFriends.parent);
+            Transform kiraiFriends = Object.Instantiate(avalist, onlineFriends.parent);
             kiraiFriends.gameObject.name = "KiraiFriends";
             kiraiFriends.SetSiblingIndex(onlineFriends.GetSiblingIndex() + 1);
+
+            UnityEngine.UI.LayoutElement layout = kiraiFriends.GetComponent<UnityEngine.UI.LayoutElement>();
+            layout.minWidth = -1;
+            layout.minHeight = 250;
 
             Transform button = kiraiFriends.Find("Button");
             button.Find("TitleText").GetComponent<UnityEngine.UI.Text>().text = "Kirai Friends";
 
-            Transform content = kiraiFriends.Find("ViewPort/Content");
+            //Transform viewport = kiraiFriends.Find("ViewPort");
+            //viewport.localPosition = new Vector3(200, 82, 0);
 
-            UiUserList ui = kiraiFriends.GetComponent<UiUserList>();
+            //RectTransform rect = viewport.GetComponent<RectTransform>();
+            //rect.sizeDelta = new Vector2(690, -58);
 
-            ui.disableAutoRefresh = true;
-
-            var list = new Il2CppSystem.Collections.Generic.List<APIUser>(1);
-            list.Add(APIUser.CurrentUser);
-            ui.Method_Private_IEnumerator_List_1_APIUser_Int32_Boolean_PDM_0(list);
+            //Transform content = viewport.Find("Content");
 
             //for (int i = 0; i < content.childCount; i++)
             //    Object.Destroy(content.GetChild(i));

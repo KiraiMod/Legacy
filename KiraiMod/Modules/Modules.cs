@@ -24,6 +24,7 @@ namespace KiraiMod.Modules
         public ItemOrbit itemOrbit;
         public GodMode godMode;
         public ItemESP itemesp;
+        public FreeCam freecam;
 
         public List<ModuleBase> modules = new List<ModuleBase>();
 
@@ -45,6 +46,7 @@ namespace KiraiMod.Modules
             modules.Add(itemOrbit = new ItemOrbit());
             modules.Add(godMode = new GodMode());
             modules.Add(itemesp = new ItemESP());
+            modules.Add(freecam = new FreeCam());
         }
 
         public void StartCoroutines()
