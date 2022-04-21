@@ -117,7 +117,7 @@ namespace KiraiMod
 
             if (Shared.menu != null)
             {
-                if (!Shared.menu.qm.prop_Boolean_0)
+                if (!Shared.menu.qm.prop_Boolean_1)
                 {
                     Shared.modules.xutils.SetState(false);
                     if (Shared.modules.xutils.state2)

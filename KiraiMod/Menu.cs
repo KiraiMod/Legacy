@@ -380,7 +380,6 @@ namespace KiraiMod
                     _SetValue(value);
                 }));
 
-                Utils.LogGO(slider);
                 slider.GetComponent<Image>().color = Utils.Colors.primary;
                 slider.transform.Find("Fill Area/Fill").GetComponent<Image>().color = Utils.Colors.highlight;
 

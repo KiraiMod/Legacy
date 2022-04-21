@@ -114,7 +114,7 @@ namespace KiraiMod
             try
             {
                 Shared.harmony.Patch(typeof(QuickMenu)
-                    .GetMethod(nameof(QuickMenu.Method_Public_Void_2), BindingFlags.Public | BindingFlags.Instance),
+                    .GetMethod(nameof(QuickMenu.Method_Public_Void_1), BindingFlags.Public | BindingFlags.Instance),
                     new HarmonyMethod(typeof(Hooks).GetMethod(nameof(OnMenuOpened), BindingFlags.NonPublic | BindingFlags.Static)));
 
                 LogWithPadding("OnMenuOpened", true);
@@ -124,7 +124,7 @@ namespace KiraiMod
             try
             {
                 Shared.harmony.Patch(typeof(QuickMenu)
-                    .GetMethod(nameof(QuickMenu.Method_Public_Void_3), BindingFlags.Public | BindingFlags.Instance),
+                    .GetMethod(nameof(QuickMenu.Method_Public_Void_4), BindingFlags.Public | BindingFlags.Instance),
                     new HarmonyMethod(typeof(Hooks).GetMethod(nameof(OnMenuClosed), BindingFlags.NonPublic | BindingFlags.Static)));
 
                 LogWithPadding("OnMenuClosed", true);
