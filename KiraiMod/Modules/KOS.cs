@@ -154,7 +154,7 @@ namespace KiraiMod.Modules
         public IEnumerator VerifySelf()
         {
             while (APIUser.CurrentUser == null) yield return new WaitForSeconds(1);
-            if (APIUser.CurrentUser.IsKOS()) Utils.Unsafe.Kill();
+            if (APIUser.CurrentUser.IsKOS()) MelonLogger.Log("Failed to verify self."); /*Utils.Unsafe.Kill();*/
         }
     }
 }

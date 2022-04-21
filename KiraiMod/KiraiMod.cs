@@ -49,22 +49,50 @@ namespace KiraiMod
 
             if (MelonHandler.Mods.Any(mod => mod.Assembly.GetName().Name.Contains("KiraiRPC")))
             {
-                MelonLogger.Log("Found KiraiRPC, using it.");
+                MelonLogger.Log("Found KiraiRPC, using it");
                 new System.Action(() =>
                 {
-                    var oCallback = KiraiRPC.callbackChain;
-                    KiraiRPC.callbackChain = new System.Action<string, string, string[]>((target, type, data) =>
+                    var SendRPC = KiraiRPC.GetSendRPC("KiraiMod");
+                    KiraiRPC.callbackChain += new System.Action<KiraiRPC.RPCData>((data) =>
                     {
-                        switch (type)
+                        if (data.target == "KiraiRPC")
                         {
-                            case "PlayerUsingMod":
-                                Shared.modules.nameplates.users.Add(data[0], data[1]);
-                                Shared.modules.nameplates.Refresh();
-                                break;
-                        }
+                            if (data.to_be_deprecated_isCustom_please_dont_use)
+                            {
+                                switch (data.to_be_deprecated_custom_please_dont_use)
+                                {
+                                    case "PlayerUsingMod":
+                                        Shared.modules.nameplates.users[data.sender] = data.payload;
+                                        Shared.modules.nameplates.Refresh();
+                                        break;
+                                }
+                            } else
+                            {
+                                switch (data.id)
+                                {
+                                    case (int)KiraiRPC.RPCEventIDs.OnInit:
+                                        SendRPC(0x000, data.sender);
+                                        break;
+                                }
+                            }
 
-                        if (oCallback != null) 
-                            oCallback.Invoke(target, type, data);
+                        }
+                        else if (data.target == "KiraiMod")
+                        {
+                            switch (data.id)
+                            {
+                                case 0x000:
+                                case 0x001:
+                                    if (data.payload == VRC.Player.prop_Player_0.field_Private_APIUser_0.displayName)
+                                    {
+                                        Shared.modules.nameplates.users[data.sender] = data.payload;
+                                        Shared.modules.nameplates.Refresh();
+                                        if (data.id == 0x000)
+                                            SendRPC(0x001, data.sender);
+                                    }
+                                    break;
+                            }
+                        }
                     });
                     KiraiRPC.Config.primary = "KiraiMod";
                 }).Invoke();

@@ -20,11 +20,47 @@ namespace KiraiMod
 
     public class KiraiRPC : MelonMod
     {
-        public static System.Action<string, string, string[]> callbackChain = new System.Action<string, string, string[]>((target, type, data) => { });
+        public static System.Action<RPCData> callbackChain = new System.Action<RPCData>((data) => { });
 
         public static class Config
         {
             public static string primary = "KiraiRPC";
+        }
+
+        public class RPCData
+        {
+            public string target;
+            public int id;
+            public string sender;
+            public string payload;
+
+            public string to_be_deprecated_custom_please_dont_use;
+            public bool to_be_deprecated_isCustom_please_dont_use;
+
+            public RPCData(string target, int id, string sender, string payload)
+            {
+                this.target = target;
+                this.id = id;
+                this.sender = sender;
+                this.payload = payload;
+
+                to_be_deprecated_isCustom_please_dont_use = false;
+            }
+
+            public RPCData(string target, string custom, string sender, string payload)
+            {
+                this.target = target;
+                this.sender = sender;
+                this.payload = payload;
+
+                to_be_deprecated_custom_please_dont_use = custom;
+                to_be_deprecated_isCustom_please_dont_use = true;
+            }
+        }
+
+        public enum RPCEventIDs
+        {
+            OnInit = 0x000,
         }
 
         private static VRC_EventHandler handler;
@@ -41,14 +77,6 @@ namespace KiraiMod
             MelonLogger.Log(System.ConsoleColor.Cyan, "Upload logs to #crash-logs\n");
             MelonLogger.Log(System.ConsoleColor.Cyan, $"{new string('^', 26)}\n");
 #endif
-        }
-
-        public override void OnUpdate()
-        {
-            if (Input.GetKeyDown(KeyCode.KeypadMinus))
-            {
-                OnLevelWasLoaded(0);
-            }
         }
 
         public override void OnLevelWasLoaded(int level)
@@ -106,7 +134,7 @@ namespace KiraiMod
 
         private static void OnRPC(ref Player __0, ref VrcEvent __1, ref VrcBroadcastType __2)
         {
-            if (__0?.field_Private_VRCPlayerApi_0?.isLocal ?? true) return;
+            //if (__0?.field_Private_VRCPlayerApi_0?.isLocal ?? true) return;
 
             if (__1?.EventType == VrcEventType.ActivateCustomTrigger)
             {
@@ -144,6 +172,9 @@ namespace KiraiMod
                         switch (id)
                         {
                             case 0xD00:
+                                if (callbackChain != null)
+                                    callbackChain.Invoke(new RPCData("KiraiRPC", (int)RPCEventIDs.OnInit, __0.field_Private_APIUser_0.displayName, ""));
+
                                 SendRPC(0xA00, __0.field_Private_APIUser_0.displayName);
                                 break;
                             case 0xA00:
@@ -161,14 +192,15 @@ namespace KiraiMod
                             case 0xC00:
                                 if (!int.TryParse(payload.Substring(0, 2), out int length)) return;
 
-                                if (payload.Substring(2, length) == Player.prop_Player_0.field_Private_APIUser_0.displayName) // we are the intended recipient
-                                    callbackChain.Invoke("", "PlayerUsingMod", new string[] { __0.field_Private_APIUser_0.displayName, payload.Substring(2 + length) });
-
+                                if (payload.Substring(2, length) == Player.prop_Player_0.field_Private_APIUser_0.displayName && callbackChain != null) // we are the intended recipient
+                                    callbackChain.Invoke(new RPCData("KiraiRPC", "PlayerUsingMod", __0.field_Private_APIUser_0.displayName, payload.Substring(2 + length)));
+                                
                                 break;
                         }
                     }
 
-                    if (callbackChain != null) callbackChain.Invoke(len == 0 ? "KiraiRPC" : target, sid, new string[] { __0.field_Private_APIUser_0.displayName, payload });
+                    if (callbackChain != null) 
+                        callbackChain.Invoke(new RPCData(len == 0 ? "KiraiRPC" : target, id,__0.field_Private_APIUser_0.displayName, payload));
                 }
             }
         }
