@@ -144,7 +144,8 @@ namespace KiraiMod
             if (rpc[0] == 'k')
             {
 #if DEBUG
-                MelonLogger.Log($"Recieved {rpc}");
+                if (player != Player.prop_Player_0)
+                    MelonLogger.Log($"Recieved {rpc}");
 #endif
 
                 if (rpc.Length < 5)
