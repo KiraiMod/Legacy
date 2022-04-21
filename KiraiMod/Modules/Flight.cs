@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using VRC.Animation;
 using VRC.SDKBase;
 
 namespace KiraiMod.Modules
