@@ -34,27 +34,12 @@ namespace KiraiMod
             public string sender;
             public string payload;
 
-            public string to_be_deprecated_custom_please_dont_use;
-            public bool to_be_deprecated_isCustom_please_dont_use;
-
             public RPCData(string target, int id, string sender, string payload)
             {
                 this.target = target;
                 this.id = id;
                 this.sender = sender;
                 this.payload = payload;
-
-                to_be_deprecated_isCustom_please_dont_use = false;
-            }
-
-            public RPCData(string target, string custom, string sender, string payload)
-            {
-                this.target = target;
-                this.sender = sender;
-                this.payload = payload;
-
-                to_be_deprecated_custom_please_dont_use = custom;
-                to_be_deprecated_isCustom_please_dont_use = true;
             }
         }
 
@@ -174,27 +159,6 @@ namespace KiraiMod
                             case 0xD00:
                                 if (callbackChain != null)
                                     callbackChain.Invoke(new RPCData("KiraiRPC", (int)RPCEventIDs.OnInit, __0.field_Private_APIUser_0.displayName, ""));
-
-                                SendRPC(0xA00, __0.field_Private_APIUser_0.displayName);
-                                break;
-                            case 0xA00:
-                            case 0xA01:
-                                if (payload == Player.prop_Player_0.field_Private_APIUser_0.displayName)
-                                {
-                                    MelonLogger.Log($"{__0.field_Private_APIUser_0.displayName} is using the RPC system.");
-
-                                    SendRPC(0xC00, // tell them what we are using
-                                        __0.field_Private_APIUser_0.displayName.Length.ToString().PadLeft(2, '0') +
-                                        __0.field_Private_APIUser_0.displayName + Config.primary);
-                                    if (id == 0) SendRPC(0xA01, __0.field_Private_APIUser_0.displayName); // ask them what they are using
-                                }
-                                break;
-                            case 0xC00:
-                                if (!int.TryParse(payload.Substring(0, 2), out int length)) return;
-
-                                if (payload.Substring(2, length) == Player.prop_Player_0.field_Private_APIUser_0.displayName && callbackChain != null) // we are the intended recipient
-                                    callbackChain.Invoke(new RPCData("KiraiRPC", "PlayerUsingMod", __0.field_Private_APIUser_0.displayName, payload.Substring(2 + length)));
-                                
                                 break;
                         }
                     }

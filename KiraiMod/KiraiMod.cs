@@ -57,23 +57,11 @@ namespace KiraiMod
                     {
                         if (data.target == "KiraiRPC")
                         {
-                            if (data.to_be_deprecated_isCustom_please_dont_use)
+                            switch (data.id)
                             {
-                                switch (data.to_be_deprecated_custom_please_dont_use)
-                                {
-                                    case "PlayerUsingMod":
-                                        Shared.modules.nameplates.users[data.sender] = data.payload;
-                                        Shared.modules.nameplates.Refresh();
-                                        break;
-                                }
-                            } else
-                            {
-                                switch (data.id)
-                                {
-                                    case (int)KiraiRPC.RPCEventIDs.OnInit:
-                                        SendRPC(0x000, data.sender);
-                                        break;
-                                }
+                                case (int)KiraiRPC.RPCEventIDs.OnInit:
+                                    SendRPC(0x000, data.sender);
+                                    break;
                             }
 
                         }
@@ -85,7 +73,7 @@ namespace KiraiMod
                                 case 0x001:
                                     if (data.payload == VRC.Player.prop_Player_0.field_Private_APIUser_0.displayName)
                                     {
-                                        Shared.modules.nameplates.users[data.sender] = "KiraiMod";
+                                        Shared.modules.nameplates.users.Add(data.sender);
                                         Shared.modules.nameplates.Refresh();
                                         if (data.id == 0x000)
                                             SendRPC(0x001, data.sender);
@@ -117,7 +105,7 @@ namespace KiraiMod
 
             if (Shared.menu != null)
             {
-                if (!Shared.menu.qm.prop_Boolean_1)
+                if (!Shared.menu.qm.prop_Boolean_0)
                 {
                     Shared.modules.xutils.SetState(false);
                     if (Shared.modules.xutils.state2)
@@ -153,7 +141,11 @@ namespace KiraiMod
             if (Input.GetKeyDown(KeyCode.KeypadMinus))
 #if DEBUG
             {
-
+                MelonLogger.Log(Shared.menu.qm.prop_Boolean_0);
+                MelonLogger.Log(Shared.menu.qm.prop_Boolean_1);
+                MelonLogger.Log(Shared.menu.qm.prop_Boolean_2);
+                MelonLogger.Log(Shared.menu.qm.prop_Boolean_3);
+                MelonLogger.Log(Shared.menu.qm.prop_Boolean_4);
             }
 #else
                 MelonLogger.Log("Alive");

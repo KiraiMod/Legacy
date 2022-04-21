@@ -2,6 +2,7 @@
 using MelonLoader;
 using System;
 using System.Collections;
+using System.Linq;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.UI;
@@ -114,7 +115,7 @@ namespace KiraiMod
             try
             {
                 Shared.harmony.Patch(typeof(QuickMenu)
-                    .GetMethod(nameof(QuickMenu.Method_Public_Void_1), BindingFlags.Public | BindingFlags.Instance),
+                    .GetMethod(nameof(QuickMenu.Method_Public_Void_0), BindingFlags.Public | BindingFlags.Instance),
                     new HarmonyMethod(typeof(Hooks).GetMethod(nameof(OnMenuOpened), BindingFlags.NonPublic | BindingFlags.Static)));
 
                 LogWithPadding("OnMenuOpened", true);

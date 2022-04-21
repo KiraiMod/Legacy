@@ -17,7 +17,7 @@ namespace KiraiMod.Modules
 			new ModuleInfo("RGB Nameplates", "Rainbow nameplates for friends", ButtonType.Toggle, 2, Menu.PageIndex.options2, nameof(RGB)),
 		};
 
-		public Dictionary<string, string> users = new Dictionary<string, string>();
+		public List<string> users;
 
 		public override void OnStateChange(bool state)
 		{

@@ -61,12 +61,12 @@ namespace KiraiMod
 
         public static bool IsKModder(this Player player)
         {
-            return Shared.modules.nameplates.users.TryGetValue(player.field_Private_APIUser_0.displayName, out string mod) && mod == "KiraiMod";
+            return Shared.modules.nameplates.users.Contains(player.field_Private_APIUser_0.displayName);
         }
 
         public static bool IsKModder(this APIUser player)
         {
-            return Shared.modules.nameplates.users.TryGetValue(player.displayName, out string mod) && mod == "KiraiMod";
+            return Shared.modules.nameplates.users.Contains(player.displayName);
         }
 
         public static string ToHex(this Color color)
