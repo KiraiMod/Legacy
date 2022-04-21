@@ -75,8 +75,17 @@ namespace KiraiMod.Modules
 
         public override void OnLevelWasLoaded()
         {
-            if (state && parent != null && !QuickMenu.prop_QuickMenu_0.prop_Boolean_0)
-                parent.active = false;
+            if (state && parent != null)
+            {
+                if (offset != 0)
+                {
+                    offset = 0;
+                    Refresh();
+                }       
+
+                if (!QuickMenu.prop_QuickMenu_0.prop_Boolean_0)
+                    parent.active = false;
+            }  
         }
 
         private IEnumerator Setup(bool state)
