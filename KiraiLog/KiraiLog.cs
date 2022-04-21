@@ -1,7 +1,11 @@
 ﻿using MelonLoader;
 using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
+
+[assembly: MelonInfo(typeof(KiraiMod.KiraiLog), "KiraiLog", KiraiMod.KiraiLib.Constants.VT_ERASE, "Kirai Chan#8315")]
+[assembly: MelonGame("VRChat", "VRChat")]
 
 namespace KiraiMod
 {
@@ -15,7 +19,7 @@ namespace KiraiMod
 #else
                 "KiraiMod.Lib.KiraiLibLoader.dll"
 #endif
-                );
+            );
 
             MemoryStream mem = new MemoryStream((int)stream.Length);
             stream.CopyTo(mem);
