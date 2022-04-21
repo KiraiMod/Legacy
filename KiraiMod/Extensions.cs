@@ -76,11 +76,6 @@ namespace KiraiMod
         }
 #endif
 
-        public static string ToHex(this Color color)
-        {
-            return $"#{(int)(color.r * 255):X2}{(int)(color.g * 255):X2}{(int)(color.b * 255):X2}{(int)(color.a * 255):X2}";
-        }
-
         public static Color GetNameplateColor(this Player player)
         {
             return player.IsKOS() ? Utils.Colors.red :
@@ -93,36 +88,6 @@ namespace KiraiMod
             return player.IsMod() ? Utils.Colors.aqua : 
                 player.IsKModder() ? Utils.Colors.highlight : 
                 Utils.Colors.white;
-        }
-
-        public static string GetTrustLevel(this APIUser user)
-        {
-            if (user.hasLegendTrustLevel)
-            {
-                if (user.tags.Contains("system_legend")) return "Legendary";
-                else return "Veteran";
-            }
-            else if (user.hasVeteranTrustLevel) return "Trusted";
-            else if (user.hasTrustedTrustLevel) return "Known";
-            else if (user.hasKnownTrustLevel) return "User";
-            else if (user.hasBasicTrustLevel) return "New";
-            else if (user.isUntrusted) return "Visitor";
-            else return "Unknown";
-        }
-
-        public static Color GetTrustColor(this APIUser user)
-        {
-            if (user.hasLegendTrustLevel)
-            {
-                if (user.tags.Contains("system_legend")) return Utils.Colors.legendary;
-                else return Utils.Colors.veteran;
-            }
-            else if (user.hasVeteranTrustLevel) return Utils.Colors.trusted;
-            else if (user.hasTrustedTrustLevel) return Utils.Colors.known;
-            else if (user.hasKnownTrustLevel) return Utils.Colors.user;
-            else if (user.hasBasicTrustLevel) return Utils.Colors.newuser;
-            else if (user.isUntrusted) return Utils.Colors.visitor;
-            else return Utils.Colors.black;
         }
     }
 }
