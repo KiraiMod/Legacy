@@ -70,7 +70,7 @@ namespace KiraiMod.Modules
 
         public override void OnUnload()
         {
-            Repeat = false;
+            OnStateChangeRepeat(Repeat = false);
             MelonCoroutines.Start(Setup(false));
         }
         public override void OnReload() => MelonCoroutines.Start(Setup(true));
