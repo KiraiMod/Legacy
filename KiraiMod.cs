@@ -106,6 +106,7 @@ namespace KiraiMod
             Shared.menu.CreatePage("kiraimod_options");
             Shared.menu.CreatePage("kiraimod_options2");
             Shared.menu.CreatePage("kiraimod_buttons");
+            Shared.menu.CreatePage("kiraimod_buttons2");
             Shared.menu.CreatePage("kiraimod_sliders");
             Shared.menu.CreatePage("kiraimod_xutils");
 

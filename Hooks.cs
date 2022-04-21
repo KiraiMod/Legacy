@@ -87,6 +87,10 @@ namespace KiraiMod
         private void OnPlayerLeft(Player player)
         {
             MelonLogger.Log(player.field_Private_VRCPlayerApi_0.displayName + " left");
+
+            if (Shared.targetPlayer == player)
+                Shared.targetPlayer = null;
+            
             Shared.modules.OnPlayerLeft(player);
         }
 

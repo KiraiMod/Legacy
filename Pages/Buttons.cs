@@ -2,6 +2,7 @@
 using System;
 using UnityEngine;
 using VRC.SDKBase;
+using System.Linq;
 
 namespace KiraiMod.Pages
 {
@@ -9,9 +10,14 @@ namespace KiraiMod.Pages
     {
         public Buttons()
         {
-            Shared.menu.CreateButton("p2/open-p3", "Next", "Opens KiraiMod's next page", -2f, 1f, Shared.menu.pages[2].transform, new System.Action(() =>
+            Shared.menu.CreateButton("p2/open-p3", "More", "Reveal more options", -2f, 2f, Shared.menu.pages[2].transform, new System.Action(() =>
             {
                 Shared.menu.selected = 3;
+            }));
+
+            Shared.menu.CreateButton("p2/open-p4", "Next", "Opens KiraiMod's next page", -2f, 1f, Shared.menu.pages[2].transform, new System.Action(() =>
+            {
+                Shared.menu.selected = 4;
             }));
 
             Shared.menu.CreateButton("p2/close-p2", "Previous", "Opens KiraiMod's previous page", -2f, 0f, Shared.menu.pages[2].transform, new System.Action(() =>
@@ -88,6 +94,38 @@ namespace KiraiMod.Pages
                 MelonLogger.Log("Manually Initiated Crash.");
                 MelonLogger.Log("^^^^^^^^^^^^^^^^^^^^^^^^^");
                 Utils.Overflow();
+            }));
+
+            Shared.menu.CreateButton("p3/drop-all", "Drop All", "Drop every pickup in the world", -1f, 1f, Shared.menu.pages[3].transform, new Action(() =>
+            {
+                foreach (VRC_Pickup pickup in UnityEngine.Object.FindObjectsOfType<VRC_Pickup>())
+                {
+                    if (Networking.GetOwner(pickup.gameObject) != Networking.LocalPlayer) Networking.SetOwner(Networking.LocalPlayer, pickup.gameObject);
+                    pickup.Drop();
+                }
+            }));
+
+            Shared.menu.CreateButton("p3/use-all", "Use All", "Use all triggers in the world.", 0f, 1f, Shared.menu.pages[3].transform, new Action(() =>
+            {
+                Vector3 oPos = VRCPlayer.field_Internal_Static_VRCPlayer_0.transform.position;
+                Quaternion oRot = VRCPlayer.field_Internal_Static_VRCPlayer_0.transform.rotation;
+                foreach (VRC_Trigger trigger in UnityEngine.Object.FindObjectsOfType<VRC_Trigger>())
+                {
+                    if (Networking.GetOwner(trigger.gameObject) != Networking.LocalPlayer) Networking.SetOwner(Networking.LocalPlayer, trigger.gameObject);
+                    trigger.Interact();
+                }
+                VRCPlayer.field_Internal_Static_VRCPlayer_0.transform.position = oPos;
+                VRCPlayer.field_Internal_Static_VRCPlayer_0.transform.rotation = oRot;
+            }));
+
+            Shared.menu.CreateButton("p3/open-p4", "Next", "Opens KiraiMod's next page", -2f, 1f, Shared.menu.pages[3].transform, new System.Action(() =>
+            {
+                Shared.menu.selected = 4;
+            }));
+
+            Shared.menu.CreateButton("p3/close-p3", "Back", "Close KiraiMod's extra options", -2f, 0f, Shared.menu.pages[3].transform, new System.Action(() =>
+            {
+                Shared.menu.selected = 2;
             }));
         }
     }

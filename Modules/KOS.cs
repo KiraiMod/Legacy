@@ -69,8 +69,9 @@ namespace KiraiMod.Modules
                 kosList = data.Split('\n');
                 MelonLogger.Log("Downloaded KOS list with " + kosList.Length + " users");
             }
-            catch
+            catch (System.Exception ex)
             {
+                MelonLogger.LogError(ex.ToString());
                 MelonLogger.LogWarning("Failed to download KOS list.");
             }
         }

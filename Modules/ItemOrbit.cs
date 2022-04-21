@@ -31,18 +31,18 @@ namespace KiraiMod.Modules
 
             if (VRCPlayer.field_Internal_Static_VRCPlayer_0 == null) return;
 
+            if (cached == null) Recache();
+
             GameObject puppet = new GameObject();
             puppet.transform.position = (Shared.targetPlayer?.transform.position ?? VRCPlayer.field_Internal_Static_VRCPlayer_0.transform.position) + new Vector3(0, 0.2f, 0);
 
             puppet.transform.Rotate(new Vector3(0, 360f * Time.time, 0));
 
-            for (int i = 0; i < cached.Length; i++)
+            foreach (VRC_Pickup pickup in cached)
             {
-                if (cached[i] == null) continue;
+                if (Networking.GetOwner(pickup.gameObject) != Networking.LocalPlayer) Networking.SetOwner(Networking.LocalPlayer, pickup.gameObject);
 
-                if (Networking.GetOwner(cached[i].gameObject) != Networking.LocalPlayer) Networking.SetOwner(Networking.LocalPlayer, cached[i].gameObject);
-
-                cached[i].transform.position = puppet.transform.position + puppet.transform.forward;
+                pickup.transform.position = puppet.transform.position + puppet.transform.forward;
 
                 puppet.transform.Rotate(new Vector3(0, 360 / cached.Length, 0));
             }
