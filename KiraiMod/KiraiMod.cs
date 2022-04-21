@@ -46,11 +46,10 @@ namespace KiraiMod
             if (MelonHandler.Mods.Any(mod => mod.Assembly.GetName().Name.Contains("KiraiRPC")))
             {
                 MelonLogger.Log("Found KiraiRPC, using it.");
-
                 new System.Action(() =>
                 {
-                    KiraiRPC.Config.modName = "KiraiMod";
-                    KiraiRPC.callback = new System.Action<string, string[]>((type, data) =>
+                    var oCallback = KiraiRPC.callbackChain;
+                    KiraiRPC.callbackChain = new System.Action<string, string, string[]>((target, type, data) =>
                     {
                         switch (type)
                         {
@@ -59,7 +58,11 @@ namespace KiraiMod
                                 Shared.modules.nameplates.Refresh();
                                 break;
                         }
+
+                        if (oCallback != null) 
+                            oCallback.Invoke(target, type, data);
                     });
+                    KiraiRPC.Config.primary = "KiraiMod";
                 }).Invoke();
             }
         }

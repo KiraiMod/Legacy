@@ -1,4 +1,5 @@
-﻿using Harmony;
+﻿//#define TESTING
+using Harmony;
 using MelonLoader;
 using System.Linq;
 using System.Reflection;
@@ -12,13 +13,13 @@ namespace KiraiMod
 {
     public class KiraiRPC : MelonMod
     {
-        public static System.Action<string, string[]> callback = new System.Action<string, string[]>((a,b)=> {});
+        public static System.Action<string, string, string[]> callbackChain = new System.Action<string, string, string[]>((target, type, data) => { });
 
         public static class Config
         {
-            public static string modName = "KiraiRPC";
+            public static string primary = "KiraiRPC";
         }
-        
+
         private static VRC_EventHandler handler;
 
         private HarmonyInstance harmony;
@@ -80,6 +81,14 @@ namespace KiraiMod
             catch { MelonLogger.LogWarning("Hooking RPCs... Failed"); }
         }
 
+        public static System.Action<SendType, string, string> GetCallback(string name)
+        {
+            return new System.Action<SendType, string, string>((type, id, payload) =>
+            {
+                SendRPC(type, id, name, payload);
+            });
+        }
+
         private static void OnRPC(ref Player __0, ref VrcEvent __1, ref VrcBroadcastType __2)
         {
             if (__0?.field_Private_VRCPlayerApi_0?.isLocal ?? true) return;
@@ -89,117 +98,168 @@ namespace KiraiMod
                 if (__1.ParameterString.Length < 1) return;
                 if (__1.ParameterString[0] == 'k')
                 {
-                    if (__1.ParameterString.Length < 4)
+#if TESTING
+                    MelonLogger.Log($"Recieved {__1.ParameterString}");
+#endif
+
+                    if (__1.ParameterString.Length < 5)
                     {
-                        MelonLogger.Log($"{__0.field_Private_APIUser_0.displayName} sent a malformed kRPC.");
+                        MelonLogger.Log($"{__0.field_Private_APIUser_0.displayName} sent a malformed kRPC (invalid size).");
                         return;
                     }
 
-                    SendType protocol = (SendType)System.Enum.Parse(typeof(_SendType), __1.ParameterString[1].ToString());
-                    string id = __1.ParameterString.Substring(2, 2);
-                    string payload = __1.ParameterString.Substring(4);
+                    string sprotocol = __1.ParameterString[1].ToString();
 
-                    switch (protocol)
+                    if (!System.Enum.TryParse(sprotocol, out _SendType _protocol))
                     {
-                        case SendType.Get:
-                            OnGet(id, payload, __0);
-                            break;
+                        MelonLogger.Log($"{__0.field_Private_APIUser_0.displayName} sent a malformed kRPC (invalid type).");
+                        return;
+                    }
 
-                        case SendType.Set:
-                            OnSet(id, payload, __0);
-                            break;
+                    SendType protocol = (SendType)_protocol;
 
-                        case SendType.Post:
-                            OnPost(id, payload, __0);
-                            break;
+                    string sid = __1.ParameterString.Substring(2, 2);
+                    if (!uint.TryParse(sid, System.Globalization.NumberStyles.HexNumber, null, out uint id)) {
+                        MelonLogger.Log($"{__0.field_Private_APIUser_0.displayName} sent a malformed kRPC (invalid id).");
+                        return;
+                    }
 
-                        case SendType.Broadcast:
-                            OnBroadcast(id, payload, __0);
-                            break;
+                    string slen = __1.ParameterString.Substring(4, 1);
+                    if (!uint.TryParse(slen, System.Globalization.NumberStyles.HexNumber, null, out uint len))
+                    {
+                        MelonLogger.Log($"{__0.field_Private_APIUser_0.displayName} sent a malformed kRPC (invalid length).");
+                        return;
+                    }
 
-                        case SendType.Upgrade:
-                            OnUpgrade(id, payload, __0);
-                            break;
+                    string payload = __1.ParameterString.Substring(5);
+
+                    if (len == 0) // intended for us
+                    {
+                        switch (protocol)
+                        {
+                            case SendType.Get:
+                                OnGet(id, payload, __0);
+                                break;
+
+                            case SendType.Set:
+                                OnSet(id, payload, __0);
+                                break;
+
+                            case SendType.Post:
+                                OnPost(id, payload, __0);
+                                break;
+
+                            case SendType.Broadcast:
+                                OnBroadcast(id, payload, __0);
+                                break;
+
+                            case SendType.Upgrade:
+                                OnUpgrade(id, payload, __0);
+                                break;
+                        }
+                    }
+                    else
+                    {
+
                     }
                 }
             }
         }
 
-        private static void OnGet(string id, string payload, Player player)
+        private static void OnGet(uint id, string payload, Player player)
         {
             switch (id)
             {
-                case "00":
-                case "01":
+                case 0:
+                case 1:
                     if (payload == Player.prop_Player_0.field_Private_APIUser_0.displayName)
                     {
                         MelonLogger.Log($"{player.field_Private_APIUser_0.displayName} is using the RPC system.");
 
                         SendRPC(SendType.Post, "00", // tell them what we are using
                             player.field_Private_APIUser_0.displayName.Length.ToString().PadLeft(2, '0') +
-                            player.field_Private_APIUser_0.displayName + Config.modName);
-                        if (id == "00") SendRPC(SendType.Get, "01", player.field_Private_APIUser_0.displayName); // ask them what they are using
+                            player.field_Private_APIUser_0.displayName + Config.primary);
+                        if (id == 0) SendRPC(SendType.Get, "01", player.field_Private_APIUser_0.displayName); // ask them what they are using
                     }
                     break;
 
             }
         }
 
-        private static void OnSet(string id, string payload, Player player)
+        private static void OnSet(uint id, string payload, Player player)
         {
 
         }
 
-        private static void OnPost(string id, string payload, Player player)
+        private static void OnPost(uint id, string payload, Player player)
         {
             switch (id)
             {
-                case "00":
+                case 0:
                     if (!int.TryParse(payload.Substring(0, 2), out int length)) return;
 
-                    if (payload.Substring(2, length) == Player.prop_Player_0.field_Private_APIUser_0.displayName)
-                    {
-                        callback.Invoke("PlayerUsingMod", new string[] { player.field_Private_APIUser_0.displayName, payload.Substring(2 + length)});
-                    }
-                        // we are the intended recipient
+                    if (payload.Substring(2, length) == Player.prop_Player_0.field_Private_APIUser_0.displayName) // we are the intended recipient
+                        callbackChain.Invoke("", "PlayerUsingMod", new string[] { player.field_Private_APIUser_0.displayName, payload.Substring(2 + length) });
+                    
+
                     break;
             }
         }
 
-        private static void OnBroadcast(string id, string payload, Player player)
+        private static void OnBroadcast(uint id, string payload, Player player)
         {
             switch (id)
             {
-                case "00": // Who is using KiraiRPC
+                case 0: // Who is using KiraiRPC
                     SendRPC(SendType.Get, "00", player.field_Private_APIUser_0.displayName); // ask them what they are using
                     break;
             }
         }
 
-        private static void OnUpgrade(string id, string payload, Player player)
+        private static void OnUpgrade(uint id, string payload, Player player)
         {
 
         }
 
-        public static void SendRPC(SendType protocol, string id)
+        private static void SendRPC(SendType protocol, string id)
         {
             SendRPC(protocol, id, "");
         }
 
-        public static void SendRPC(SendType protocol, string id, string payload)
+        private static bool SendRPC(SendType protocol, string id, string payload)
         {
-            if (id.Length != 2)
-            {
-                MelonLogger.Log($"RPC {id} is invalid length");
-                return;
-            }
+            if (id.Length != 2) return false;
 
-            SendRPC("k" + System.Enum.GetName(typeof(_SendType), protocol) + id + payload);
+            SendRPC("k" + System.Enum.GetName(typeof(_SendType), protocol) + id + "0" + payload);
+
+            return true;
+        }
+
+        private static bool SendRPC(SendType protocol, string id, string sender, string payload)
+        {
+            if (id.Length != 2) return false;
+
+            SendRPC("k" + System.Enum.GetName(typeof(_SendType), protocol) + id + sender.Length + sender + payload);
+
+            return true;
+        }
+
+        private static bool SendRPC(string protocol, string id, string sender, string payload)
+        {
+            if (protocol.Length != 1) return false;
+            if (id.Length != 2) return false;
+
+            SendRPC("k" + protocol + id + sender.Length + sender + payload);
+
+            return true;
         }
 
         public static void SendRPC(string raw)
         {
+#if TESTING
             MelonLogger.Log($"Sending {raw}");
+#endif
+
             if (handler == null)
             {
                 MelonLogger.Log("Canceling RPC because handler is null.");
