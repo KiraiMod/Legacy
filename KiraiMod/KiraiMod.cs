@@ -73,7 +73,7 @@ namespace KiraiMod
 
             Shared.modules.StartCoroutines();
 
-            KiraiLib.Callbacks.OnUIUnload += () =>
+            KiraiLib.Events.OnUIUnload += () =>
             {
                 MelonLogger.Msg("OnUIUnload");
                 Shared.modules.OnUnload();
@@ -81,7 +81,7 @@ namespace KiraiMod
                 Shared.unloaded = true;
             };
 
-            KiraiLib.Callbacks.OnUIReload += () => 
+            KiraiLib.Events.OnUIReload += () => 
             {
                 MelonLogger.Msg("OnUIReload");
                 VRChat_OnUiManagerInit();
@@ -190,14 +190,14 @@ namespace KiraiMod
         {
             if (bUnload) return;
 
-            KiraiLib.SDK.Events.OnSceneLoad(buildIndex, sceneName);
+            KiraiLib.Events.OnSceneLoad(buildIndex, sceneName);
 
             if (HighlightsFX.prop_HighlightsFX_0 != null && HighlightsFX.prop_HighlightsFX_0.field_Protected_Material_0 != null)
                 HighlightsFX.prop_HighlightsFX_0.field_Protected_Material_0.SetColor("_HighlightColor", new Color(0.34f, 0f, 0.65f));
 
             Shared.modules.OnLevelWasLoaded();
 
-            if (Shared.Options.bOSLPush) KiraiLib.SDK.Events.OnSceneLoad(buildIndex, sceneName);
+            if (Shared.Options.bOSLPush) KiraiLib.Events.OnSceneLoad(buildIndex, sceneName);
         }
 
         public override void VRChat_OnUiManagerInit()

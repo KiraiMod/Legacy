@@ -47,7 +47,7 @@ namespace KiraiMod
 
             ourRSA = RSA.Create();
 
-            KiraiLib.Callbacks.OnUIReload += () => VRChat_OnUiManagerInit();
+            KiraiLib.Events.OnUIReload += () => VRChat_OnUiManagerInit();
 
             MelonCoroutines.Start(WaitForNetworkManager());
         }
@@ -96,7 +96,7 @@ namespace KiraiMod
 
         public override void OnSceneWasLoaded(int buildIndex, string sceneName)
         {
-            if (bOSLPush) KiraiLib.SDK.Events.OnSceneLoad(buildIndex, sceneName);
+            if (bOSLPush) KiraiLib.Events.OnSceneLoad(buildIndex, sceneName);
         }
 
         private void OnPlayerLeft(Player player)
