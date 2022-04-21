@@ -176,6 +176,7 @@
     <Compile Include="Integrations.cs" />
     <Compile Include="IPC.cs" />
     <Compile Include="KiraiMod.cs" />
+    <Compile Include="ModuleLoader.cs" />
     <Compile Include="Modules\BaseModule.cs" />
     <Compile Include="Modules\ESP.cs" />
     <Compile Include="Modules\Flight.cs" />

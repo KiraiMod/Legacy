@@ -66,6 +66,7 @@ namespace KiraiMod
             Shared.harmony = Harmony;
             Shared.http = new HttpClient();
 
+            ModuleLoader.Initialize();
             Shared.modules = new Modules.Modules();
             Config.Load();
             Shared.ipc = new IPC();
@@ -227,6 +228,7 @@ namespace KiraiMod
             Shared.PageRemap.Add(KiraiLib.UI.CreatePage("KiraiMod.Udon1"));
             Shared.PageRemap.Add(KiraiLib.UI.CreatePage("KiraiMod.Udon2"));
 
+            ModuleLoader.CreateUIElements();
             new Pages.Pages();
 
             foreach(Modules.ModuleBase module in Shared.modules.modules)
