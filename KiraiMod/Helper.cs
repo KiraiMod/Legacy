@@ -126,7 +126,10 @@ namespace KiraiMod
         public static void BroadcastCustomEvent(string name)
         {
             foreach (UdonBehaviour ub in Shared.modules.udon.behaviours)
-                ub.SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, name);
+            {
+                if (ub._eventTable.ContainsKey(name))
+                   ub.SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, name);
+            }
         }
 
         public static void OverrideVideoPlayers(string url)
