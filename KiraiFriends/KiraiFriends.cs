@@ -7,7 +7,7 @@ using System.Net.Http;
 using UnityEngine;
 using VRC.SDKBase;
 
-[assembly: MelonInfo(typeof(KiraiMod.KiraiFriends), "KiraiFriends", "0.0.0", "Kirai Chan#8315")]
+[assembly: MelonInfo(typeof(KiraiMod.KiraiFriends), "KiraiFriends", null, "Kirai Chan#8315")]
 [assembly: MelonGame("VRChat", "VRChat")]
 
 namespace KiraiMod

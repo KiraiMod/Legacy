@@ -11,8 +11,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KiraiRPC", "KiraiRPC\KiraiR
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KiraiFriends", "KiraiFriends\KiraiFriends.csproj", "{2F6F8C37-CE09-402A-A49A-25B8F9CE36E0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HostelClient", "HostelClient\HostelClient.csproj", "{7FFC3FD3-11C9-4921-B5C7-8C789194EE49}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KiraiComms", "KiraiComms\KiraiComms.csproj", "{DB387DB2-ECE9-43D7-ADD0-53EF2F9867F4}"
 EndProject
 Global
@@ -37,10 +35,6 @@ Global
 		{2F6F8C37-CE09-402A-A49A-25B8F9CE36E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2F6F8C37-CE09-402A-A49A-25B8F9CE36E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2F6F8C37-CE09-402A-A49A-25B8F9CE36E0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7FFC3FD3-11C9-4921-B5C7-8C789194EE49}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7FFC3FD3-11C9-4921-B5C7-8C789194EE49}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7FFC3FD3-11C9-4921-B5C7-8C789194EE49}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7FFC3FD3-11C9-4921-B5C7-8C789194EE49}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DB387DB2-ECE9-43D7-ADD0-53EF2F9867F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DB387DB2-ECE9-43D7-ADD0-53EF2F9867F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DB387DB2-ECE9-43D7-ADD0-53EF2F9867F4}.Release|Any CPU.ActiveCfg = Release|Any CPU

@@ -8,7 +8,7 @@ using VRC;
 using VRC.SDKBase;
 using static VRC.SDKBase.VRC_EventHandler;
 
-[assembly: MelonInfo(typeof(KiraiMod.KiraiRPC), "KiraiRPC", "0.0.0", "Kirai Chan#8315")]
+[assembly: MelonInfo(typeof(KiraiMod.KiraiRPC), "KiraiRPC", null, "Kirai Chan#8315")]
 [assembly: MelonGame("VRChat", "VRChat")]
 
 namespace KiraiMod

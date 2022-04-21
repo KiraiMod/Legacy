@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using VRC;
 
-[assembly: MelonInfo(typeof(KiraiMod.KiraiComms), "KiraiComms", "0.0.0", "Kirai Chan#8315 & Brass")]
+[assembly: MelonInfo(typeof(KiraiMod.KiraiComms), "KiraiComms", null, "Kirai Chan#8315 & Brass")]
 [assembly: MelonGame("VRChat", "VRChat")]
 
 namespace KiraiMod
