@@ -7,6 +7,8 @@ namespace KiraiMod.Modules
 {
     public class Udon : ModuleBase
     {
+        public Udon() => MelonCoroutines.Start(Setup(true));
+
         public new ModuleInfo[] info =
         {
             new ModuleInfo("Select\nIndex", "Select a UdonBehaviour by its index", ButtonType.Button, 3, 3, Shared.PageIndex.udon1, nameof(SelectIndex)),
@@ -40,6 +42,7 @@ namespace KiraiMod.Modules
         private string storedBeta;
         private string storedGamma;
         private string last;
+        private bool hasSet;
 
         public bool Networked = false;
         public bool Targeted = false;
@@ -62,6 +65,30 @@ namespace KiraiMod.Modules
                 if ((value < 0 || value > (selected?._eventTable?.Count ?? 0) / 12 - 1) && value != 0) return;
                 buttonPage = value;
                 HandleButtonPage();
+            }
+        }
+
+        public override void OnUnload() => MelonCoroutines.Start(Setup(false));
+        public override void OnReload() => MelonCoroutines.Start(Setup(true));
+
+        private System.Collections.IEnumerator Setup(bool expand)
+        {
+            while (VRCUiManager.prop_VRCUiManager_0 is null) yield return null;
+
+            BoxCollider collider = QuickMenu.prop_QuickMenu_0.GetComponent<BoxCollider>();
+
+            if (expand && !hasSet) // expand
+            {
+                hasSet = true;
+
+                collider.extents += new Vector3(0, 420, 0);
+                collider.center += new Vector3(0, 420, 0);
+            } else if (!expand && hasSet)
+            {
+                hasSet = false;
+
+                collider.extents -= new Vector3(0, 420, 0);
+                collider.center -= new Vector3(0, 420, 0);
             }
         }
 

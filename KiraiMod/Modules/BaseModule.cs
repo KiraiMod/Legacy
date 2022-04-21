@@ -22,6 +22,8 @@ namespace KiraiMod.Modules
 
         public virtual void OnStateChange(bool state) { }
         public virtual void OnConfigLoaded() { }
+        public virtual void OnUnload() { }
+        public virtual void OnReload() { }
 
         public virtual void OnUpdate() { }
         public virtual void OnLevelWasLoaded() { }

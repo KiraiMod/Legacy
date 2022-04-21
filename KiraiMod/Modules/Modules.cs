@@ -86,10 +86,22 @@ namespace KiraiMod.Modules
                 modules[i].OnLevelWasLoaded();
         }
 
-        internal void OnAvatarInitialized(GameObject avatar, VRCAvatarManager instance)
+        public void OnAvatarInitialized(GameObject avatar, VRCAvatarManager instance)
         {
             for (int i = 0; i < modules.Count; i++)
                 modules[i].OnAvatarInitialized(avatar, instance);
+        }
+
+        public void OnUnload()
+        {
+            for (int i = 0; i < modules.Count; i++)
+                modules[i].OnUnload();
+        }
+
+        public void OnReload()
+        {
+            for (int i = 0; i < modules.Count; i++)
+                modules[i].OnReload();
         }
     }
 }

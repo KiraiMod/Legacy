@@ -1,5 +1,4 @@
-﻿using MelonLoader;
-using UnityEngine;
+﻿using UnityEngine;
 using VRC;
 using VRC.SDKBase;
 using System.Linq;

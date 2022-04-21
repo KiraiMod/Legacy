@@ -135,23 +135,24 @@ namespace KiraiMod
                             }
                         }
                     };
-                    KiraiRPC.Config.primary = "KiraiMod";
                 }).Invoke();
             }
+
+            KiraiLib.Callbacks.OnUIUnload += () =>
+            {
+                MelonLogger.Msg("OnUIUnload");
+                Shared.modules.OnUnload();
+
+                Shared.unloaded = true;
+            };
 
             KiraiLib.Callbacks.OnUIReload += () => 
             {
                 MelonLogger.Msg("OnUIReload");
                 VRChat_OnUiManagerInit();
+                Shared.modules.OnReload();
 
                 Shared.unloaded = false;
-            };
-
-            KiraiLib.Callbacks.OnUIUnload += () =>
-            {
-                MelonLogger.Msg("OnUIUnload");
-
-                Shared.unloaded = true;
             };
         }
 
@@ -289,7 +290,8 @@ namespace KiraiMod
                             {
                                 module.SetState(state);
                             }));
-                        } else
+                        } 
+                        else
                         {
                             MethodInfo onStateChange = module.GetType().GetMethod($"OnStateChange{(/*info.reference == "state" ? "" :*/ info.reference)}", BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
                             FieldInfo reference = module.GetType().GetField(info.reference, BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
