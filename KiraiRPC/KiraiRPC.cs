@@ -78,12 +78,12 @@ namespace KiraiMod
 #if DEBUG
             MelonLogger.Log($"Found Event listener after {sleep} seconds");
 #endif
-            SendRPC(SendType.Broadcast, "00");
+            SendRPC(0xD00);
         }
 
         private System.Collections.IEnumerator Initialize()
         {
-            while (ReferenceEquals(NetworkManager.field_Internal_Static_NetworkManager_0, null)) yield return null;
+            while (NetworkManager.field_Internal_Static_NetworkManager_0 is null) yield return null;
 
             try
             {
@@ -96,11 +96,11 @@ namespace KiraiMod
             catch { MelonLogger.LogWarning("Hooking RPCs... Failed"); }
         }
 
-        public static System.Action<SendType, string, string> GetCallback(string name)
+        public static System.Action<int, string> GetSendRPC(string name)
         {
-            return new System.Action<SendType, string, string>((type, id, payload) =>
+            return new System.Action<int, string>((id, payload) =>
             {
-                SendRPC(type, id, name, payload);
+                SendRPC(id, name, payload);
             });
         }
 
@@ -123,17 +123,7 @@ namespace KiraiMod
                         return;
                     }
 
-                    string sprotocol = __1.ParameterString[1].ToString();
-
-                    if (!System.Enum.TryParse(sprotocol, out _SendType _protocol))
-                    {
-                        MelonLogger.Log($"{__0.field_Private_APIUser_0.displayName} sent a malformed kRPC (invalid type).");
-                        return;
-                    }
-
-                    SendType protocol = (SendType)_protocol;
-
-                    string sid = __1.ParameterString.Substring(2, 2);
+                    string sid = __1.ParameterString.Substring(1, 3);
                     if (!int.TryParse(sid, System.Globalization.NumberStyles.HexNumber, null, out int id)) {
                         MelonLogger.Log($"{__0.field_Private_APIUser_0.displayName} sent a malformed kRPC (invalid id).");
                         return;
@@ -151,109 +141,59 @@ namespace KiraiMod
 
                     if (len == 0) // intended for us
                     {
-                        switch (protocol)
+                        switch (id)
                         {
-                            case SendType.Get:
-                                OnGet(id, payload, __0);
+                            case 0xD00:
+                                SendRPC(0xA00, __0.field_Private_APIUser_0.displayName);
                                 break;
+                            case 0xA00:
+                            case 0xA01:
+                                if (payload == Player.prop_Player_0.field_Private_APIUser_0.displayName)
+                                {
+                                    MelonLogger.Log($"{__0.field_Private_APIUser_0.displayName} is using the RPC system.");
 
-                            case SendType.Set:
-                                OnSet(id, payload, __0);
+                                    SendRPC(0xC00, // tell them what we are using
+                                        __0.field_Private_APIUser_0.displayName.Length.ToString().PadLeft(2, '0') +
+                                        __0.field_Private_APIUser_0.displayName + Config.primary);
+                                    if (id == 0) SendRPC(0xA01, __0.field_Private_APIUser_0.displayName); // ask them what they are using
+                                }
                                 break;
+                            case 0xC00:
+                                if (!int.TryParse(payload.Substring(0, 2), out int length)) return;
 
-                            case SendType.Post:
-                                OnPost(id, payload, __0);
-                                break;
+                                if (payload.Substring(2, length) == Player.prop_Player_0.field_Private_APIUser_0.displayName) // we are the intended recipient
+                                    callbackChain.Invoke("", "PlayerUsingMod", new string[] { __0.field_Private_APIUser_0.displayName, payload.Substring(2 + length) });
 
-                            case SendType.Broadcast:
-                                OnBroadcast(id, payload, __0);
-                                break;
-
-                            case SendType.Upgrade:
-                                OnUpgrade(id, payload, __0);
                                 break;
                         }
                     }
 
-                    if (callbackChain != null) callbackChain.Invoke(len == 0 ? "KiraiRPC" : target, sprotocol + sid, new string[] { __0.field_Private_APIUser_0.displayName, payload });
+                    if (callbackChain != null) callbackChain.Invoke(len == 0 ? "KiraiRPC" : target, sid, new string[] { __0.field_Private_APIUser_0.displayName, payload });
                 }
             }
         }
 
-        private static void OnGet(int id, string payload, Player player)
+        private static void SendRPC(int id)
         {
-            switch (id)
-            {
-                case 0:
-                case 1:
-                    if (payload == Player.prop_Player_0.field_Private_APIUser_0.displayName)
-                    {
-                        MelonLogger.Log($"{player.field_Private_APIUser_0.displayName} is using the RPC system.");
-
-                        SendRPC(SendType.Post, "00", // tell them what we are using
-                            player.field_Private_APIUser_0.displayName.Length.ToString().PadLeft(2, '0') +
-                            player.field_Private_APIUser_0.displayName + Config.primary);
-                        if (id == 0) SendRPC(SendType.Get, "01", player.field_Private_APIUser_0.displayName); // ask them what they are using
-                    }
-                    break;
-
-            }
+            SendRPC(id, "");
         }
 
-        private static void OnSet(int id, string payload, Player player)
+        private static bool SendRPC(int id, string payload)
         {
+            string sid = id.ToString("X");
+            if (sid.Length > 3) return false;
 
-        }
-
-        private static void OnPost(int id, string payload, Player player)
-        {
-            switch (id)
-            {
-                case 0:
-                    if (!int.TryParse(payload.Substring(0, 2), out int length)) return;
-
-                    if (payload.Substring(2, length) == Player.prop_Player_0.field_Private_APIUser_0.displayName) // we are the intended recipient
-                        callbackChain.Invoke("", "PlayerUsingMod", new string[] { player.field_Private_APIUser_0.displayName, payload.Substring(2 + length) });
-                    
-
-                    break;
-            }
-        }
-
-        private static void OnBroadcast(int id, string payload, Player player)
-        {
-            switch (id)
-            {
-                case 0: // Who is using KiraiRPC
-                    SendRPC(SendType.Get, "00", player.field_Private_APIUser_0.displayName); // ask them what they are using
-                    break;
-            }
-        }
-
-        private static void OnUpgrade(int id, string payload, Player player)
-        {
-
-        }
-
-        private static void SendRPC(SendType protocol, string id)
-        {
-            SendRPC(protocol, id, "");
-        }
-
-        private static bool SendRPC(SendType protocol, string id, string payload)
-        {
-            if (id.Length != 2) return false;
-
-            SendRPC("k" + System.Enum.GetName(typeof(_SendType), protocol) + id + "0" + payload);
+            SendRPC("k" + sid.PadLeft(3, '0') + "0" + payload);
 
             return true;
         }
 
-        private static bool SendRPC(SendType protocol, string id, string sender, string payload)
+        private static bool SendRPC(int id, string sender, string payload)
         {
-            if (id.Length != 2) return false;
+            string sid = id.ToString("X");
+            if (sid.Length > 3) return false;
 
-            SendRPC("k" + System.Enum.GetName(typeof(_SendType), protocol) + id + sender.Length.ToString("X") + sender + payload);
+            SendRPC("k" + sid.PadLeft(3, '0') + sender.Length.ToString("X") + sender + payload);
 
             return true;
         }
@@ -294,43 +234,5 @@ namespace KiraiMod
             },
             VrcBroadcastType.AlwaysUnbuffered, VRCPlayer.field_Internal_Static_VRCPlayer_0.gameObject, 0f);
         }
-
-        /// <summary>
-        /// Get       = A,
-        /// Set       = B,
-        /// Post      = C,
-        /// Broadcast = D,
-        /// Upgrade   = E
-        /// </summary>
-        public enum SendType
-        {
-            Get,
-            Set,
-            Post,
-            Broadcast,
-            Upgrade
-        }
-
-        enum _SendType
-        {
-            A,
-            B,
-            C,
-            D,
-            E
-        }
-
-        // A - Get
-        // B - Set
-        // C - Post
-        // D - Broadcast
-        // E - Upgrade (ignore)
-
-        // Broadcast 00: Anybody here?
-        // Broadcast 01: I'm here.
-        // Get 00: What mod are you using?
-        // Set 00: I am using ModName
-        // Get 01: What is your supported version?
-        // Set 01: My supported version is x.x.x
     }
 }
