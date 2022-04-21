@@ -58,7 +58,7 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Beta|AnyCPU'">
-    <OutputPath>bin\Beta\</OutputPath>
+    <OutputPath>..\BetaBuild\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Optimize>true</Optimize>
@@ -85,9 +85,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\KiraiLib\Build\KiraiLib.dll</HintPath>
     </Reference>
-    <Reference Include="KiraiLibLoader, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\KiraiMod\Lib\KiraiLibLoader.dll</HintPath>
+    <Reference Include="KiraiLibLoader">
+      <HintPath>..\KiraiComms\Lib\KiraiLibLoader.dll</HintPath>
     </Reference>
     <Reference Include="librsync.net">
       <HintPath>Lib\librsync.net.dll</HintPath>
