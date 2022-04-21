@@ -62,8 +62,8 @@ namespace KiraiMod.Modules
                 if (Input.GetKey(KeyCode.D)) x++;
                 if (Input.GetKey(KeyCode.A)) x--;
 
-                if (Input.GetKey(KeyCode.E)) y++;
-                if (Input.GetKey(KeyCode.Q)) y--;
+                if (Input.GetKey(KeyCode.E) || Input.GetKey(KeyCode.Space)) y++;
+                if (Input.GetKey(KeyCode.Q) || Input.GetKey(KeyCode.LeftControl)) y--;
             }
 
             if (camera == null)

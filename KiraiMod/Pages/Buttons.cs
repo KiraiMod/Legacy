@@ -123,6 +123,16 @@ namespace KiraiMod.Pages
                 Helper.CrashSelected();
             }));
 
+            Shared.menu.CreateButton("buttons2/force-jump", "Force Jump", "Allows yourself to jump in a world without it", -1, 0, Shared.menu.pages[(int)Menu.PageIndex.buttons2].transform, new Action(() =>
+            {
+                Networking.LocalPlayer.SetJumpImpulse(3);
+            }));
+
+            Shared.menu.CreateButton("buttons2/classic-movement", "Classic\nMovement", "Use old VRChat movement in SDK3 worlds", 0, 0, Shared.menu.pages[(int)Menu.PageIndex.buttons2].transform, new Action(() =>
+            {
+                Networking.LocalPlayer.UseLegacyLocomotion();
+            }));
+
             Shared.menu.CreateButton("p4/open-p5", "Next", "Opens KiraiMod's next page", -2f, 1f, Shared.menu.pages[(int)Menu.PageIndex.buttons2].transform, new System.Action(() =>
             {
                 Shared.menu.selected = 5;

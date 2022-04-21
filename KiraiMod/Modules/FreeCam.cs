@@ -12,9 +12,6 @@ namespace KiraiMod.Modules
             new ModuleInfo("FreeCam", "Move your camera without moving your player", ButtonType.Toggle, 11, Menu.PageIndex.options1, nameof(state))
         };
 
-        private Quaternion oRot;
-        private Vector3 oPos;
-
         private GamelikeInputController playerController;
         private Transform camera;
 
@@ -28,16 +25,13 @@ namespace KiraiMod.Modules
             
             if (state)
             {
-                oPos = head.position;
-                oRot = head.rotation;
-
                 playerController.enabled = false;
                 forward.active = false;
             }
             else
             {
-                head.position = oPos;
-                head.rotation = oRot;
+                head.localPosition = Vector3.zero;
+                head.localRotation = Quaternion.identity;
 
                 playerController.enabled = true;
                 forward.active = true;

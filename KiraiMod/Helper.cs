@@ -116,7 +116,7 @@ namespace KiraiMod
 
         public static System.Collections.IEnumerator RunawayChairSpamCrash(VRCStation[] stations)
         {
-            for (int i = 0; i < 20; i++)
+            for (int i = 0; i < 4; i++)
             {
                 MelonCoroutines.Start(ChairSpamCrash(stations));
                 yield return null;
@@ -128,6 +128,7 @@ namespace KiraiMod
         {
             foreach (VRCStation station in stations)
             {
+                if (station?.gameObject is null) continue;
                 if (Shared.targetPlayer is null) yield break;
                 Networking.SetOwner(Shared.targetPlayer.field_Private_VRCPlayerApi_0, station.gameObject);
                 station.GetComponent<UdonBehaviour>().SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner, "_interact");
