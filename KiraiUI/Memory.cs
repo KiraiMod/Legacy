@@ -26,5 +26,7 @@ namespace KiraiMod
 
         public static Sprite panel;
         public static float qmRPPU;
+
+        public static string EarlyAccessText;
     }
 }

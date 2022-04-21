@@ -26,46 +26,53 @@ namespace KiraiMod
             return (float)bb - (float)fl;
         }
 
-        public static void Move(int op, ref Image c, ref Color s, Color i)
+        public static void MoveImageColor(int op, ref Image c, ref Color s, Color i)
         {
             if (op == 0) c.color = i;
             else if (op == 1) s = c.color;
             else c.color = s;
         }
 
-        public static void Move(int op, ref PedalGraphic c, ref Color s, Color i)
+        public static void MovePedalGraphicColor(int op, ref PedalGraphic c, ref Color s, Color i)
         {
             if (op == 0) c.color = i;
             else if (op == 1) s = c.color;
             else c.color = s;
         }
 
-        public static void Move(int op, ref RectTransform t, ref Vector2 s, Vector2 i)
+        public static void MoveRectTransformSizeDelta(int op, ref RectTransform t, ref Vector2 s, Vector2 i)
         {
             if (op == 0) t.sizeDelta = i;
             else if (op == 1) s = t.sizeDelta;
             else t.sizeDelta = s;
         }
 
-        public static void Move(int op, ref RectTransform t, ref Vector3 s, Vector3 i)
+        public static void MoveRectTransformLocalPosition(int op, ref RectTransform t, ref Vector3 s, Vector3 i)
         {
             if (op == 0) t.localPosition = i;
             else if (op == 1) s = t.localPosition;
             else t.localPosition = s;
         }
 
-        public static void Move(int op, ref Image t, ref Sprite s, Sprite i)
+        public static void MoveImageSprite(int op, ref Image t, ref Sprite s, Sprite i)
         {
             if (op == 0) t.sprite = i;
             else if (op == 1) s = t.sprite;
             else t.sprite = s;
         }
 
-        public static void Move(int op, ref CanvasScaler t, ref float s, float i)
+        public static void MoveCanvasScalarRefPixPerUnit(int op, ref CanvasScaler t, ref float s, float i)
         {
             if (op == 0) t.m_ReferencePixelsPerUnit = i;
             else if (op == 1) s = t.m_ReferencePixelsPerUnit;
             else t.m_ReferencePixelsPerUnit = s;
+        }
+
+        public static void MoveTextText(int op, ref Text t, ref string s, string i)
+        {
+            if (op == 0) t.text = i;
+            else if (op == 1) s = t.text;
+            else t.text = s;
         }
     }
 }

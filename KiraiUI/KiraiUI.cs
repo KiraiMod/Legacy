@@ -11,7 +11,6 @@ namespace KiraiMod
         public static KiraiUI instance;
 
         public bool hasStored = false;
-        public bool disableQM = false;
         public bool hasLoaded = false;
         public bool isApplied = false;
 
@@ -25,17 +24,23 @@ namespace KiraiMod
             public static bool extended = false;
         }
 
-        Transform ui;
-        Transform screen;
-        Transform hud;
-        Transform am;
-        Transform qmne;
-        Text earlyAccess;
+        public static class CompatibilityModule
+        {
+            public static bool NoColors;
+            public static bool NoMovement;
+            public static bool NoCompatibility;
+        }
+
+        Transform UIRoot;
+        Transform SelectionMenu;
+        Transform Screens;
+        Transform HUD;
+        Transform ActionMenu;
+        Transform QuickMenuNewElements;
+        Text EarlyAccessText;
 
         public override void OnApplicationStart()
         {
-            base.OnApplicationStart();
-
             instance = this;
         }
 
@@ -43,48 +48,42 @@ namespace KiraiMod
         {
             hasLoaded = true;
 
-            ui = GameObject.Find("UserInterface").transform;
-            if (ui == null) MelonLogger.LogWarning("Didn't find UserInterface");
+            UIRoot = QuickMenu.prop_QuickMenu_0.transform.parent;
 
-            screen = ui.Find("MenuContent");
-            if (screen == null) MelonLogger.LogWarning("Didn't find MenuContent");
+            System.Collections.Generic.List<Transform> check = new System.Collections.Generic.List<Transform>();
 
-            hud = ui.Find("UnscaledUI/HudContent/Hud");
-            if (hud == null) MelonLogger.LogWarning("Didn't find Hud");
+            Screens = UIRoot?.Find("MenuContent");
+            HUD = UIRoot?.Find("UnscaledUI/HudContent/Hud");
+            SelectionMenu = QuickMenu.prop_QuickMenu_0.transform.Find("ShortcutMenu");
+            ActionMenu = UIRoot?.Find("ActionMenu");
+            QuickMenuNewElements = QuickMenu.prop_QuickMenu_0.transform.Find("QuickMenu_NewElements");
+            EarlyAccessText = SelectionMenu?.Find("EarlyAccessText")?.GetComponent<Text>();
 
-            earlyAccess = ui.Find("QuickMenu/ShortcutMenu/EarlyAccessText")?.GetComponent<Text>();
-            if (earlyAccess == null) MelonLogger.Log("Didn't find EarlyAccessText");
-
-            am = ui.Find("ActionMenu");
-            if (am is null) MelonLogger.Log("Didn't find ActionMenu");
-
-            qmne = ui.Find("QuickMenu/QuickMenu_NewElements");
-            if (qmne is null) MelonLogger.Log("Didn't find QuickMenu_NewElements");
-
-            if (!MelonHandler.Mods.Any(mod => mod.Assembly.GetName().Name.Contains("KiraiMod")))
+            if (!MelonHandler.Mods.Any(mod => mod.Assembly.GetName().Name == "KiraiMod"))
             {
                 // we have no dom so we will do it ourselves -\_(._.)_/-
                 MelonLogger.Log("KiraiMod not found. Maintaining full control.");
+
                 Store();
                 Apply();
             }
-            else
-                MelonLogger.Log("KiraiMod found! Forfeiting all control.");
+            else MelonLogger.Log("KiraiMod found! Forfeiting all control.");
 
-            if (MelonHandler.Mods.Any(mod => mod.Assembly.GetName().Name.Contains("FClient")))
+            if (MelonHandler.Mods.Any(mod => mod.Assembly.GetName().Name == "FClient"))
             {
                 MelonLogger.Log("FClient detected, not moving QuickMenu around.");
-                disableQM = true;
+                CompatibilityModule.NoMovement = true;
             }
 
-            if (!disableQM && earlyAccess != null) MelonCoroutines.Start(UpdateClock());
+            if (EarlyAccessText != null) MelonCoroutines.Start(UpdateClock());
         }
 
         private System.Collections.IEnumerator UpdateClock()
         {
             for (;;)
             {
-                earlyAccess.text = DateTime.Now.ToLongTimeString();
+                if (isApplied)
+                    EarlyAccessText.text = DateTime.Now.ToLongTimeString();
                 yield return new WaitForSeconds(1);
             }
         }
@@ -93,124 +92,147 @@ namespace KiraiMod
         {
             if (!hasLoaded) return;
             isApplied = true;
-            SetColors(0);
-            if (!disableQM) SetQuickMenu(0);
+            Execute(0);
         }
 
         public void Store()
         {
             if (!hasLoaded) return;
             hasStored = true;
-            SetColors(1);
-            if (!disableQM) SetQuickMenu(1);
+            Execute(1);
         }
 
         public void Restore()
         {
             if (!hasLoaded) return;
             isApplied = false;
-            SetColors(2);
-            if (!disableQM) SetQuickMenu(2);
+            Execute(2);
         }
 
-        private void SetColors(int op)
+        private void Execute(int op)
         {
-            Image temp;
+            Image tmp1;
+            PedalGraphic tmp2;
+            Transform tmp3;
+            Text tmp4;
 
-            #region Screens
-            // screen background
-            temp = screen.Find("Backdrop/Backdrop/Background")?.GetComponent<Image>();
-            if (temp != null) Utils.Move(op, ref temp, ref Memory.screenBackground, Config.primary2);
-            #endregion
-            #region HUD Icons
-            // mic off
-            temp = hud.Find("VoiceDotParent/VoiceDotDisabled").GetComponent<Image>();
-            if (temp != null) Utils.Move(op, ref temp, ref Memory.micOff, Config.primary);
 
-            // afk
-            temp = hud.Find("AFK/Icon").GetComponent<Image>();
-            if (temp != null) Utils.Move(op, ref temp, ref Memory.afkIcon, Config.primary);
-            #endregion
-            #region Action Menu
-            // action menu main background left
-            PedalGraphic amMBgL = am.Find("MenuL/ActionMenu/Main/Background")?.GetComponent<PedalGraphic>();
-            if (amMBgL != null) Utils.Move(op, ref amMBgL, ref Memory.amMBgL, Config.background);
-
-            // action menu main background right
-            PedalGraphic amMBgR = am.Find("MenuR/ActionMenu/Main/Background")?.GetComponent<PedalGraphic>();
-            if (amMBgR != null) Utils.Move(op, ref amMBgR, ref Memory.amMBgR, Config.background);
-
-            // action menu main background left
-            PedalGraphic amRPMBgL = am.Find("MenuL/ActionMenu/RadialPuppetMenu/Container/Background")?.GetComponent<PedalGraphic>();
-            if (amRPMBgL != null) Utils.Move(op, ref amRPMBgL, ref Memory.amRPMBgL, Config.background);
-
-            // action menu main background right
-            PedalGraphic amRPMBgR = am.Find("MenuR/ActionMenu/RadialPuppetMenu/Container/Background")?.GetComponent<PedalGraphic>();
-            if (amRPMBgR != null) Utils.Move(op, ref amRPMBgR, ref Memory.amRPMBgR, Config.background);
-            #endregion
-            #region QuickMenu Colors
-
-            temp = qmne.Find("_Background/Panel")?.GetComponent<Image>();
-            if (temp != null)
+            if (CompatibilityModule.NoCompatibility || !CompatibilityModule.NoColors)
             {
-                Utils.Move(op, ref temp, ref Memory.panel, null);
-                Utils.Move(op, ref temp, ref Memory.qmneBackground, Config.background2);
+                #region Screen Colors
+                // screen background
+                tmp1 = Screens.Find("Backdrop/Backdrop/Background")?.GetComponent<Image>();
+                if (tmp1 != null) Utils.MoveImageColor(op, ref tmp1, ref Memory.screenBackground, Config.primary2);
+                #endregion
+                #region HUD Icon Colors
+                // mic off
+                tmp1 = HUD.Find("VoiceDotParent/VoiceDotDisabled").GetComponent<Image>();
+                if (tmp1 != null) Utils.MoveImageColor(op, ref tmp1, ref Memory.micOff, Config.primary);
+
+                // afk
+                tmp1 = HUD.Find("AFK/Icon").GetComponent<Image>();
+                if (tmp1 != null) Utils.MoveImageColor(op, ref tmp1, ref Memory.afkIcon, Config.primary);
+                #endregion
+                #region Action Menu Colors
+                // action menu main background left
+                tmp2 = ActionMenu.Find("MenuL/ActionMenu/Main/Background")?.GetComponent<PedalGraphic>();
+                if (tmp2 != null) Utils.MovePedalGraphicColor(op, ref tmp2, ref Memory.amMBgL, Config.background);
+
+                // action menu main background right
+                tmp2 = ActionMenu.Find("MenuR/ActionMenu/Main/Background")?.GetComponent<PedalGraphic>();
+                if (tmp2 != null) Utils.MovePedalGraphicColor(op, ref tmp2, ref Memory.amMBgR, Config.background);
+
+                // action menu main background left
+                tmp2 = ActionMenu.Find("MenuL/ActionMenu/RadialPuppetMenu/Container/Background")?.GetComponent<PedalGraphic>();
+                if (tmp2 != null) Utils.MovePedalGraphicColor(op, ref tmp2, ref Memory.amRPMBgL, Config.background);
+
+                // action menu main background right
+                tmp2 = ActionMenu.Find("MenuR/ActionMenu/RadialPuppetMenu/Container/Background")?.GetComponent<PedalGraphic>();
+                if (tmp2 != null) Utils.MovePedalGraphicColor(op, ref tmp2, ref Memory.amRPMBgR, Config.background);
+                #endregion
+                #region QuickMenu Colors
+
+                tmp1 = QuickMenuNewElements.Find("_Background/Panel")?.GetComponent<Image>();
+                if (tmp1 != null)
+                {
+                    Utils.MoveImageSprite(op, ref tmp1, ref Memory.panel, null);
+                    Utils.MoveImageColor(op, ref tmp1, ref Memory.qmneBackground, Config.background2);
+                }
+
+                tmp1 = QuickMenuNewElements.Find("_InfoBar/Panel")?.GetComponent<Image>();
+                if (tmp1 != null)
+                {
+                    Utils.MoveImageSprite(op, ref tmp1, ref Memory.panel, null);
+                    Utils.MoveImageColor(op, ref tmp1, ref Memory.qmneInfoBar, Config.background2);
+                }
+
+                tmp3 = QuickMenuNewElements.Find("_CONTEXT");
+                if (tmp3 != null)
+                {
+                    tmp1 = tmp3.Find("QM_Context_ToolTip/Panel")?.GetComponent<Image>();
+                    if (tmp1 != null)
+                    {
+                        Utils.MoveImageSprite(op, ref tmp1, ref Memory.panel, null);
+                        Utils.MoveImageColor(op, ref tmp1, ref Memory.qmneToolTip, Config.background2);
+                    }
+
+                    tmp1 = tmp3.Find("QM_Context_User_Hover/Panel")?.GetComponent<Image>();
+                    if (tmp1 != null)
+                    {
+                        Utils.MoveImageSprite(op, ref tmp1, ref Memory.panel, null);
+                        Utils.MoveImageColor(op, ref tmp1, ref Memory.qmneUserHover, Config.background2);
+                    }
+
+                    tmp1 = tmp3.Find("QM_Context_User_Selected/Panel")?.GetComponent<Image>();
+                    if (tmp1 != null)
+                    {
+                        Utils.MoveImageSprite(op, ref tmp1, ref Memory.panel, null);
+                        Utils.MoveImageColor(op, ref tmp1, ref Memory.qmneUserSelected, Config.background2);
+                    }
+
+                    tmp1 = tmp3.Find("QM_Context_Invite/Panel")?.GetComponent<Image>();
+                    if (tmp2 != null)
+                    {
+                        Utils.MoveImageSprite(op, ref tmp1, ref Memory.panel, null);
+                        Utils.MoveImageColor(op, ref tmp1, ref Memory.qmneInvite, Config.background2);
+                    }
+                }
+                #endregion
             }
 
-            temp = qmne.Find("_InfoBar/Panel")?.GetComponent<Image>();
-            if (temp != null)
+            MelonLogger.Log(CompatibilityModule.NoMovement);
+            if (CompatibilityModule.NoCompatibility || !CompatibilityModule.NoMovement)
             {
-                Utils.Move(op, ref temp, ref Memory.panel, null);
-                Utils.Move(op, ref temp, ref Memory.qmneInfoBar, Config.background2);
+                #region QuickMenu Movement
+                float size = 420f;
+
+                RectTransform background = QuickMenuNewElements?.Find("_Background")?.GetComponent<RectTransform>();
+                if (background != null) Utils.MoveRectTransformSizeDelta(op, ref background, ref Memory.backgroundSize, new Vector2(100 + size * (Config.extended ? 4 : 2), 100));
+                if (background != null) Utils.MoveRectTransformLocalPosition(op, ref background, ref Memory.backgroundPos, new Vector3(Config.extended ? -size : 0, 0, 0));
+
+                RectTransform infobar = QuickMenuNewElements?.Find("_InfoBar")?.GetComponent<RectTransform>();
+                if (infobar != null) Utils.MoveRectTransformSizeDelta(op, ref infobar, ref Memory.infobarSize, new Vector2(1680 + size * 2, 285.7f));
+                #endregion
             }
-
-            Transform temp2 = qmne.Find("_CONTEXT");
-            if (temp2 != null)
-            {
-                temp = temp2.Find("QM_Context_ToolTip/Panel")?.GetComponent<Image>();
-                if (temp != null)
-                {
-                    Utils.Move(op, ref temp, ref Memory.panel, null);
-                    Utils.Move(op, ref temp, ref Memory.qmneToolTip, Config.background2);
-                }
-
-                temp = temp2.Find("QM_Context_User_Hover/Panel")?.GetComponent<Image>();
-                if (temp != null)
-                {
-                    Utils.Move(op, ref temp, ref Memory.panel, null);
-                    Utils.Move(op, ref temp, ref Memory.qmneUserHover, Config.background2);
-                }
-
-                temp = temp2.Find("QM_Context_User_Selected/Panel")?.GetComponent<Image>();
-                if (temp != null)
-                {
-                    Utils.Move(op, ref temp, ref Memory.panel, null);
-                    Utils.Move(op, ref temp, ref Memory.qmneUserSelected, Config.background2);
-                }
-
-                temp = temp2.Find("QM_Context_Invite/Panel")?.GetComponent<Image>();
-                if (temp != null)
-                {
-                    Utils.Move(op, ref temp, ref Memory.panel, null);
-                    Utils.Move(op, ref temp, ref Memory.qmneInvite, Config.background2);
-                }
-            }
-            #endregion
-        }
-
-        private void SetQuickMenu(int op)
-        {
-            float size = 420f;
-
-            RectTransform background = QuickMenu.prop_QuickMenu_0.transform.Find("QuickMenu_NewElements/_Background")?.GetComponent<RectTransform>();
-            if (background != null) Utils.Move(op, ref background, ref Memory.backgroundSize, new Vector2(100 + size * (Config.extended ? 4 : 2 ), 100));   
-            if (background != null) Utils.Move(op, ref background, ref Memory.backgroundPos, new Vector3(Config.extended ? -size : 0, 0, 0));
-
-            RectTransform infobar = QuickMenu.prop_QuickMenu_0.transform.Find("QuickMenu_NewElements/_InfoBar")?.GetComponent<RectTransform>();
-            if (infobar != null) Utils.Move(op, ref infobar, ref Memory.infobarSize, new Vector2(1680 + size * 2, 285.7f));
 
             CanvasScaler scalar = QuickMenu.prop_QuickMenu_0.GetComponent<CanvasScaler>();
-            if (scalar != null) Utils.Move(op, ref scalar, ref Memory.qmRPPU, 0);
+            if (scalar != null) Utils.MoveCanvasScalarRefPixPerUnit(op, ref scalar, ref Memory.qmRPPU, 0);
+
+            tmp3 = SelectionMenu?.Find("BuildNumText");
+            tmp4 = tmp3?.GetComponent<Text>();
+            var ddt = tmp3?.GetComponent<VRC.UI.DebugDisplayText>();
+            if (tmp4 != null && ddt != null)
+            {
+                if (op == 0)
+                {
+                    ddt.enabled = false;
+                    tmp4.text = $"Version {VRCApplicationSetup.prop_VRCApplicationSetup_0.buildNumber}";
+                }
+                else if (op == 2) ddt.enabled = true;
+            }
+
+            if (op == 1) Memory.EarlyAccessText = EarlyAccessText.text;
+            else if (op == 2) EarlyAccessText.text = Memory.EarlyAccessText;
         }
     }
 }
