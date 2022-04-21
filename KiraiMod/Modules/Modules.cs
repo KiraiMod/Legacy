@@ -19,7 +19,6 @@ namespace KiraiMod.Modules
         public Nameplates nameplates;
         public Aliases aliases;
         public ItemOrbit itemOrbit;
-        public GodMode godMode;
         public Tracers tracers;
         public FreeCam freecam;
         public PlayerList playerlist;
@@ -43,7 +42,6 @@ namespace KiraiMod.Modules
             modules.Add(nameplates = new Nameplates());
             modules.Add(aliases = new Aliases());
             modules.Add(itemOrbit = new ItemOrbit());
-            modules.Add(godMode = new GodMode());
             modules.Add(tracers = new Tracers());
             modules.Add(freecam = new FreeCam());
             modules.Add(playerlist = new PlayerList());

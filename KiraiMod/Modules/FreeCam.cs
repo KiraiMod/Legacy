@@ -1,7 +1,8 @@
-﻿using MelonLoader;
-using System.Reflection;
+﻿//#define FREECAM_LEGACY
+
 using UnityEngine;
 using VRC;
+using VRC.Networking;
 using VRC.SDKBase;
 
 namespace KiraiMod.Modules
@@ -12,13 +13,20 @@ namespace KiraiMod.Modules
             new ModuleInfo("FreeCam", "Move your camera without moving your player", ButtonType.Toggle, 11, Shared.PageIndex.toggles1, nameof(state))
         };
 
+#if FREECAM_LEGACY
         private GamelikeInputController playerController;
         private Transform camera;
-        private bool oNoclip = false;
         private bool oFlight = false;
+#else
+        private FlatBufferNetworkSerializer serializer;
+        private Vector3 oPos;
+        private Quaternion oRot;
+#endif
+        private bool oNoclip = false;
 
         public override void OnStateChange(bool state)
         {
+#if FREECAM_LEGACY
             FetchPlayerController();
 
             GameObject forward = Player.prop_Player_0.transform.Find("ForwardDirection").gameObject;
@@ -34,15 +42,38 @@ namespace KiraiMod.Modules
                 head.localRotation = Quaternion.identity;
             }
 
+#else
+            if (state)
             {
-                if (KiraiLib.UI.elements.TryGetValue(Utils.CreateID("noclip", (int)Shared.modules.noclip.info[0].page), out KiraiLib.UI.UIElement element))
+                oPos = Player.prop_Player_0.transform.position;
+                oRot = Player.prop_Player_0.transform.rotation;
+            } 
+            else
+            {
+                Player.prop_Player_0.transform.position = oPos;
+                Player.prop_Player_0.transform.rotation = oRot;
+            }
+
+            if (serializer is null)
+                serializer = Player.prop_Player_0.GetComponent<FlatBufferNetworkSerializer>();
+            serializer.enabled = !state;
+
+#endif
+            {
+            if (KiraiLib.UI.elements.TryGetValue(Utils.CreateID("noclip", (int)Shared.PageIndex.toggles1), out KiraiLib.UI.UIElement element))
                 {
                     KiraiLib.UI.Toggle toggle = element as KiraiLib.UI.Toggle;
 
                     if (state)
                     {
                         oNoclip = toggle.state;
-                        toggle.SetState(false);
+                        toggle.SetState(
+#if FREECAM_LEGACY
+                            false
+#else
+                            true
+#endif
+                            );
                     }
                     else
                     {
@@ -52,6 +83,7 @@ namespace KiraiMod.Modules
                 }
             }
 
+#if FREECAM_LEGACY
             {
                 if (KiraiLib.UI.elements.TryGetValue(Utils.CreateID("flight", (int)Shared.modules.flight.info[0].page), out KiraiLib.UI.UIElement element))
                 {
@@ -69,8 +101,10 @@ namespace KiraiMod.Modules
                     }
                 }
             }
+#endif
         }
 
+#if FREECAM_LEGACY
         public override void OnUpdate()
         {
             if (!state) return;
@@ -99,10 +133,8 @@ namespace KiraiMod.Modules
                 if (Input.GetKey(KeyCode.Q)) y--;
             }
 
-            if (camera == null)
-            {
+            if (camera is null)
                 camera = VRCVrCamera.field_Private_Static_VRCVrCamera_0.GetComponentInChildren<Camera>().transform;
-            }
 
             Transform head = VRCVrCamera.field_Private_Static_VRCVrCamera_0.transform.parent;
 
@@ -122,5 +154,8 @@ namespace KiraiMod.Modules
 
             return playerController;
         }
+#else
+        public override void OnLevelWasLoaded() => serializer = null;
+#endif
     }
 }

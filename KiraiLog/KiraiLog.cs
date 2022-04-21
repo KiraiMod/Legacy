@@ -34,5 +34,13 @@ namespace KiraiMod
 #endif
             )();
         }
+
+        public override void OnApplicationStart()
+        {
+            KiraiLib.Events.OnOwnershipTransferred += (player) =>
+            {
+                KiraiLib.Logger.Display($"[Owner] {player.field_Private_APIUser_0.displayName}", 1);
+            };
+        }
     }
 }

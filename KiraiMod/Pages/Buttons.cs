@@ -74,7 +74,7 @@ namespace KiraiMod.Pages
                 VRCPlayer.field_Internal_Static_VRCPlayer_0.transform.rotation = oRot;
             }));
 
-            KiraiLib.UI.Button.Create("p4/crash-selected", "Crash Selected", "Crash the selected player", 1f, 1f, KiraiLib.UI.pages[Shared.PageRemap[(int)Shared.PageIndex.buttons2]].transform, new Action(() =>
+            KiraiLib.UI.Button.Create("p4/crash-selected", "Crash Selected", "Crash the selected player", 2f, 1f, KiraiLib.UI.pages[Shared.PageRemap[(int)Shared.PageIndex.buttons2]].transform, new Action(() =>
             {
                 Helper.CrashSelected();
             }));

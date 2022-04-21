@@ -181,7 +181,7 @@
     <Compile Include="Modules\ESP.cs" />
     <Compile Include="Modules\Flight.cs" />
     <Compile Include="Modules\FreeCam.cs" />
-    <Compile Include="Modules\GodMode.cs" />
+    <Compile Include="Modules\FreezePickups.cs" />
     <Compile Include="Modules\HideSelf.cs" />
     <Compile Include="Modules\Misc.cs" />
     <Compile Include="Modules\PlayerList.cs" />

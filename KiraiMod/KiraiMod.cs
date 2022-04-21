@@ -106,6 +106,7 @@ namespace KiraiMod
             if (bUnload) return;
 
             Shared.modules.OnUpdate();
+            Shared.Events.OnUpdate();
 
             // todo: make this event driven using OnPlayerJoined and OnMenuOpened/Closed
             if (VRCUiManager.prop_VRCUiManager_0 != null)

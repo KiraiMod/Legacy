@@ -31,8 +31,9 @@ namespace KiraiMod.Modules
             new ModuleInfo("Bring\nPickups", "Brings all pickups in the scene", ButtonType.Button, 6, Shared.PageIndex.buttons1, nameof(BringPickups)),
             new ModuleInfo("Drop\nTarget", "Forget the current target", ButtonType.Button, 7, Shared.PageIndex.buttons1, nameof(DropTarget)),
             new ModuleInfo("Change\nPedestals", "Change all pedestals to an avatar ID", ButtonType.Button, 9, Shared.PageIndex.buttons2, nameof(ChangePedestals)),
-            new ModuleInfo("Respawn\nPickups", "Respawns all pickups", ButtonType.Button, 10, Shared.PageIndex.buttons2, nameof(RespawnPickups)),
+            new ModuleInfo("Respawn\nAll", "Respawns all pickups in the world", ButtonType.Button, 2, Shared.PageIndex.buttons2, nameof(RespawnPickups)),
             new ModuleInfo("Join World\nvia ID", "Join a world using a full instance id", ButtonType.Button, 6, Shared.PageIndex.buttons2, nameof(JoinWorldByID)),
+            new ModuleInfo("Copy\nWorld ID", "Copy your world ID to the clipboard", ButtonType.Button, 10, Shared.PageIndex.buttons2, nameof(CopyWorldID)),
             new ModuleInfo("Clipboard", "Use the clipboard instead of a popup input", ButtonType.Toggle, 10, Shared.PageIndex.toggles2, nameof(bUseClipboard)),
             new ModuleInfo("Annoyance Mode", "Orbit things around the targets head instead of their feet", ButtonType.Toggle, 9, Shared.PageIndex.toggles2, nameof(bAnnoyance)),
             new ModuleInfo("Persistant QuickMenu", "Keep the Quick Menu open when moving around", ButtonType.Toggle, 2, Shared.PageIndex.toggles3, nameof(bPersistantQuickMenu)),
@@ -98,7 +99,7 @@ namespace KiraiMod.Modules
             foreach (VRC_Pickup pickup in UnityEngine.Object.FindObjectsOfType<VRC_Pickup>())
             {
                 Networking.LocalPlayer.TakeOwnership(pickup.gameObject);
-                pickup.transform.position = new Vector3(0, -10000000, 0);
+                pickup.transform.position = new Vector3(0, -10000000, 0); // it works
             };
         }
 
@@ -143,6 +144,14 @@ namespace KiraiMod.Modules
                 {
                     Helper.JoinWorldById(resp.Trim());
                 }));
+        }
+
+        public void CopyWorldID()
+        {
+            string id = $"{RoomManager.field_Internal_Static_ApiWorldInstance_0.idOnly}:{RoomManager.field_Internal_Static_ApiWorldInstance_0.idWithTags}";
+            System.Windows.Forms.Clipboard.SetText(id);
+            MelonLoader.MelonLogger.Msg(id);
+            KiraiLib.Logger.Display("World ID copied to clipboard and saved to console", 2);
         }
 
         public void OnStateChangeBindsNumpad(bool state)

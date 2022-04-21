@@ -8,9 +8,9 @@ namespace KiraiMod.Modules
     {
         public new ModuleInfo[] info =
         {
-            new ModuleInfo("Select\nMulti Crash", "Select which people in the lobby to crash", ButtonType.Button, 3, Shared.PageIndex.buttons2, nameof(Show)),
-            new ModuleInfo("Activate\nMulti Crash", "Crash all the people you have selected", ButtonType.Half, 7, false, Shared.PageIndex.buttons2, nameof(Activate)),
-            new ModuleInfo("Deactivate\nMulti Crash", "Disable Multi Crash after activation", ButtonType.Half, 7, true, Shared.PageIndex.buttons2, nameof(Deactivate))
+            new ModuleInfo("Select\nMulti Crash", "Select which people in the lobby to crash", ButtonType.Button, 7, Shared.PageIndex.buttons2, nameof(Show)),
+            new ModuleInfo("Activate\nMulti Crash", "Crash all the people you have selected", ButtonType.Half, 11, false, Shared.PageIndex.buttons2, nameof(Activate)),
+            new ModuleInfo("Deactivate\nMulti Crash", "Disable Multi Crash after activation", ButtonType.Half, 11, true, Shared.PageIndex.buttons2, nameof(Deactivate))
         };
 
         public System.Collections.Generic.List<string> selected = new System.Collections.Generic.List<string>();

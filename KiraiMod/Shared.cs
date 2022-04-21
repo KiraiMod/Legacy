@@ -1,4 +1,5 @@
 ﻿using Harmony;
+using System;
 using System.Net.Http;
 using VRC;
 
@@ -26,6 +27,11 @@ namespace KiraiMod
         {
             public static bool bWorldTriggers;
             public static bool bOSLPush;
+        }
+        
+        public static class Events
+        {
+            public static Action OnUpdate = new Action(() => { });
         }
 
         public static bool unloaded;
