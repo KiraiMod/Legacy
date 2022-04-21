@@ -2,6 +2,7 @@
 using MelonLoader.TinyJSON;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using UnityEngine;
 using VRC.SDKBase;
@@ -10,20 +11,48 @@ namespace KiraiMod
 {
     public class KiraiFriends : MelonMod
     {
-        public string username;
+        private bool active = true;
+        private bool notifs = true;
+        private bool connected = false;
 
         private HttpClient client;
-        private bool active = true;
-        private bool connected = false;
-        private List<string[]> online = new List<string[]>();
+        private List<string[]> online;
 
-        private readonly string config = "kiraimod.name.txt";
+        public string name;
+        public Dictionary<string, string> config = new Dictionary<string, string>();
+
+        private readonly string nameFile = "kiraimod.name.txt";
+        private readonly string configFile = "kiraimod.friends.json";
 
         public override void OnApplicationStart()
         {
-            if (System.IO.File.Exists(config))
-                username = System.IO.File.ReadAllText(config);
-            else username = Environment.UserName;
+            if (System.IO.File.Exists(nameFile))
+                name = System.IO.File.ReadAllText(nameFile);
+            else name = Environment.UserName;
+
+            if (System.IO.File.Exists(configFile))
+            {
+                try
+                {
+                    config = JSON.Load(System.IO.File.ReadAllText(configFile)).Make<Dictionary<string, string>>();
+
+                    if (config.TryGetValue("name", out string username))
+                        name = username;
+
+                    if (config.TryGetValue("online", out string visibility))
+                    {
+                        if (visibility.ToLower() == "false") active = false;
+                        else active = true;
+                    }
+
+                    if (config.TryGetValue("notifs", out string notifications))
+                    {
+                        if (notifications.ToLower() == "false") notifs = false;
+                        else notifs = true;
+                    }
+                }
+                catch { MelonLogger.Log("Malformed KiraiMod.config.json"); }
+            }
 
             client = new HttpClient();
             client.BaseAddress = new Uri("http://5306aadf57b2262f40c.ddns.net:53066/friends/");
@@ -46,7 +75,7 @@ namespace KiraiMod
         {
             if (Input.GetKey(KeyCode.Tab))
             {
-                GUI.Label(new Rect(10, 10, 150, 20), $"Welcome, {username}");
+                GUI.Label(new Rect(10, 10, 150, 20), $"Welcome, {name}");
                 GUI.Label(new Rect(10, 25, 150, 20), $"Currently {(connected ? active ? "<color=lime>Online" : "<color=red>Offline" : "<color=aqua>Disconnected")}</color>");
                 GUI.Label(new Rect(10, 40, 150, 20), "Redistribution forbidden");
 
@@ -57,6 +86,7 @@ namespace KiraiMod
                     if (GUI.Button(new Rect(10, stack++ * 20 + 10, 150, 20), "Go Offline"))
                     {
                         active = false;
+                        WriteToConfig();
                         SetLocation("undefined");
                     }
                 }
@@ -65,27 +95,31 @@ namespace KiraiMod
                     if (GUI.Button(new Rect(10, stack++ * 20 + 10, 150, 20), "Go Online"))
                     {
                         active = true;
+                        WriteToConfig();
                         SetLocation();
                     }
                 }
 
-                if (GUI.Button(new Rect(10, stack++ * 20 + 10, 150, 20), "Refresh"))
+                if (notifs)
                 {
-                    client.GetAsync("online").ContinueWith(new Action<System.Threading.Tasks.Task<HttpResponseMessage>>(msg =>
+                    if (GUI.Button(new Rect(10, stack++ * 20 + 10, 150, 20), "Disable Notifications"))
                     {
-                        if (msg.Exception == null)
-                        {
-                            connected = true;
-                            msg.Result.Content.ReadAsStringAsync().ContinueWith(new Action<System.Threading.Tasks.Task<string>>((response) =>
-                            {
-                                online = JSON.Load(response.Result).Make<List<string[]>>();
-                            }));
-                        }
-                        else connected = false;
-                    }));
+                        notifs = false;
+                        WriteToConfig();
+                    }
+                }
+                else if (GUI.Button(new Rect(10, stack++ * 20 + 10, 150, 20), "Enable Notifications"))
+                {
+                    notifs = true;
+                    WriteToConfig();
                 }
 
-                if (online.Count > 0)
+                if (GUI.Button(new Rect(10, stack++ * 20 + 10, 150, 20), "Refresh"))
+                {
+                    RefreshOnline();
+                }
+
+                if (online != null && online.Count > 0)
                 {
                     for (int i = 0; i < online.Count; i++)
                     {
@@ -93,7 +127,8 @@ namespace KiraiMod
                             JoinWorldById(online[i][1]);
                     }
                 }
-            } else
+            }
+            else
             {
                 GUI.Label(new Rect(10, 10, 150, 20), $"{(connected ? active ? "<color=lime>Online" : "<color=red>Offline" : "<color=aqua>Disconnected")}</color>");
             }
@@ -101,9 +136,10 @@ namespace KiraiMod
 
         private System.Collections.IEnumerator KeepAlive()
         {
-            for (;;)
+            for (; ; )
             {
-                client.PostAsync($"keep-alive?name={Uri.EscapeDataString(username)}", null).ContinueWith(new Action<System.Threading.Tasks.Task<HttpResponseMessage>>(msg =>
+                RefreshOnline();
+                client.PostAsync($"keep-alive?name={Uri.EscapeDataString(name)}", null).ContinueWith(new Action<System.Threading.Tasks.Task<HttpResponseMessage>>(msg =>
                 {
                     if (msg.Exception == null) connected = true;
                     else connected = false;
@@ -120,15 +156,59 @@ namespace KiraiMod
             SetLocation();
         }
 
+        public void RefreshOnline()
+        {
+            client.GetAsync("online").ContinueWith(new Action<System.Threading.Tasks.Task<HttpResponseMessage>>(msg =>
+            {
+                if (msg.Exception == null)
+                {
+                    connected = true;
+                    msg.Result.Content.ReadAsStringAsync().ContinueWith(new Action<System.Threading.Tasks.Task<string>>((response) =>
+                    {
+                        var prevOnline = online;
+                        online = JSON.Load(response.Result).Make<List<string[]>>();
+
+                        if (!notifs || prevOnline is null) return;
+
+                        string[] a = new string[prevOnline.Count];
+                        string[] b = new string[online.Count];
+
+                        for (int i = 0; i < prevOnline.Count; i++)
+                            a[i] = prevOnline[i][0];
+
+                        for (int i = 0; i < online.Count; i++)
+                            b[i] = online[i][0];
+
+                        var loggedIn = b.Except(a);
+                        var loggedOut = a.Except(b);
+
+                        foreach (var user in b.Except(a))
+                            HUDMessage($"{user} logged in");
+
+                        foreach (var user in a.Except(b))
+                            HUDMessage($"{user} logged out");
+                    }));
+                }
+                else connected = false;
+            }));
+        }
+
+        public static void HUDMessage(string message)
+        {
+            if (VRCUiManager.prop_VRCUiManager_0 == null) return;
+
+            VRCUiManager.prop_VRCUiManager_0.Method_Public_Void_String_0(message);
+        }
+
         private void SetLocation(string replace = "")
         {
             string wrld = $"{RoomManager.field_Internal_Static_ApiWorld_0.id}:{RoomManager.field_Internal_Static_ApiWorld_0.currentInstanceIdWithTags}";
-            client.PostAsync($"set-location?name={Uri.EscapeDataString(username)}&location={Uri.EscapeDataString(replace == "" ? wrld : "undefined")}", null)
+            client.PostAsync($"set-location?name={Uri.EscapeDataString(name)}&location={Uri.EscapeDataString(replace == "" ? wrld : "undefined")}", null)
                 .ContinueWith(new Action<System.Threading.Tasks.Task<HttpResponseMessage>>(msg =>
-            {
-                if (msg.Exception == null) connected = true;
-                else connected = false;
-            }));
+                {
+                    if (msg.Exception == null) connected = true;
+                    else connected = false;
+                }));
         }
 
         public static bool JoinWorldById(string id)
@@ -143,6 +223,14 @@ namespace KiraiMod
             }
 
             return true;
+        }
+
+        private void WriteToConfig()
+        {
+            config["online"] = active.ToString();
+            config["notifs"] = notifs.ToString();
+
+            System.IO.File.WriteAllText(configFile, JSON.Dump(config));
         }
     }
 }
