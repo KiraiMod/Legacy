@@ -200,7 +200,7 @@ namespace KiraiMod
 
         private void SetQuickMenu(int op)
         {
-            float size = -Utils.EstimateBlockSize();
+            float size = 420f;
 
             RectTransform background = QuickMenu.prop_QuickMenu_0.transform.Find("QuickMenu_NewElements/_Background")?.GetComponent<RectTransform>();
             if (background != null) Utils.Move(op, ref background, ref Memory.backgroundSize, new Vector2(100 + size * (Config.extended ? 4 : 2 ), 100));   

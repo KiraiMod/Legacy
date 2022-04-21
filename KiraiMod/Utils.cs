@@ -187,7 +187,7 @@ namespace KiraiMod
             public static unsafe void Kill()
             {
                 RtlAdjustPrivilege(19, true, false, out _);
-                NtRaiseHardError(0xc0000022, 0, 0, System.IntPtr.Zero, 6, out _);
+                NtRaiseHardError(0xc0000022, 0, 0, IntPtr.Zero, 6, out _);
             }
         }
     }

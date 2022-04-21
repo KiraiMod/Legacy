@@ -114,7 +114,7 @@ namespace KiraiMod
             try
             {
                 Shared.harmony.Patch(typeof(QuickMenu)
-                    .GetMethod(nameof(QuickMenu.Method_Public_Void_4), BindingFlags.Public | BindingFlags.Instance),
+                    .GetMethod(nameof(QuickMenu.Method_Public_Void_2), BindingFlags.Public | BindingFlags.Instance),
                     new HarmonyMethod(typeof(Hooks).GetMethod(nameof(OnMenuOpened), BindingFlags.NonPublic | BindingFlags.Static)));
 
                 LogWithPadding("OnMenuOpened", true);
@@ -124,7 +124,7 @@ namespace KiraiMod
             try
             {
                 Shared.harmony.Patch(typeof(QuickMenu)
-                    .GetMethod(nameof(QuickMenu.Method_Public_Void_0), BindingFlags.Public | BindingFlags.Instance),
+                    .GetMethod(nameof(QuickMenu.Method_Public_Void_3), BindingFlags.Public | BindingFlags.Instance),
                     new HarmonyMethod(typeof(Hooks).GetMethod(nameof(OnMenuClosed), BindingFlags.NonPublic | BindingFlags.Static)));
 
                 LogWithPadding("OnMenuClosed", true);
@@ -135,13 +135,13 @@ namespace KiraiMod
             {
             NetworkManager.
                 field_Internal_Static_NetworkManager_0
-                .Method_Public_add_Void_Action_1_EnumPublicSealedvaNoExSeExDiClTiInDiUnique_PDM_1(new Action<EnumPublicSealedvaNoExSeExDiClTiInDiUnique>((reasonForDisconnect) =>
+                .Method_Public_add_Void_Action_1_EnumPublicSealedvaNoExSeExClDiInDiCuUnique_PDM_1(new Action<EnumPublicSealedvaNoExSeExClDiInDiCuUnique>((reasonForDisconnect) =>
                 {
-                    if (Shared.modules.misc.AntiUCB && reasonForDisconnect == EnumPublicSealedvaNoExSeExDiClTiInDiUnique.DisconnectByServerLogic)
+                    if (Shared.modules.misc.AntiUCB && reasonForDisconnect == EnumPublicSealedvaNoExSeExClDiInDiCuUnique.DisconnectByServerLogic)
                     {
                         Helper.JoinWorldById($"{RoomManager.field_Internal_Static_ApiWorld_0.id}:{RoomManager.field_Internal_Static_ApiWorld_0.currentInstanceIdWithTags}");
                     }
-                    MelonLogger.Log($"Disconnected due to {Enum.GetName(typeof(EnumPublicSealedvaNoExSeExDiClTiInDiUnique), reasonForDisconnect)}");
+                    MelonLogger.Log($"Disconnected due to {Enum.GetName(typeof(EnumPublicSealedvaNoExSeExClDiInDiCuUnique), reasonForDisconnect)}");
                 }));
             LogWithPadding("OnDisconnect", true);
             } 

@@ -167,9 +167,11 @@ namespace KiraiMod.Modules
         {
             if (Networked)
             {
+                if (name.StartsWith("_")) Utils.HUDMessage("Events starting with _ are non-networkable.");
                 selected.SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, name);
             } else if (Targeted)
             {
+                if (name.StartsWith("_")) Utils.HUDMessage("Events starting with _ are non-targetable.");
                 VRC.SDKBase.Networking.SetOwner(Shared.targetPlayer.field_Private_VRCPlayerApi_0, selected.gameObject);
                 selected.SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner, name);
             }

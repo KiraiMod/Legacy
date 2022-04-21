@@ -25,6 +25,7 @@ namespace KiraiMod
         public QuickMenu qm;
         public GameObject sm;
         public GameObject um;
+        public float size = 420f;
 
         public System.Collections.Generic.Dictionary<string, MenuObject> objects = new System.Collections.Generic.Dictionary<string, MenuObject>();
         public System.Collections.Generic.List<GameObject> pages = new System.Collections.Generic.List<GameObject>();
@@ -100,7 +101,7 @@ namespace KiraiMod
                 y = value[1];
             }
 
-            Toggle toggle = new Toggle(label, tooltip, x, y, state, parent, OnEnable, OnDisable);
+            Toggle toggle = new Toggle(this, label, tooltip, x, y, state, parent, OnEnable, OnDisable);
             objects.Add(id, toggle);
             return toggle;
         }
@@ -113,7 +114,7 @@ namespace KiraiMod
                 y = value[1];
             }
 
-            Toggle toggle = new Toggle(text, tooltip, x, y, state, parent,
+            Toggle toggle = new Toggle(this, text, tooltip, x, y, state, parent,
                 new Action(() => OnChange.Invoke(true)),
                 new Action(() => OnChange.Invoke(false))
             );
@@ -134,7 +135,7 @@ namespace KiraiMod
                 y = value[1];
             }
 
-            Button button = new Button(label, tooltip, x, y, parent, OnClick);
+            Button button = new Button(this, label, tooltip, x, y, parent, OnClick);
             if (managed) objects.Add(id, button);
             return button;
         }
@@ -147,7 +148,7 @@ namespace KiraiMod
                 y = value[1];
             }
 
-            Slider slider = new Slider(label, x, y, min, max, initial, parent, OnChange);
+            Slider slider = new Slider(this, label, x, y, min, max, initial, parent, OnChange);
             objects.Add(id, slider);
             return slider;
         }
@@ -231,7 +232,7 @@ namespace KiraiMod
             private Action OnEnable;
             public bool state;
 
-            public Toggle(string label, string tooltip, float x, float y, bool state, Transform parent, Action OnEnable, Action OnDisable)
+            public Toggle(Menu menu, string label, string tooltip, float x, float y, bool state, Transform parent, Action OnEnable, Action OnDisable)
             {
                 this.state = state;
                 this.OnEnable = OnEnable;
@@ -243,14 +244,9 @@ namespace KiraiMod
                 if (hudButton == null) MelonLogger.LogError("Failed to find UIElementMenu/ToggleHUDButton");
                 GameObject button = UnityEngine.Object.Instantiate(hudButton.gameObject, parent);
 
-
-                float size =
-                    qm.transform.Find("UserInteractMenu/ForceLogoutButton").localPosition.x -
-                    qm.transform.Find("UserInteractMenu/BanButton").localPosition.x;
-
                 button.transform.localPosition = new Vector3(
-                    button.transform.localPosition.x + (size * (x + 1)),
-                    button.transform.localPosition.y + (size * (y + 1)) + 18,
+                    button.transform.localPosition.x + (menu.size * (x + 1)),
+                    button.transform.localPosition.y + (menu.size * (y + 1)) + 18,
                     button.transform.localPosition.z
                 );
 
@@ -317,7 +313,7 @@ namespace KiraiMod
             public GameObject self;
             public Action OnClick;
 
-            public Button(string text, string tooltip, float x, float y, Transform parent, Action OnClick)
+            public Button(Menu menu, string text, string tooltip, float x, float y, Transform parent, Action OnClick)
             {
                 QuickMenu qm = QuickMenu.prop_QuickMenu_0;
 
@@ -325,13 +321,9 @@ namespace KiraiMod
                 if (blockButton == null) MelonLogger.LogError("Failed to find NotificationInteractMenu/BlockButton");
                 GameObject button = UnityEngine.Object.Instantiate(blockButton.gameObject, parent);
 
-                float size =
-                    qm.transform.Find("UserInteractMenu/ForceLogoutButton").localPosition.x -
-                    qm.transform.Find("UserInteractMenu/BanButton").localPosition.x;
-
                 button.transform.localPosition = new Vector3(
-                    button.transform.localPosition.x + (size * (x - 1)),
-                    button.transform.localPosition.y + (size * y),
+                    button.transform.localPosition.x + (menu.size * (x - 1)),
+                    button.transform.localPosition.y + (menu.size * y),
                     button.transform.localPosition.z
                 );
 
@@ -368,7 +360,7 @@ namespace KiraiMod
 
             public float value;
 
-            public Slider(string text, float x, float y, float min, float max, float initial, Transform parent, Action<float> OnChange)
+            public Slider(Menu menu, string text, float x, float y, float min, float max, float initial, Transform parent, Action<float> OnChange)
             {
                 QuickMenu qm = QuickMenu.prop_QuickMenu_0;
                 this.initial = initial;
@@ -376,30 +368,21 @@ namespace KiraiMod
 
                 GameObject slider = UnityEngine.Object.Instantiate(VRCUiManager.prop_VRCUiManager_0.menuContent.transform.Find("Screens/Settings/AudioDevicePanel/VolumeSlider"), parent).gameObject;
 
-                float size =
-                    qm.transform.Find("UserInteractMenu/ForceLogoutButton").localPosition.x - 
-                    qm.transform.Find("UserInteractMenu/BanButton").localPosition.x;
-
                 slider.transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
-                slider.transform.localPosition = new Vector3(size * (x - 0.25f), size * (y + 2.5f), 0.01f);
+                slider.transform.localPosition = new Vector3(menu.size * (x - 0.25f), menu.size * (y + 2.5f), 0.01f);
                 slider.transform.localRotation = Quaternion.Euler(0, 0, 0);
 
                 uiSlider = slider.GetComponentInChildren<UnityEngine.UI.Slider>();
                 uiSlider.minValue = min;
                 uiSlider.maxValue = max;
                 uiSlider.onValueChanged = new UnityEngine.UI.Slider.SliderEvent();
-                uiSlider.onValueChanged.AddListener(new Action<float>(_ =>
-                {
-                    uiSlider.onValueChanged.RemoveAllListeners();
-                    uiSlider.onValueChanged.AddListener(new Action<float>(value => {
-                        _SetValue(value);
-                    }));
-                    MelonCoroutines.Start(DelayedInit());
+                uiSlider.onValueChanged.AddListener(new Action<float>(value => {
+                    _SetValue(value);
                 }));
 
-                slider.transform.Find("Background").GetComponent<Image>().color = Utils.Colors.primary;
-                slider.transform.Find("Fill Area").GetComponentInChildren<Image>().color = Utils.Colors.highlight;
-                slider.transform.Find("Handle Slide Area").GetComponentInChildren<Image>().color = Utils.Colors.highlight;
+                Utils.LogGO(slider);
+                slider.GetComponent<Image>().color = Utils.Colors.primary;
+                slider.transform.Find("Fill Area/Fill").GetComponent<Image>().color = Utils.Colors.highlight;
 
                 GameObject textGO = new GameObject("Text");
                 textGO.transform.SetParent(parent.transform, false);
@@ -417,19 +400,10 @@ namespace KiraiMod
                 textText.transform.localPosition += new Vector3(0, 80, 0);
                 textText.GetComponent<RectTransform>().sizeDelta = new Vector2(textText.fontSize * text.Count(), 100f);
 
-                GameObject valueGO = new GameObject("Text");
-                valueGO.transform.SetParent(parent.transform, false);
+                valueText = slider.transform.Find("Fill Area/Label").GetComponent<Text>();
+                valueText.color = Utils.Colors.primary;
 
-                valueText = valueGO.AddComponent<Text>();
-                valueText.supportRichText = true;
-                valueText.text = "INVALID STATE";
-                valueText.font = font;
-                valueText.fontSize = 48;
-                valueText.color = Utils.Colors.highlight;
-                valueText.alignment = TextAnchor.MiddleCenter;
-                valueText.transform.localPosition = slider.transform.localPosition;
-                valueText.transform.localPosition += new Vector3(0, -70, 0);
-                valueText.GetComponent<RectTransform>().sizeDelta = new Vector2(valueText.fontSize * text.Count(), 100f);
+                uiSlider.Set(initial, true);
 
                 self = slider.gameObject;
             }
@@ -441,20 +415,12 @@ namespace KiraiMod
 
                 uiSlider.value = value;
                 _SetValue(value);
-                MelonLogger.Log("fuk");
             }
 
             private void _SetValue(float value)
             {
-                valueText.text = value.ToString("0.00");
+                valueText.text = $"<b>{value:0.00}</b>";
                 OnChange.Invoke(value);
-            }
-
-            private System.Collections.IEnumerator DelayedInit()
-            {
-                yield return new WaitForEndOfFrame();
-                initialized = true;
-                uiSlider.Set(initial, true);
             }
         }
     }

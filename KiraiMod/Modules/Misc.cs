@@ -50,7 +50,7 @@ namespace KiraiMod.Modules
             if (bUseClipboard)
                 Helper.OverrideVideoPlayers(Utils.GetClipboard().Trim());
             else
-                Utils.HUDInput("Video URL", "Override", "https://www.youtube.com/watch?v=LhCYW9dKC5s", "https://www.youtube.com/watch?v=LhCYW9dKC5s", new Action<string>((value) =>
+                Utils.HUDInput("Video URL", "Override", "https://www.youtube.com/watch?v=LhCYW9dKC5s", "", new Action<string>((value) =>
                 {
                     Helper.OverrideVideoPlayers(value.Trim());
                 }));

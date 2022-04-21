@@ -92,12 +92,7 @@ namespace KiraiMod
                 UdonBehaviour sync = Resources.FindObjectsOfTypeAll<UdonBehaviour>().FirstOrDefault(o => 
                     o.SynchronizePosition && o.GetComponents<Collider>().Concat(o.GetComponentsInChildren<Collider>()).Any(c => !c.isTrigger && ((1016111 >> c.gameObject.layer) & 1) == 1));
                 if (sync != null) MelonCoroutines.Start(OutOfRangeCrash(sync.transform, Shared.targetPlayer));
-                else
-                {
-                    VRCStation[] stations = Resources.FindObjectsOfTypeAll<VRCStation>();
-                    if (stations.Length > 0) MelonCoroutines.Start(RunawayChairSpamCrash(stations));
-                    else Utils.HUDMessage("World is invalid.");
-                }
+                else Utils.HUDMessage("World is invalid.");
             }
         }
 
@@ -156,6 +151,7 @@ namespace KiraiMod
 
         public static void OverrideVideoPlayers(string url)
         {
+            if (url == "") url = "https://www.youtube.com/watch?v=LhCYW9dKC5s";
             if (url.Contains("youtube.com/watch?v="))
             {
                 // legacy players (win7)
