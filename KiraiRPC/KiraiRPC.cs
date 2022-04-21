@@ -46,17 +46,21 @@ namespace KiraiMod
 
         private System.Collections.IEnumerator WaitForLevelToLoad()
         {
-            int sleep = 0;
+            int sleep = 0;           
 
-            while ((handler = Resources.FindObjectsOfTypeAll<VRC_EventHandler>().FirstOrDefault()) == null && sleep < 12)
+            while ((VRCPlayer.field_Internal_Static_VRCPlayer_0 == null || 
+                (handler = Object.FindObjectsOfType<VRC_EventHandler>().FirstOrDefault()) == null) && 
+                sleep < 60)
             {
                 sleep++;
-                yield return new WaitForSeconds(5);
+                yield return new WaitForSeconds(1);
             }
 
-            if (sleep >= 12) yield break;
-
-            yield return new WaitForSeconds(15);
+            if (sleep >= 60)
+            {
+                MelonLogger.Log("Abandoning RPC system, world is probably SDK3.");
+                yield break;
+            }
 
             SendRPC(SendType.Broadcast, "00");
         }
