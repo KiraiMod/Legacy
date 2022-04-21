@@ -14,6 +14,17 @@ namespace KiraiMod
         {
             MelonLogger.Log("Starting");
 
+#pragma warning disable 0162
+            try
+            {
+                if (BuildInfo.Version != "0.2.7.1")
+                {
+                    MelonLogger.Log("You should update");
+                    System.Diagnostics.Process.Start("https://github.com/HerpDerpinstine/MelonLoader/releases/latest");
+                }
+            } catch (System.Exception) {}
+#pragma warning restore 0162
+
             System.IO.Stream stream = Assembly.GetManifestResourceStream("KiraiMod.resources.assetbundle");
             System.IO.MemoryStream mem = new System.IO.MemoryStream((int)stream.Length);
             stream.CopyTo(mem);
@@ -50,7 +61,7 @@ namespace KiraiMod
 
             if (Shared.menu != null)
             {
-                if (!Shared.menu.qm.prop_Boolean_0)
+                if (!Shared.menu.qm.field_Internal_Boolean_0)
                 {
                     Shared.modules.xutils.state = false;
                     if (Shared.modules.xutils.col != null)

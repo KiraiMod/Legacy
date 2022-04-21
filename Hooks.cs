@@ -58,7 +58,7 @@ namespace KiraiMod
             try
             {
                 Shared.harmony.Patch(typeof(VRCAvatarManager)
-                    .GetMethod(nameof(VRCAvatarManager.Method_Private_Boolean_GameObject_String_Single_0), BindingFlags.Instance | BindingFlags.Public), 
+                    .GetMethod(nameof(VRCAvatarManager.Method_Private_Boolean_GameObject_String_Single_PDM_0), BindingFlags.Instance | BindingFlags.Public), 
                     null, new HarmonyMethod(typeof(Hooks).GetMethod(nameof(OnAvatarInitialized), BindingFlags.NonPublic | BindingFlags.Static)));
 
                 MelonLogger.Log("Hooking OnAvatarInitialized... Passed");
