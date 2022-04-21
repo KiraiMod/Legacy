@@ -37,6 +37,12 @@
     <Reference Include="Assembly-CSharp">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\VRChat\MelonLoader\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
+    <Reference Include="Blake2Sharp">
+      <HintPath>Lib\Blake2Sharp.dll</HintPath>
+    </Reference>
+    <Reference Include="DotZLib">
+      <HintPath>Lib\DotZLib.dll</HintPath>
+    </Reference>
     <Reference Include="Il2Cppmscorlib">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\VRChat\MelonLoader\Managed\Il2Cppmscorlib.dll</HintPath>
     </Reference>
@@ -47,6 +53,9 @@
     <Reference Include="KiraiLibLoader, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\KiraiMod\Lib\KiraiLibLoader.dll</HintPath>
+    </Reference>
+    <Reference Include="librsync.net">
+      <HintPath>Lib\librsync.net.dll</HintPath>
     </Reference>
     <Reference Include="MelonLoader.ModHandler">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\VRChat\MelonLoader\MelonLoader.ModHandler.dll</HintPath>
@@ -70,14 +79,37 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ApiFileUtils.cs" />
     <Compile Include="KiraiClone.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="KiraiLibLoader.dll" />
-    <EmbeddedResource Include="UBPU.exe" />
+    <EmbeddedResource Include="Lib\KiraiLibLoader.dll" />
+    <EmbeddedResource Include="Lib\UBPU.exe" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Lib\Blake2Sharp.dll" />
+    <EmbeddedResource Include="Lib\librsync.net.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Lib\DotZLib.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Lib\AsyncEnumerable.dll" />
+    <EmbeddedResource Include="Lib\LZ4.dll" />
+    <EmbeddedResource Include="Lib\Microsoft.Bcl.AsyncInterfaces.dll" />
+    <EmbeddedResource Include="Lib\Mono.Cecil.dll" />
+    <EmbeddedResource Include="Lib\Mono.Cecil.Mdb.dll" />
+    <EmbeddedResource Include="Lib\Mono.Cecil.Pdb.dll" />
+    <EmbeddedResource Include="Lib\Mono.Cecil.Rocks.dll" />
+    <EmbeddedResource Include="Lib\MonoMod.RuntimeDetour.dll" />
+    <EmbeddedResource Include="Lib\MonoMod.Utils.dll" />
+    <EmbeddedResource Include="Lib\SevenZip.dll" />
+    <EmbeddedResource Include="Lib\System.Threading.Tasks.Extensions.dll" />
+    <EmbeddedResource Include="Lib\websocket-sharp.dll" />
+    <EmbeddedResource Include="Lib\zlibwapi.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

@@ -22,6 +22,8 @@ namespace KiraiMod
         HttpClient client = new HttpClient();
         List<string> inProgress = new List<string>();
 
+        ApiFileUtils utils;
+
         private MethodInfo UBPU;
 
         public KiraiClone()
@@ -29,9 +31,10 @@ namespace KiraiMod
             Stream stream;
             MemoryStream mem;
 
+            #region Load KiraiLibLoader
             if (!AppDomain.CurrentDomain.GetAssemblies().Any(a => a.GetName().Name == "KiraiLibLoader"))
             {
-                stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("KiraiMod.KiraiLibLoader.dll");
+                stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("KiraiMod.Lib.KiraiLibLoader.dll");
                 mem = new MemoryStream((int)stream.Length);
                 stream.CopyTo(mem);
 
@@ -39,8 +42,9 @@ namespace KiraiMod
 
                 new Action(() => KiraiLibLoader.Load())();
             }
-
-            stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("KiraiMod.UBPU.exe");
+            #endregion
+            #region Load UBPU
+            stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("KiraiMod.Lib.UBPU.exe");
             mem = new MemoryStream((int)stream.Length);
             stream.CopyTo(mem);
 
@@ -49,9 +53,37 @@ namespace KiraiMod
                 .First(t => t.Name == "Program")
                 .GetMethods(BindingFlags.Static | BindingFlags.NonPublic)
                 .First(method => method.Name == "Main");
+            #endregion
+            #region Load All Extra Dependencies
+            foreach (string resource in new string[] {
+                "KiraiMod.Lib.AsyncEnumerable.dll",
+                "KiraiMod.Lib.Blake2Sharp.dll",
+                "KiraiMod.Lib.DotZLib.dll",
+                "KiraiMod.Lib.librsync.net.dll",
+                "KiraiMod.Lib.LZ4.dll",
+                "KiraiMod.Lib.Microsoft.Bcl.AsyncInterfaces.dll",
+                "KiraiMod.Lib.Mono.Cecil.dll",
+                "KiraiMod.Lib.Mono.Cecil.Mdb.dll",
+                "KiraiMod.Lib.Mono.Cecil.Pdb.dll",
+                "KiraiMod.Lib.Mono.Cecil.Rocks.dll",
+                "KiraiMod.Lib.MonoMod.RuntimeDetour.dll",
+                "KiraiMod.Lib.MonoMod.Utils.dll",
+                "KiraiMod.Lib.SevenZip.dll",
+                "KiraiMod.Lib.System.Threading.Tasks.Extensions.dll",
+                "KiraiMod.Lib.websocket-sharp.dll",
+                })
+            {
+                stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resource);
+                mem = new MemoryStream((int)stream.Length);
+                stream.CopyTo(mem);
 
-            if (!Directory.Exists("./Temp"))
-                Directory.CreateDirectory("./Temp");
+                Assembly.Load(mem.ToArray());
+            }
+            #endregion
+
+            if (Directory.Exists("./Temp"))
+                Directory.Delete("./Temp", true);
+            Directory.CreateDirectory("./Temp");
         }
 
         public override void OnApplicationStart()
@@ -59,15 +91,25 @@ namespace KiraiMod
             MelonLogger.Log("Full recode by Kirai Chan et al");
             MelonLogger.Log("$40 for something slower than hotswap?");
             MelonLogger.Log("Good job Astro and Spacers.VIP but reuploader is flawed");
-            MelonLogger.Log("20 required assemblies and a folder? No thanks");
+            MelonLogger.Log("20 required assemblies? No thanks");
             MelonLogger.Log("Shouldn't have banned me for association to Astro");
             MelonLogger.Log("wikipedia.org/wiki/Clean_room_design");
             MelonLogger.Log("Nothing from reuploader is stolen :D");
+
+            UnhollowerRuntimeLib.ClassInjector.RegisterTypeInIl2Cpp<ApiFileUtils>();
+            var go = new UnityEngine.GameObject();
+            utils = go.AddComponent<ApiFileUtils>();
+            UnityEngine.Object.DontDestroyOnLoad(go);
 
             KiraiLib.Callbacks.OnUIReload += () =>
             {
                 VRChat_OnUiManagerInit();
             };
+        }
+
+        private static bool NoOp()
+        {
+            return false;
         }
 
         public override void VRChat_OnUiManagerInit()
@@ -125,28 +167,104 @@ namespace KiraiMod
 
         public async void Reupload(ApiAvatar avatar)
         {
+            if (avatar is null)
+            {
+                KiraiLib.Logger.Log("Avatar is null");
+                return;
+            }
+
             inProgress.Add(avatar.id);
 
-            KiraiLib.Logger.Log($"KiraiCloning {avatar.name}");
-            await Download(avatar);
-            KiraiLib.Logger.Log("Downloaded");
-            string id = await CreateID();
-            KiraiLib.Logger.Log($"Created ID");
-            await Uncompress(avatar);
-            KiraiLib.Logger.Log("Decompressed");
-            File.Delete($"./Temp/{avatar.id}");
-            KiraiLib.Logger.Log("Deleted");
-            Replace(avatar, id);
-            KiraiLib.Logger.Log("Replaced ID");
-            Recompress(avatar);
-            KiraiLib.Logger.Log("Recompressed");
-            File.Move($"./Temp/{avatar.id}.LZ4HC", $"./Temp/{avatar.id}.vrca");
-            KiraiLib.Logger.Log("Moved");
-            Upload(avatar);
-            KiraiLib.Logger.Log("Reuploaded (NOT IMPLEMENTED)");
-            MelonLogger.Log($"The generated id is: {id}");
+            var imageUrl = avatar.imageUrl;
+            var assetUrl = avatar.assetUrl;
+            var id = avatar.id;
+            var name = avatar.name;
+            var description = avatar.description;
 
-            inProgress.Remove(avatar.id);
+            KiraiLib.Logger.Log($"KiraiCloning {name}");
+            await Download(imageUrl, id);
+            KiraiLib.Logger.Log("Downloaded VRCA");
+            string newID = await CreateID();
+            KiraiLib.Logger.Log($"Created ID");
+            await Uncompress(id);
+            KiraiLib.Logger.Log("Decompressed Original");
+            File.Delete($"./Temp/{id}");
+            KiraiLib.Logger.Log("Deleted Original");
+            Replace(id, newID);
+            KiraiLib.Logger.Log("Replaced ID");
+            await Task.Delay(500);
+            Recompress(id);
+            KiraiLib.Logger.Log("Recompressed Modified");
+            File.Move($"./Temp/{id}.LZ4HC", $"./Temp/{id}.vrca");
+            KiraiLib.Logger.Log("Renamed Modified");
+            await Task.Delay(500);
+
+            ApiFileUtils.UploadFileAsync($"./Temp/{id}.vrca", null, name, (ApiFile vrca, string _) =>
+            {
+                KiraiLib.Logger.Log("Uploaded VRCA");
+                string imagePath = DownloadImage(imageUrl, id).Result;
+                KiraiLib.Logger.Log("Downloaded Image");
+
+                ApiFileUtils.UploadFileAsync(imagePath, null, vrca.GetFileURL(), (ApiFile image, string __) =>
+                    {
+                        KiraiLib.Logger.Log("Uploaded Image");
+
+                        var avtr = new ApiAvatar
+                        {
+                            id = id,
+                            authorName = APIUser.CurrentUser.username,
+                            authorId = APIUser.CurrentUser.id,
+                            name = name,
+                            imageUrl = image.GetFileURL(),
+                            assetUrl = vrca.GetFileURL(),
+                            description = description,
+                            releaseStatus = "private"
+                        };
+
+                        var Last = new Action(() =>
+                        {
+                            Directory.Delete($"./Temp/{id}_dump", true);
+                            File.Delete($"./Temp/{id}.vrca");
+                            File.Delete($"./Temp/{id}.xml");
+                            File.Delete(imagePath);
+
+                            KiraiLib.Logger.Log($"Cleaned up");
+
+                            inProgress.Remove(id);
+                        });
+
+                        avtr.Post(
+                            UnhollowerRuntimeLib.DelegateSupport.ConvertDelegate<Il2CppSystem.Action<ApiContainer>>(new Action<ApiContainer>((___) =>
+                            {
+                                KiraiLib.Logger.Log($"Successfully KiraiCloned {name}");
+
+                                Last();
+                            })),
+                            UnhollowerRuntimeLib.DelegateSupport.ConvertDelegate<Il2CppSystem.Action<ApiContainer>>(new Action<ApiContainer>((___) =>
+                            {
+                                KiraiLib.Logger.Log($"Failed to KiraiClone {name}");
+
+                                Last();
+                            })));
+                    },
+                    (ApiFile a, string s1) => { },
+                    (ApiFile a, string s1, string s2, float p) => { },
+                    (VRC.Core.ApiFile Assets) => false);
+            },
+            (ApiFile a, string s) => { },
+            (ApiFile a, string s, string s2, float f) => { },
+            (ApiFile a) => { return false; });
+        }
+
+        private async Task<string> DownloadImage(string imageUrl, string id)
+        {
+            HttpResponseMessage httpResponseMessage = await new HttpClient().GetAsync(imageUrl);
+            byte[] array = await httpResponseMessage.Content.ReadAsByteArrayAsync();
+
+            string text = $"./Temp/{id}.{httpResponseMessage.Content.Headers.GetValues("Content-Type").First().Split('/')[1]}";
+
+            File.WriteAllBytes(text, array);
+            return text;
         }
 
         private async Task<string> CreateID()
@@ -174,25 +292,22 @@ namespace KiraiMod
             return id;
         }
 
-        private async Task Download(ApiAvatar avatar)
+        private async Task Download(string assetUrl, string id)
         {
-            byte[] bytes = await client.GetByteArrayAsync(avatar.assetUrl);
-            File.WriteAllBytes($"./Temp/{avatar.id}", bytes);
+            byte[] bytes = await client.GetByteArrayAsync(assetUrl);
+            File.WriteAllBytes($"./Temp/{id}", bytes);
         }
 
-        private async Task Uncompress(ApiAvatar avatar)
+        private async Task Uncompress(string id)
         {
-            UBPU.Invoke(null, new object[] { new string[] { $"./Temp/{avatar.id}" } });
+            UBPU.Invoke(null, new object[] { new string[] { $"./Temp/{id}" } });
 
-
-            Console.WriteLine(Path.Combine(Directory.GetCurrentDirectory(), $"./Temp/{avatar.id}_dump"));
-            // todo fix
-            while (!Directory.Exists($"./Temp/{avatar.id}_dump")) await Task.Delay(10);
+            while (!Directory.Exists($"./Temp/{id}_dump")) await Task.Delay(10);
         }
 
-        private void Replace(ApiAvatar avatar, string id)
+        private void Replace(string id, string newID)
         {
-            string[] files = Directory.EnumerateFiles($"./Temp/{avatar.id}_dump")
+            string[] files = Directory.EnumerateFiles($"./Temp/{id}_dump")
                 .Select(n => new FileInfo(n))
                 .OrderBy(f => f.CreationTime)
                 .Select(f => f.Name)
@@ -206,111 +321,18 @@ namespace KiraiMod
                         res = file;
             } else res = files[0];
 
-            MelonLogger.Log(res);
+            byte[] bytes = File.ReadAllBytes($"./Temp/{id}_dump/{res}");
 
-            byte[] bytes = File.ReadAllBytes($"./Temp/{avatar.id}_dump/{res}");
-
-            File.WriteAllBytes($"./Temp/{avatar.id}_dump/{res}",
-                ReplaceBytes(bytes, Encoding.UTF8.GetBytes(avatar.id), Encoding.UTF8.GetBytes(id)));
+            File.WriteAllBytes($"./Temp/{id}_dump/{res}",
+                ReplaceBytes(bytes, Encoding.UTF8.GetBytes(id), Encoding.UTF8.GetBytes(newID)));
         }
 
-        private void Recompress(ApiAvatar avatar)
+        private void Recompress(string id)
         {
             Directory.SetCurrentDirectory("Temp");
-            UBPU.Invoke(null, new object[] { new string[] { $"./{avatar.id}.xml", "lz4hc" } });
+            UBPU.Invoke(null, new object[] { new string[] { $"./{id}.xml", "lz4hc" } });
             Directory.SetCurrentDirectory("../");
             return;
-        }
-
-        public static void Create(string name, string mimeType, string extension, Action<ApiContainer> successCallback, Action<ApiContainer> errorCallback)
-        {
-            new ApiFile
-            {
-                name = name,
-                mimeType = mimeType,
-                extension = extension
-            }.Save(successCallback, errorCallback);
-        }
-
-
-        private void Upload(ApiAvatar avatar)
-        {
-            return;
-
-            MelonLogger.Log("0");
-            var a = new ApiFile
-            {
-                name = avatar.name,
-                mimeType = "application/x-avatar",
-                extension = ".vrca",
-            };
-            MelonLogger.Log("1");
-            a.Save();
-            MelonLogger.Log("2");
-
-
-            MD5 md5 = MD5.Create();
-
-            byte[] bytes = File.ReadAllBytes($"./Temp/{avatar.id}.vrca");
-
-            string hash = "";
-            foreach (byte b in md5.ComputeHash(bytes, 0, bytes.Length))
-            {
-                hash += b.ToString("X2");
-            }
-            MelonLogger.Log("3");
-
-
-            //a.CreateNewVersion(ApiFile.Version.FileType.Full, hash, bytes.Length, sigMD5Base64, sigFileSize, _ => { }, _ => { });
-
-
-
-            //application/x-world
-            //application/x-avatar
-
-            //MelonLogger.Log("0");
-            //ApiFile.Create(avatar.name, "", ".vrca", new Action<ApiContainer>(container =>
-            //{
-            //    KiraiLib.Logger.Log("Recorded");
-
-            //    ApiFile file = container.Model as ApiFile;
-
-            //    MelonLogger.Log("1");
-            //    file.StartSimpleUpload(ApiFile.Version.FileDescriptor.Type.file, new Action<ApiContainer>(resp =>
-            //    {
-            //        KiraiLib.Logger.Log("Uploading");
-
-            //        MD5 md5 = MD5.Create();
-
-            //        byte[] bytes = File.ReadAllBytes($"./Temp/{avatar.id}.vrca");
-
-            //        string hash = "";
-            //        foreach (byte b in md5.ComputeHash(bytes, 0, bytes.Length))
-            //        {
-            //            hash += b.ToString("X2");
-            //        }
-
-            //    MelonLogger.Log("2");
-            //        ApiFile.PutSimpleFileToURL(
-            //            (resp as ApiDictContainer).ResponseDictionary["url"].Cast<Il2CppSystem.String>(), 
-            //            $"./Temp/{avatar.id}.vrca",
-            //            "application/x-avatar", 
-            //            hash, 
-            //            new Action(() => { }), new Action<string>(_ => { }), new Action<long, long>((_, __) => { }));
-            //    }), new Action<ApiContainer>(_ =>
-            //    {
-            //        KiraiLib.Logger.Log("Aborting");
-            //    }));
-            //}), new Action<ApiContainer>(container =>
-            //{
-
-            //    if (container.Code == 400)
-            //    {
-            //        KiraiLib.Logger.Log("Retrying");
-            //        Upload(avatar);
-            //    }
-            //    else KiraiLib.Logger.Log("Aborting");
-            //}));
         }
 
         public static int FindBytes(byte[] src, byte[] find)
