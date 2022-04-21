@@ -38,9 +38,10 @@ namespace KiraiMod.Modules
         public float x = -1;
         public float y = -1;
         public Shared.PageIndex page;
-        public string reference = null;
+        public string reference;
         public float min;
         public float max;
+        public bool lower;
 
         public ModuleInfo (string label, string description, ButtonType type, int index, Shared.PageIndex page, string reference) {
             this.label = label;
@@ -64,6 +65,18 @@ namespace KiraiMod.Modules
             this.reference = reference;
         }
 
+        public ModuleInfo(string label, string description, ButtonType type, int x, int y, bool lower, Shared.PageIndex page, string reference)
+        {
+            this.label = label;
+            this.description = description;
+            this.type = type;
+            this.x = x;
+            this.y = y;
+            this.lower = lower;
+            this.page = page;
+            this.reference = reference;
+        }
+
         public ModuleInfo(string label, ButtonType type, int index, Shared.PageIndex page, string reference, float min, float max)
         {
             this.label = label;
@@ -81,6 +94,7 @@ namespace KiraiMod.Modules
         Toggle,
         Button,
         Slider,
+        Half,
         Undefined
     }
 }

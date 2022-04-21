@@ -15,6 +15,13 @@ namespace KiraiMod.Modules
             new ModuleInfo("Down", "See more UdonBehaviours", ButtonType.Button, 3, 0, Shared.PageIndex.udon1, nameof(Down)),
             new ModuleInfo("Broadcast", "Broadcast an event to every UdonBehaviour", ButtonType.Button, 3, -1, Shared.PageIndex.udon1, nameof(Broadcast)),
 
+            new ModuleInfo("Set Alpha", "Stores the last used button in the alpha register", ButtonType.Half, 0, 3, false, Shared.PageIndex.udon2, nameof(SetAlpha)),
+            new ModuleInfo("Set Beta", "Stores the last used button in the beta register", ButtonType.Half, 1, 3, false, Shared.PageIndex.udon2, nameof(SetBeta)),
+            new ModuleInfo("Set Gamma", "Stores the last used button in the gamma register", ButtonType.Half, 2, 3, false, Shared.PageIndex.udon2, nameof(SetGamma)),
+            new ModuleInfo("Clear Alpha", "Clears the alpha register", ButtonType.Half, 0, 3, true, Shared.PageIndex.udon2, nameof(ClearAlpha)),
+            new ModuleInfo("Clear Beta", "Clears the beta register", ButtonType.Half, 1, 3, true, Shared.PageIndex.udon2, nameof(ClearBeta)),
+            new ModuleInfo("Clear Gamma", "Clears the gamma register", ButtonType.Half, 2, 3, true, Shared.PageIndex.udon2, nameof(ClearGamma)),
+
             new ModuleInfo("Repeat", "Repeat the last clicked event 10 times a second", ButtonType.Toggle, 3, 3, Shared.PageIndex.udon2, nameof(Repeat)),
             new ModuleInfo("Targeted", "Execute the event for the targeted player", ButtonType.Toggle, 3, 2, Shared.PageIndex.udon2, nameof(Targeted)),
             new ModuleInfo("Networked", "Execute the event for everyone", ButtonType.Toggle, 3, -1, Shared.PageIndex.udon2, nameof(Networked)),
@@ -23,12 +30,15 @@ namespace KiraiMod.Modules
         };
 
         private List<GameObject> pages = new List<GameObject>();
-        private List<KiraiLib.UI.Button> buttons = new List<KiraiLib.UI.Button>();
+        private List<KiraiLib.UI.Button> buttons = new List<KiraiLib.UI.Button>(); // this might be a data race
         private readonly int pageSize = 12;
         private UdonBehaviour selected;
         private int currentPage = 0;
         private int buttonPage = 0;
         private object token = null;
+        private string storedAlpha;
+        private string storedBeta;
+        private string storedGamma;
         private string last;
 
         public bool Networked = false;
@@ -99,6 +109,7 @@ namespace KiraiMod.Modules
 
                     button.onClick.AddListener(new System.Action(() =>
                     {
+                        ClearRegisters();
                         KiraiLib.UI.selected = Shared.PageRemap[(int)Shared.PageIndex.udon2];
                         selected = behaviours[current];
                         ButtonPage = 0;
@@ -124,8 +135,8 @@ namespace KiraiMod.Modules
         public void OnStateChangeRepeat(bool state)
         {
             if (token != null)
-                    MelonCoroutines.Stop(token);
-            
+                MelonCoroutines.Stop(token);
+
             if (state) token = MelonCoroutines.Start(Repeater());
             else token = null;
         }
@@ -134,8 +145,10 @@ namespace KiraiMod.Modules
         {
             for (;;)
             {
-                if (last != null)
-                    Execute(last);
+                if (storedAlpha != null) Execute(storedAlpha);
+                if (storedBeta != null) Execute(storedBeta);
+                if (storedGamma != null) Execute(storedGamma);
+
                 yield return new WaitForSecondsRealtime(0.1f);
             }
         }
@@ -157,7 +170,7 @@ namespace KiraiMod.Modules
             {
                 string name = GetEventName(i + buttonPage * 12);
                 Utils.GetGenericLayout(i, out int x, out int y);
-                buttons.Add(KiraiLib.UI.Button.Create($"udon2/execute-{i + (buttonPage * 12) - 1}", name, "Execute this event", x, y, 
+                buttons.Add(KiraiLib.UI.Button.Create($"udon2/execute-{i + (buttonPage * 12) - 1}", name, "Execute this event", x, y,
                     KiraiLib.UI.pages[Shared.PageRemap[(int)Shared.PageIndex.udon2]].transform, new System.Action(() =>
                 {
                     last = name;
@@ -181,7 +194,7 @@ namespace KiraiMod.Modules
                 if (i == index) return a.key;
                 i++;
             }
-            return "<NULL>";
+            return null;
         }
 
         private void Execute(string name)
@@ -196,10 +209,15 @@ namespace KiraiMod.Modules
                 VRC.SDKBase.Networking.SetOwner(Shared.TargetPlayer.field_Private_VRCPlayerApi_0, selected.gameObject);
                 selected.SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner, name);
             }
-            else
-            {
-                selected.SendCustomEvent(name);
-            }
+            else selected.SendCustomEvent(name);
+        }
+
+        private void ClearRegisters()
+        {
+            last = null;
+            ClearAlpha();
+            ClearBeta();
+            ClearGamma();
         }
 
         #region Buttons
@@ -212,6 +230,7 @@ namespace KiraiMod.Modules
                         KiraiLib.Logger.Log("Index is out of bounds");
                     else
                     {
+                        ClearRegisters();
                         KiraiLib.UI.selected = Shared.PageRemap[(int)Shared.PageIndex.udon2];
                         selected = behaviours[index - 1];
                         ButtonPage = 0;
@@ -254,6 +273,66 @@ namespace KiraiMod.Modules
         public void Down2()
         {
             ButtonPage++;
+        }
+
+        public void SetAlpha()
+        {
+            if (last is null) return;
+
+            if (last == storedBeta) KiraiLib.Logger.Log("Value Already in Beta");
+            else if (last == storedGamma) KiraiLib.Logger.Log("Value Already in Gamma");
+            else
+            {
+                KiraiLib.Logger.Log($"Setting Alpha to {selected.name}::{last}");
+                storedAlpha = last;
+            }
+        }
+
+        public void SetBeta()
+        {
+            if (last is null) return;
+
+            if (last == storedAlpha) KiraiLib.Logger.Log("Value Already in Alpha");
+            else if (last == storedGamma) KiraiLib.Logger.Log("Value Already in Gamma");
+            else
+            {
+                storedBeta = last;
+                KiraiLib.Logger.Log($"Setting Beta to {selected.name}::{last}");
+            }
+        }
+
+        public void SetGamma()
+        {
+            if (last is null) return;
+
+            if (last == storedAlpha) KiraiLib.Logger.Log("Value Already in Alpha");
+            else if (last == storedBeta) KiraiLib.Logger.Log("Value Already in Beta");
+            else
+            {
+                storedGamma = last;
+                KiraiLib.Logger.Log($"Setting Gamma to {selected.name}::{last}");
+            }
+        }
+
+        public void ClearAlpha()
+        {
+            if (storedAlpha is null) return; 
+            KiraiLib.Logger.Log("Clearing Alpha register");
+            storedAlpha = null;
+        }
+
+        public void ClearBeta()
+        {
+            if (storedBeta is null) return; 
+            KiraiLib.Logger.Log("Clearing Beta register");
+            storedBeta = null;
+        }
+
+        public void ClearGamma()
+        {
+            if (storedGamma is null) return; 
+            KiraiLib.Logger.Log("Clearing Gamma register");
+            storedGamma = null;
         }
         #endregion
     }

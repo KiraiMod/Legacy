@@ -341,6 +341,21 @@ namespace KiraiMod
                                 reference.Invoke(module, null);
                             }));
                     }
+                    else if (info.type == Modules.ButtonType.Half)
+                    {
+                        MethodInfo reference = module.GetType().GetMethod(info.reference, BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
+                        if (reference == null)
+                        {
+                            MelonLogger.Warning($"Failed to find method {info.reference} on {module.GetType()}");
+                            continue;
+                        }
+                        KiraiLib.UI.HalfButton.Create(Utils.CreateID(info.label, (int)info.page),
+                            info.label, info.description, info.x, info.y, info.lower, KiraiLib.UI.pages[Shared.PageRemap[(int)info.page]].transform,
+                            new Action(() =>
+                            {
+                                reference.Invoke(module, null);
+                            }));
+                    }
                     else if (info.type == Modules.ButtonType.Slider)
                     {
                         FieldInfo reference = module.GetType().GetField(info.reference, BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
