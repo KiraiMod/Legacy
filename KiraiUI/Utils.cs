@@ -53,5 +53,12 @@ namespace KiraiMod
             else if (op == 1) s = t.localPosition;
             else t.localPosition = s;
         }
+
+        public static void Move(int op, ref Image t, ref Sprite s, Sprite i)
+        {
+            if (op == 0) t.sprite = i;
+            else if (op == 1) s = t.sprite;
+            else t.sprite = s;
+        }
     }
 }

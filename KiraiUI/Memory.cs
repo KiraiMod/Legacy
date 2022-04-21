@@ -12,9 +12,18 @@ namespace KiraiMod
         public static Color amRPMBgL;
         public static Color amRPMBgR;
 
+        public static Color qmneBackground;
+        public static Color qmneInfoBar;
+        public static Color qmneToolTip;
+        public static Color qmneUserHover;
+        public static Color qmneUserSelected;
+        public static Color qmneInvite;
+
         public static Vector2 backgroundSize;
         public static Vector2 infobarSize;
 
         public static Vector3 backgroundPos;
+
+        public static Sprite panel;
     }
 }

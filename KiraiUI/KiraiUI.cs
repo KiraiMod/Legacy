@@ -21,6 +21,7 @@ namespace KiraiMod
             public static Color primary2 = new Color(0.34f, 0f, 0.65f, 0.8f);
             public static Color highlight = new Color(0.8f, 0.8f, 1f);
             public static Color background = new Color(0, 0, 0);
+            public static Color background2 = new Color(0, 0, 0, 0.9f);
             public static bool extended = false;
         }
 
@@ -28,6 +29,7 @@ namespace KiraiMod
         Transform screen;
         Transform hud;
         Transform am;
+        Transform qmne;
         Text earlyAccess;
 
         public override void OnApplicationStart()
@@ -56,6 +58,9 @@ namespace KiraiMod
             am = ui.Find("ActionMenu");
             if (am is null) MelonLogger.Log("Didn't find ActionMenu");
 
+            qmne = ui.Find("QuickMenu/QuickMenu_NewElements");
+            if (qmne is null) MelonLogger.Log("Didn't find QuickMenu_NewElements");
+
             if (!MelonHandler.Mods.Any(mod => mod.Assembly.GetName().Name.Contains("KiraiMod")))
             {
                 // we have no dom so we will do it ourselves -\_(._.)_/-
@@ -64,9 +69,7 @@ namespace KiraiMod
                 Apply();
             }
             else
-            {
                 MelonLogger.Log("KiraiMod found! Forfeiting all control.");
-            }
 
             if (MelonHandler.Mods.Any(mod => mod.Assembly.GetName().Name.Contains("FClient")))
             {
@@ -112,18 +115,23 @@ namespace KiraiMod
 
         private void SetColors(int op)
         {
-            // screen background
-            Image background = screen.Find("Backdrop/Backdrop/Background")?.GetComponent<Image>();
-            if (background != null) Utils.Move(op, ref background, ref Memory.screenBackground, Config.primary2);
+            Image temp;
 
+            #region Screens
+            // screen background
+            temp = screen.Find("Backdrop/Backdrop/Background")?.GetComponent<Image>();
+            if (temp != null) Utils.Move(op, ref temp, ref Memory.screenBackground, Config.primary2);
+            #endregion
+            #region HUD Icons
             // mic off
-            Image voiceOff = hud.Find("VoiceDotParent/VoiceDotDisabled").GetComponent<Image>();
-            if (voiceOff != null) Utils.Move(op, ref voiceOff, ref Memory.micOff, Config.primary);
+            temp = hud.Find("VoiceDotParent/VoiceDotDisabled").GetComponent<Image>();
+            if (temp != null) Utils.Move(op, ref temp, ref Memory.micOff, Config.primary);
 
             // afk
-            Image afkIcon = hud.Find("AFK/Icon").GetComponent<Image>();
-            if (afkIcon != null) Utils.Move(op, ref afkIcon, ref Memory.afkIcon, Config.primary);
-
+            temp = hud.Find("AFK/Icon").GetComponent<Image>();
+            if (temp != null) Utils.Move(op, ref temp, ref Memory.afkIcon, Config.primary);
+            #endregion
+            #region Action Menu
             // action menu main background left
             PedalGraphic amMBgL = am.Find("MenuL/ActionMenu/Main/Background")?.GetComponent<PedalGraphic>();
             if (amMBgL != null) Utils.Move(op, ref amMBgL, ref Memory.amMBgL, Config.background);
@@ -139,6 +147,55 @@ namespace KiraiMod
             // action menu main background right
             PedalGraphic amRPMBgR = am.Find("MenuR/ActionMenu/RadialPuppetMenu/Container/Background")?.GetComponent<PedalGraphic>();
             if (amRPMBgR != null) Utils.Move(op, ref amRPMBgR, ref Memory.amRPMBgR, Config.background);
+            #endregion
+            #region QuickMenu Colors
+
+            temp = qmne.Find("_Background/Panel")?.GetComponent<Image>();
+            if (temp != null)
+            {
+                Utils.Move(op, ref temp, ref Memory.panel, null);
+                Utils.Move(op, ref temp, ref Memory.qmneBackground, Config.background2);
+            }
+
+            temp = qmne.Find("_InfoBar/Panel")?.GetComponent<Image>();
+            if (temp != null)
+            {
+                Utils.Move(op, ref temp, ref Memory.panel, null);
+                Utils.Move(op, ref temp, ref Memory.qmneInfoBar, Config.background2);
+            }
+
+            Transform temp2 = qmne.Find("_CONTEXT");
+            if (temp2 != null)
+            {
+                temp = temp2.Find("QM_Context_ToolTip/Panel")?.GetComponent<Image>();
+                if (temp != null)
+                {
+                    Utils.Move(op, ref temp, ref Memory.panel, null);
+                    Utils.Move(op, ref temp, ref Memory.qmneToolTip, Config.background2);
+                }
+
+                temp = temp2.Find("QM_Context_User_Hover/Panel")?.GetComponent<Image>();
+                if (temp != null)
+                {
+                    Utils.Move(op, ref temp, ref Memory.panel, null);
+                    Utils.Move(op, ref temp, ref Memory.qmneUserHover, Config.background2);
+                }
+
+                temp = temp2.Find("QM_Context_User_Selected/Panel")?.GetComponent<Image>();
+                if (temp != null)
+                {
+                    Utils.Move(op, ref temp, ref Memory.panel, null);
+                    Utils.Move(op, ref temp, ref Memory.qmneUserSelected, Config.background2);
+                }
+
+                temp = temp2.Find("QM_Context_Invite/Panel")?.GetComponent<Image>();
+                if (temp != null)
+                {
+                    Utils.Move(op, ref temp, ref Memory.panel, null);
+                    Utils.Move(op, ref temp, ref Memory.qmneInvite, Config.background2);
+                }
+            }
+            #endregion
         }
 
         private void SetQuickMenu(int op)
