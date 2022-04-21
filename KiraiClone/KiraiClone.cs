@@ -128,11 +128,6 @@ namespace KiraiMod
                 }).Invoke();
         }
 
-        private static bool NoOp()
-        {
-            return false;
-        }
-
         public override void VRChat_OnUiManagerInit()
         {
             KiraiLib.UI.Initialize();
@@ -222,13 +217,24 @@ namespace KiraiMod
                 Log("Renamed Modified");
                 await Task.Delay(500);
 
-                ApiFileUtils.UploadFileAsync($"./Temp/{id}.vrca", null, name, (ApiFile vrca, string _) =>
+                var Last = new Action(() =>
+                {
+                    Directory.Delete($"./Temp/{id}_dump", true);
+                    File.Delete($"./Temp/{id}.vrca");
+                    File.Delete($"./Temp/{id}.xml");
+
+                    KiraiLib.Logger.Log($"Cleaned up");
+
+                    inProgress.Remove(id);
+                });
+
+                SDK.UploadFileAsync($"./Temp/{id}.vrca", null, name, (ApiFile vrca, string _) =>
                 {
                     Log("Uploaded VRCA");
                     string imagePath = DownloadImage(imageUrl, id).Result;
                     Log("Downloaded Image");
 
-                    ApiFileUtils.UploadFileAsync(imagePath, null, vrca.GetFileURL(), (ApiFile image, string __) =>
+                    SDK.UploadFileAsync(imagePath, null, vrca.GetFileURL(), (ApiFile image, string __) =>
                         {
                             Log("Uploaded Image");
 
@@ -244,18 +250,6 @@ namespace KiraiMod
                                 id = newID,
                             };
 
-                            var Last = new Action(() =>
-                            {
-                                Directory.Delete($"./Temp/{id}_dump", true);
-                                File.Delete($"./Temp/{id}.vrca");
-                                File.Delete($"./Temp/{id}.xml");
-                                File.Delete(imagePath);
-
-                                KiraiLib.Logger.Log($"Cleaned up");
-
-                                inProgress.Remove(id);
-                            });
-
                             avtr.Post(
                                 UnhollowerRuntimeLib.DelegateSupport.ConvertDelegate<Il2CppSystem.Action<ApiContainer>>(new Action<ApiContainer>((___) =>
                                 {
@@ -270,13 +264,17 @@ namespace KiraiMod
                                     Last();
                                 })));
                         },
-                        (ApiFile a, string s1) => { },
-                        (ApiFile a, string s1, string s2, float p) => { },
-                        (VRC.Core.ApiFile Assets) => false);
+                        (ApiFile a, string s1) => {
+                            Log($"Failed to KiraiClone {name}");
+
+                            MelonLogger.Log(name);
+
+                            Last();
+                        },
+                        (ApiFile a, string s1, string s2, float p) => { });
                 },
                 (ApiFile a, string s) => { },
-                (ApiFile a, string s, string s2, float f) => { },
-                (ApiFile a) => { return false; });
+                (ApiFile a, string s, string s2, float f) => { });
             }
             catch (Exception ex)
             {

@@ -81,7 +81,7 @@ namespace KiraiMod
 
         public override void OnLevelWasLoaded(int level)
         {
-            if (level == -1)
+            if (level == -1 && active)
                 MelonCoroutines.Start(SetLocationDelayed());
         }
 

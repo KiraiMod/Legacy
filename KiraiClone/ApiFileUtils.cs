@@ -15,7 +15,6 @@ using System.Runtime.InteropServices;
 
 namespace KiraiMod
 {
-
     public class ApiFileUtils : MonoBehaviour
     {
         public Il2CppSystem.Collections.Generic.List<MonoBehaviour> AntiGcList;
@@ -61,11 +60,6 @@ namespace KiraiMod
             new Regex(@"/Editor/Data/UnityExtensions/")             // anything that looks like part of the Unity installation
         };
 
-        public delegate void OnFileOpSuccess(VRC.Core.ApiFile apiFile, string message);
-        public delegate void OnFileOpError(VRC.Core.ApiFile apiFile, string error);
-        public delegate void OnFileOpProgress(VRC.Core.ApiFile apiFile, string status, string subStatus, float pct);
-        public delegate bool FileOpCancelQuery(VRC.Core.ApiFile apiFile);
-
         public static ApiFileUtils Instance
         {
             get
@@ -85,21 +79,6 @@ namespace KiraiMod
         {
             Success,
             Unchanged
-        }
-
-        public static void UploadFileAsync(string filename, string existingFileId, string friendlyName,
-            OnFileOpSuccess onSuccess, OnFileOpError onError, OnFileOpProgress onProgress, FileOpCancelQuery cancelQuery)
-        {
-            try
-            {
-                string extension = Path.GetExtension(filename);
-            }
-            catch (System.Exception ex)
-            {
-                MelonLogger.LogError(ex.ToString());
-            }
-            MelonCoroutines.Start(Instance.UploadFile(filename, existingFileId, friendlyName, onSuccess, onError,
-                onProgress, cancelQuery));
         }
 
         public static string GetMimeTypeFromExtension(string extension)
@@ -127,14 +106,18 @@ namespace KiraiMod
             return "application/octet-stream";
         }
 
-        public static bool IsGZipCompressed(string filename)
+        public static bool IsGZipCompressed(string path)
         {
-            return GetMimeTypeFromExtension(Path.GetExtension(filename)) == "application/gzip";
+            return GetMimeTypeFromExtension(Path.GetExtension(path)) == "application/gzip";
         }
 
-
-        public IEnumerator UploadFile(string filename, string existingFileId, string friendlyName,
-            OnFileOpSuccess onSuccess, OnFileOpError onError, OnFileOpProgress onProgress, FileOpCancelQuery cancelQuery)
+        public IEnumerator UploadFile(
+            string path,
+            string id,
+            string name,
+            Action<ApiFile, string> OnSuccess,
+            Action<ApiFile, string> OnError,
+            Action<ApiFile, string, string, float> OnProgress)
         {
             if (!config.IsInitialized())
             {
@@ -153,47 +136,47 @@ namespace KiraiMod
                 }
                 if (!config.IsInitialized())
                 {
-                    Error(onError, null, "Failed to fetch configuration.");
+                    Error(OnError, null, "Failed to fetch configuration.");
                     yield break;
                 }
             }
             // validate input file
             
             Instance.EnableDeltaCompression = config.GetBool("sdkEnableDeltaCompression");
-            Progress(onProgress, null, "Checking file...");
+            Progress(OnProgress, null, "Checking file...");
 
-            if (string.IsNullOrEmpty(filename))
+            if (string.IsNullOrEmpty(path))
             {
-                Error(onError, null, "Upload filename is empty!");
+                Error(OnError, null, "Upload path is empty!");
                 yield break;
             }
             
 
-            if (!System.IO.Path.HasExtension(filename))
+            if (!System.IO.Path.HasExtension(path))
             {
-                Error(onError, null, "Upload filename must have an extension: " + filename);
+                Error(OnError, null, "Upload path must have an extension: " + path);
                 yield break;
             }
 
             string whyNot;
-            if (!VRC.Tools.FileCanRead(filename, out whyNot))
+            if (!VRC.Tools.FileCanRead(path, out whyNot))
             {
-                Error(onError, null, "Could not read file to upload!", filename + "\n" + whyNot);
+                Error(OnError, null, "Could not read file to upload!", path + "\n" + whyNot);
                 yield break;
             }            
 
             // get or create ApiFile
-            Progress(onProgress, null, string.IsNullOrEmpty(existingFileId) ? "Creating file record..." : "Getting file record...");
+            Progress(OnProgress, null, string.IsNullOrEmpty(id) ? "Creating file record..." : "Getting file record...");
 
             bool wait = true;
             bool wasError = false;
             bool worthRetry = false;
             string errorStr = "";
 
-            if (string.IsNullOrEmpty(friendlyName))
-                friendlyName = filename;
+            if (string.IsNullOrEmpty(name))
+                name = path;
             
-            string extension = System.IO.Path.GetExtension(filename);
+            string extension = System.IO.Path.GetExtension(path);
             string mimeType = GetMimeTypeFromExtension(extension);
 
             VRC.Core.ApiFile apiFile = null;
@@ -220,16 +203,13 @@ namespace KiraiMod
                 worthRetry = false;
                 errorStr = "";
 
-                if (string.IsNullOrEmpty(existingFileId))
-                    VRC.Core.ApiFile.Create(friendlyName, mimeType, extension, fileSuccess, fileFailure);
+                if (string.IsNullOrEmpty(id))
+                    VRC.Core.ApiFile.Create(name, mimeType, extension, fileSuccess, fileFailure);
                 else
-                    API.Fetch<VRC.Core.ApiFile>(existingFileId, fileSuccess, fileFailure);
+                    API.Fetch<VRC.Core.ApiFile>(id, fileSuccess, fileFailure);
 
                 while (wait)
                 {
-                    if (apiFile != null && CheckCancelled(cancelQuery, onError, apiFile))
-                        yield break;
-
                     yield return null;
                 }
 
@@ -237,12 +217,12 @@ namespace KiraiMod
                 {
                     if (errorStr.Contains("File not found"))
                     {
-                        existingFileId = "";
+                        id = "";
                         continue;
                     }
 
-                    string msg = string.IsNullOrEmpty(existingFileId) ? "Failed to create file record." : "Failed to get file record.";
-                    Error(onError, null, msg, errorStr);
+                    string msg = string.IsNullOrEmpty(id) ? "Failed to create file record." : "Failed to get file record.";
+                    Error(OnError, null, msg, errorStr);
 
                     if (!worthRetry)
                         yield break;
@@ -270,9 +250,6 @@ namespace KiraiMod
                 });
                 while (wait)
                 {
-                    if (apiFile != null && CheckCancelled(cancelQuery, onError, apiFile))
-                        yield break;
-
                     yield return null;
                 }
             }
@@ -288,7 +265,7 @@ namespace KiraiMod
                 while (true)
                 {
                     // delete previous failed version
-                    Progress(onProgress, apiFile, "Preparing file for upload...", "Cleaning up previous version");
+                    Progress(OnProgress, apiFile, "Preparing file for upload...", "Cleaning up previous version");
 
                     wait = true;
                     errorStr = "";
@@ -298,17 +275,12 @@ namespace KiraiMod
 
                     while (wait)
                     {
-                        if (CheckCancelled(cancelQuery, onError, null))
-                        {
-                            yield break;
-                        }
-
                         yield return null;
                     }
 
                     if (!string.IsNullOrEmpty(errorStr))
                     {
-                        Error(onError, apiFile, "Failed to delete previous failed version!", errorStr);
+                        Error(OnError, apiFile, "Failed to delete previous failed version!", errorStr);
                         if (!worthRetry)
                         {
                             CleanupTempFiles(apiFile.id);
@@ -329,30 +301,30 @@ namespace KiraiMod
             // verify previous file op is complete
             if (apiFile.HasQueuedOperation(EnableDeltaCompression))
             {
-                Error(onError, apiFile, "A previous upload is still being processed. Please try again later.");
+                Error(OnError, apiFile, "A previous upload is still being processed. Please try again later.");
                 yield break;
             }
             
             // prepare file for upload
-            Progress(onProgress, apiFile, "Preparing file for upload...", "Optimizing file");
+            Progress(OnProgress, apiFile, "Preparing file for upload...", "Optimizing file");
             
-            string uploadFilename = VRC.Tools.GetTempFileName(Path.GetExtension(filename), out errorStr, apiFile.id);
-            if (string.IsNullOrEmpty(uploadFilename))
+            string uploadpath = VRC.Tools.GetTempFileName(Path.GetExtension(path), out errorStr, apiFile.id);
+            if (string.IsNullOrEmpty(uploadpath))
             {
-                Error(onError, apiFile, "Failed to optimize file for upload.", "Failed to create temp file: \n" + errorStr);
+                Error(OnError, apiFile, "Failed to optimize file for upload.", "Failed to create temp file: \n" + errorStr);
                 yield break;
             }
             
             wasError = false;
-            yield return MelonCoroutines.Start(CreateOptimizedFileInternal(filename, uploadFilename,
+            yield return MelonCoroutines.Start(CreateOptimizedFileInternal(path, uploadpath,
                 delegate (FileOpResult res)
                 {
                     if (res == FileOpResult.Unchanged)
-                        uploadFilename = filename;
+                        uploadpath = path;
                 },
                 delegate (string error)
                 {
-                    Error(onError, apiFile, "Failed to optimize file for upload.", error);
+                    Error(OnError, apiFile, "Failed to optimize file for upload.", error);
                     CleanupTempFiles(apiFile.id);
                     wasError = true;
                 })
@@ -362,33 +334,28 @@ namespace KiraiMod
                 yield break;
 
             // generate md5 and check if file has changed
-            Progress(onProgress, apiFile, "Preparing file for upload...", "Generating file hash");
+            Progress(OnProgress, apiFile, "Preparing file for upload...", "Generating file hash");
 
             string fileMD5Base64 = "";
             wait = true;
             errorStr = "";
-            fileMD5Base64 = System.Convert.ToBase64String(MD5.Create().ComputeHash(File.ReadAllBytes(uploadFilename)));
+            fileMD5Base64 = System.Convert.ToBase64String(MD5.Create().ComputeHash(File.ReadAllBytes(uploadpath)));
             
             wait = false;
             while (wait)
             {
-                if (CheckCancelled(cancelQuery, onError, apiFile))
-                {
-                    CleanupTempFiles(apiFile.id);
-                    yield break;
-                }
                 yield return null;
             }
             
             if (!string.IsNullOrEmpty(errorStr))
             {
-                Error(onError, apiFile, "Failed to generate MD5 hash for upload file.", errorStr);
+                Error(OnError, apiFile, "Failed to generate MD5 hash for upload file.", errorStr);
                 CleanupTempFiles(apiFile.id);
                 yield break;
             }
             
             // check if file has been changed
-            Progress(onProgress, apiFile, "Preparing file for upload...", "Checking for changes");
+            Progress(OnProgress, apiFile, "Preparing file for upload...", "Checking for changes");
             
             bool isPreviousUploadRetry = false;
             if (apiFile.HasExistingOrPendingVersion())
@@ -399,7 +366,7 @@ namespace KiraiMod
                     // the previous operation completed successfully?
                     if (!apiFile.IsWaitingForUpload())
                     {
-                        Success(onSuccess, apiFile, "The file to upload is unchanged.");
+                        Success(OnSuccess, apiFile, "The file to upload is unchanged.");
                         CleanupTempFiles(apiFile.id);
                         yield break;
                     }
@@ -417,7 +384,7 @@ namespace KiraiMod
                         while (true)
                         {
                             // delete previous failed version
-                            Progress(onProgress, apiFile, "Preparing file for upload...", "Cleaning up previous version");
+                            Progress(OnProgress, apiFile, "Preparing file for upload...", "Cleaning up previous version");
 
                             wait = true;
                             worthRetry = false;
@@ -427,16 +394,12 @@ namespace KiraiMod
 
                             while (wait)
                             {
-                                if (CheckCancelled(cancelQuery, onError, apiFile))
-                                {
-                                    yield break;
-                                }
                                 yield return null;
                             }
 
                             if (!string.IsNullOrEmpty(errorStr))
                             {
-                                Error(onError, apiFile, "Failed to delete previous incomplete version!", errorStr);
+                                Error(OnError, apiFile, "Failed to delete previous incomplete version!", errorStr);
                                 if (!worthRetry)
                                 {
                                     CleanupTempFiles(apiFile.id);
@@ -456,26 +419,26 @@ namespace KiraiMod
             
             // generate signature for new file
 
-            Progress(onProgress, apiFile, "Preparing file for upload...", "Generating signature");
+            Progress(OnProgress, apiFile, "Preparing file for upload...", "Generating signature");
 
-            string signatureFilename = VRC.Tools.GetTempFileName(".sig", out errorStr, apiFile.id);
+            string signaturepath = VRC.Tools.GetTempFileName(".sig", out errorStr, apiFile.id);
             
-            if (string.IsNullOrEmpty(signatureFilename))
+            if (string.IsNullOrEmpty(signaturepath))
             {
-                Error(onError, apiFile, "Failed to generate file signature!", "Failed to create temp file: \n" + errorStr);
+                Error(OnError, apiFile, "Failed to generate file signature!", "Failed to create temp file: \n" + errorStr);
                 CleanupTempFiles(apiFile.id);
                 yield break;
             }
 
             wasError = false;
-            yield return MelonCoroutines.Start(CreateFileSignatureInternal(uploadFilename, signatureFilename,
+            yield return MelonCoroutines.Start(CreateFileSignatureInternal(uploadpath, signaturepath,
                 delegate ()
                 {
                     // success!
                 },
                 delegate (string error)
                 {
-                    Error(onError, apiFile, "Failed to generate file signature!", error);
+                    Error(OnError, apiFile, "Failed to generate file signature!", error);
                     CleanupTempFiles(apiFile.id);
                     wasError = true;
                 })
@@ -485,34 +448,29 @@ namespace KiraiMod
                 yield break;
 
             // generate signature md5 and file size
-            Progress(onProgress, apiFile, "Preparing file for upload...", "Generating signature hash");
+            Progress(OnProgress, apiFile, "Preparing file for upload...", "Generating signature hash");
             
             string sigMD5Base64 = "";
             wait = true;
             errorStr = "";
-            sigMD5Base64 = System.Convert.ToBase64String(MD5.Create().ComputeHash(File.ReadAllBytes(signatureFilename)));
+            sigMD5Base64 = System.Convert.ToBase64String(MD5.Create().ComputeHash(File.ReadAllBytes(signaturepath)));
             wait = false;
             while (wait)
             {
-                if (CheckCancelled(cancelQuery, onError, apiFile))
-                {
-                    CleanupTempFiles(apiFile.id);
-                    yield break;
-                }
                 yield return null;
             }
 
             if (!string.IsNullOrEmpty(errorStr))
             {
-                Error(onError, apiFile, "Failed to generate MD5 hash for signature file.", errorStr);
+                Error(OnError, apiFile, "Failed to generate MD5 hash for signature file.", errorStr);
                 CleanupTempFiles(apiFile.id);
                 yield break;
             }
             
             long sigFileSize = 0;
-            if (!VRC.Tools.GetFileSize(signatureFilename, out sigFileSize, out errorStr))
+            if (!VRC.Tools.GetFileSize(signaturepath, out sigFileSize, out errorStr))
             {
-                Error(onError, apiFile, "Failed to generate file signature!", "Couldn't get file size:\n" + errorStr);
+                Error(OnError, apiFile, "Failed to generate file signature!", "Couldn't get file size:\n" + errorStr);
                 CleanupTempFiles(apiFile.id);
                 yield break;
             }
@@ -521,7 +479,7 @@ namespace KiraiMod
             string existingFileSignaturePath = null;
             if (EnableDeltaCompression && apiFile.HasExistingVersion())
             {
-                Progress(onProgress, apiFile, "Preparing file for upload...", "Downloading previous version signature");
+                Progress(OnProgress, apiFile, "Preparing file for upload...", "Downloading previous version signature");
 
                 wait = true;
                 errorStr = "";
@@ -553,51 +511,46 @@ namespace KiraiMod
                     wait = false;
                 }, (System.Action<long, long>)delegate (long downloaded, long length)
                 {
-                    Progress(onProgress, apiFile, "Preparing file for upload...", "Downloading previous version signature", Tools.DivideSafe(downloaded, length));
+                    Progress(OnProgress, apiFile, "Preparing file for upload...", "Downloading previous version signature", Tools.DivideSafe(downloaded, length));
                 });
                 while (wait)
                 {
-                    if (CheckCancelled(cancelQuery, onError, apiFile))
-                    {
-                        CleanupTempFiles(apiFile.id);
-                        yield break;
-                    }
                     yield return null;
                 }
                 
 
                 if (!string.IsNullOrEmpty(errorStr))
                 {
-                    Error(onError, apiFile, "Failed to download previous file version signature.", errorStr);
+                    Error(OnError, apiFile, "Failed to download previous file version signature.", errorStr);
                     CleanupTempFiles(apiFile.id);
                     yield break;
                 }
             }
             
             // create delta if needed
-            string deltaFilename = null;
+            string deltapath = null;
 
             if (EnableDeltaCompression && !string.IsNullOrEmpty(existingFileSignaturePath))
             {
-                Progress(onProgress, apiFile, "Preparing file for upload...", "Creating file delta");
+                Progress(OnProgress, apiFile, "Preparing file for upload...", "Creating file delta");
 
-                deltaFilename = VRC.Tools.GetTempFileName(".delta", out errorStr, apiFile.id);
-                if (string.IsNullOrEmpty(deltaFilename))
+                deltapath = VRC.Tools.GetTempFileName(".delta", out errorStr, apiFile.id);
+                if (string.IsNullOrEmpty(deltapath))
                 {
-                    Error(onError, apiFile, "Failed to create file delta for upload.", "Failed to create temp file: \n" + errorStr);
+                    Error(OnError, apiFile, "Failed to create file delta for upload.", "Failed to create temp file: \n" + errorStr);
                     CleanupTempFiles(apiFile.id);
                     yield break;
                 }
 
                 wasError = false;
-                yield return MelonCoroutines.Start(CreateFileDeltaInternal(uploadFilename, existingFileSignaturePath, deltaFilename,
+                yield return MelonCoroutines.Start(CreateFileDeltaInternal(uploadpath, existingFileSignaturePath, deltapath,
                     delegate ()
                     {
                         // success!
                     },
                     delegate (string error)
                     {
-                        Error(onError, apiFile, "Failed to create file delta for upload.", error);
+                        Error(OnError, apiFile, "Failed to create file delta for upload.", error);
                         CleanupTempFiles(apiFile.id);
                         wasError = true;
                     })
@@ -611,10 +564,10 @@ namespace KiraiMod
             // upload smaller of delta and new file
             long fullFizeSize = 0;
             long deltaFileSize = 0;
-            if (!VRC.Tools.GetFileSize(uploadFilename, out fullFizeSize, out errorStr) ||
-                (!string.IsNullOrEmpty(deltaFilename) && !VRC.Tools.GetFileSize(deltaFilename, out deltaFileSize, out errorStr)))
+            if (!VRC.Tools.GetFileSize(uploadpath, out fullFizeSize, out errorStr) ||
+                (!string.IsNullOrEmpty(deltapath) && !VRC.Tools.GetFileSize(deltapath, out deltaFileSize, out errorStr)))
             {
-                Error(onError, apiFile, "Failed to create file delta for upload.", "Couldn't get file size: " + errorStr);
+                Error(OnError, apiFile, "Failed to create file delta for upload.", "Couldn't get file size: " + errorStr);
                 CleanupTempFiles(apiFile.id);
                 yield break;
             }
@@ -624,27 +577,22 @@ namespace KiraiMod
             string deltaMD5Base64 = "";
             if (uploadDeltaFile)
             {
-                Progress(onProgress, apiFile, "Preparing file for upload...", "Generating file delta hash");
+                Progress(OnProgress, apiFile, "Preparing file for upload...", "Generating file delta hash");
 
                 wait = true;
                 errorStr = "";
 
-                deltaMD5Base64 = System.Convert.ToBase64String(MD5.Create().ComputeHash(File.ReadAllBytes(deltaFilename)));
+                deltaMD5Base64 = System.Convert.ToBase64String(MD5.Create().ComputeHash(File.ReadAllBytes(deltapath)));
                 wait = false;
 
                 while (wait)
                 {
-                    if (CheckCancelled(cancelQuery, onError, apiFile))
-                    {
-                        CleanupTempFiles(apiFile.id);
-                        yield break;
-                    }
                     yield return null;
                 }
 
                 if (!string.IsNullOrEmpty(errorStr))
                 {
-                    Error(onError, apiFile, "Failed to generate file delta hash.", errorStr);
+                    Error(OnError, apiFile, "Failed to generate file delta hash.", errorStr);
                     CleanupTempFiles(apiFile.id);
                     yield break;
                 }
@@ -689,7 +637,7 @@ namespace KiraiMod
                 else
                 {
                     // delete previous invalid version
-                    Progress(onProgress, apiFile, "Preparing file for upload...", "Cleaning up previous version");
+                    Progress(OnProgress, apiFile, "Preparing file for upload...", "Cleaning up previous version");
 
                     while (true)
                     {
@@ -701,16 +649,12 @@ namespace KiraiMod
 
                         while (wait)
                         {
-                            if (CheckCancelled(cancelQuery, onError, null))
-                            {
-                                yield break;
-                            }
                             yield return null;
                         }
 
                         if (!string.IsNullOrEmpty(errorStr))
                         {
-                            Error(onError, apiFile, "Failed to delete previous incomplete version!", errorStr);
+                            Error(OnError, apiFile, "Failed to delete previous incomplete version!", errorStr);
                             if (!worthRetry)
                             {
                                 CleanupTempFiles(apiFile.id);
@@ -732,7 +676,7 @@ namespace KiraiMod
             {
                 while (true)
                 {
-                    Progress(onProgress, apiFile, "Creating file version record...");
+                    Progress(OnProgress, apiFile, "Creating file version record...");
 
                     wait = true;
                     errorStr = "";
@@ -747,18 +691,12 @@ namespace KiraiMod
 
                     while (wait)
                     {
-                        if (CheckCancelled(cancelQuery, onError, apiFile))
-                        {
-                            CleanupTempFiles(apiFile.id);
-                            yield break;
-                        }
-
                         yield return null;
                     }
 
                     if (!string.IsNullOrEmpty(errorStr))
                     {
-                        Error(onError, apiFile, "Failed to create file version record.", errorStr);
+                        Error(OnError, apiFile, "Failed to create file version record.", errorStr);
                         if (!worthRetry)
                         {
                             CleanupTempFiles(apiFile.id);
@@ -783,26 +721,25 @@ namespace KiraiMod
             {
                 if (apiFile.GetLatestVersion().delta.status == VRC.Core.ApiFile.Status.Waiting)
                 {
-                    Progress(onProgress, apiFile, "Uploading file delta...");
+                    Progress(OnProgress, apiFile, "Uploading file delta...");
 
                     wasError = false;
                     yield return MelonCoroutines.Start(UploadFileComponentInternal(apiFile,
-                        VRC.Core.ApiFile.Version.FileDescriptor.Type.delta, deltaFilename, deltaMD5Base64, deltaFileSize,
+                        VRC.Core.ApiFile.Version.FileDescriptor.Type.delta, deltapath, deltaMD5Base64, deltaFileSize,
                         delegate (VRC.Core.ApiFile file)
                         {
                             apiFile = file;
                         },
                         delegate (string error)
                         {
-                            Error(onError, apiFile, "Failed to upload file delta.", error);
+                            Error(OnError, apiFile, "Failed to upload file delta.", error);
                             CleanupTempFiles(apiFile.id);
                             wasError = true;
                         },
                         delegate (long downloaded, long length)
                         {
-                            Progress(onProgress, apiFile, "Uploading file delta...", "", Tools.DivideSafe(downloaded, length));
-                        },
-                        cancelQuery)
+                            Progress(OnProgress, apiFile, "Uploading file delta...", "", Tools.DivideSafe(downloaded, length));
+                        })
                     );
 
                     if (wasError)
@@ -814,26 +751,25 @@ namespace KiraiMod
             {
                 if (apiFile.GetLatestVersion().file.status == VRC.Core.ApiFile.Status.Waiting)
                 {
-                    Progress(onProgress, apiFile, "Uploading file...");
+                    Progress(OnProgress, apiFile, "Uploading file...");
 
                     wasError = false;
                     yield return MelonCoroutines.Start(UploadFileComponentInternal(apiFile,
-                        VRC.Core.ApiFile.Version.FileDescriptor.Type.file, uploadFilename, fileMD5Base64, fullFizeSize,
+                        VRC.Core.ApiFile.Version.FileDescriptor.Type.file, uploadpath, fileMD5Base64, fullFizeSize,
                         delegate (VRC.Core.ApiFile file)
                         {
                             apiFile = file;
                         },
                         delegate (string error)
                         {
-                            Error(onError, apiFile, "Failed to upload file.", error);
+                            Error(OnError, apiFile, "Failed to upload file.", error);
                             CleanupTempFiles(apiFile.id);
                             wasError = true;
                         },
                         delegate (long downloaded, long length)
                         {
-                            Progress(onProgress, apiFile, "Uploading file...", "", Tools.DivideSafe(downloaded, length));
-                        },
-                        cancelQuery)
+                            Progress(OnProgress, apiFile, "Uploading file...", "", Tools.DivideSafe(downloaded, length));
+                        })
                     );
 
                     if (wasError)
@@ -846,26 +782,25 @@ namespace KiraiMod
             // upload signature
             if (apiFile.GetLatestVersion().signature.status == VRC.Core.ApiFile.Status.Waiting)
             {
-                Progress(onProgress, apiFile, "Uploading file signature...");
+                Progress(OnProgress, apiFile, "Uploading file signature...");
 
                 wasError = false;
                 yield return MelonCoroutines.Start(UploadFileComponentInternal(apiFile,
-                    VRC.Core.ApiFile.Version.FileDescriptor.Type.signature, signatureFilename, sigMD5Base64, sigFileSize,
+                    VRC.Core.ApiFile.Version.FileDescriptor.Type.signature, signaturepath, sigMD5Base64, sigFileSize,
                     delegate (VRC.Core.ApiFile file)
                     {
                         apiFile = file;
                     },
                     delegate (string error)
                     {
-                        Error(onError, apiFile, "Failed to upload file signature.", error);
+                        Error(OnError, apiFile, "Failed to upload file signature.", error);
                         CleanupTempFiles(apiFile.id);
                         wasError = true;
                     },
                     delegate (long downloaded, long length)
                     {
-                        Progress(onProgress, apiFile, "Uploading file signature...", "", Tools.DivideSafe(downloaded, length));
-                    },
-                    cancelQuery)
+                        Progress(OnProgress, apiFile, "Uploading file signature...", "", Tools.DivideSafe(downloaded, length));
+                    })
                 );
 
                 if (wasError)
@@ -875,7 +810,7 @@ namespace KiraiMod
 
 
             // Validate file records queued or complete
-            Progress(onProgress, apiFile, "Validating upload...");
+            Progress(OnProgress, apiFile, "Validating upload...");
 
             bool isUploadComplete = (uploadDeltaFile
                 ? apiFile.GetFileDescriptor(apiFile.GetLatestVersionNumber(), VRC.Core.ApiFile.Version.FileDescriptor.Type.delta).status == VRC.Core.ApiFile.Status.Complete
@@ -885,7 +820,7 @@ namespace KiraiMod
 
             if (!isUploadComplete)
             {
-                Error(onError, apiFile, "Failed to upload file.", "Record status is not 'complete'");
+                Error(OnError, apiFile, "Failed to upload file.", "Record status is not 'complete'");
                 CleanupTempFiles(apiFile.id);
                 yield break;
             }
@@ -896,7 +831,7 @@ namespace KiraiMod
 
             if (!isServerOpQueuedOrComplete)
             {
-                Error(onError, apiFile, "Failed to upload file.", "Record is still in 'waiting' status");
+                Error(OnError, apiFile, "Failed to upload file.", "Record is still in 'waiting' status");
                 CleanupTempFiles(apiFile.id);
                 yield break;
             }
@@ -904,7 +839,7 @@ namespace KiraiMod
 
 
             // wait for server processing to complete
-            Progress(onProgress, apiFile, "Processing upload...");
+            Progress(OnProgress, apiFile, "Processing upload...");
             float checkDelay = SERVER_PROCESSING_INITIAL_RETRY_TIME;
             float maxDelay = SERVER_PROCESSING_MAX_RETRY_TIME;
             float timeout = GetServerProcessingWaitTimeoutForDataSize(apiFile.GetLatestVersion().file.sizeInBytes);
@@ -913,20 +848,14 @@ namespace KiraiMod
             while (apiFile.HasQueuedOperation(uploadDeltaFile))
             {
                 // wait before polling again
-                Progress(onProgress, apiFile, "Processing upload...", "Checking status in " + Mathf.CeilToInt(checkDelay) + " seconds");
+                Progress(OnProgress, apiFile, "Processing upload...", "Checking status in " + Mathf.CeilToInt(checkDelay) + " seconds");
 
                 while (Time.realtimeSinceStartup - startTime < checkDelay)
                 {
-                    if (CheckCancelled(cancelQuery, onError, apiFile))
-                    {
-                        CleanupTempFiles(apiFile.id);
-                        yield break;
-                    }
-
                     if (Time.realtimeSinceStartup - initialStartTime > timeout)
                     {
 
-                        Error(onError, apiFile, "Timed out waiting for upload processing to complete.");
+                        Error(OnError, apiFile, "Timed out waiting for upload processing to complete.");
                         CleanupTempFiles(apiFile.id);
                         yield break;
                     }
@@ -937,7 +866,7 @@ namespace KiraiMod
                 while (true)
                 {
                     // check status
-                    Progress(onProgress, apiFile, "Processing upload...", "Checking status...");
+                    Progress(OnProgress, apiFile, "Processing upload...", "Checking status...");
 
                     wait = true;
                     worthRetry = false;
@@ -946,18 +875,12 @@ namespace KiraiMod
 
                     while (wait)
                     {
-                        if (CheckCancelled(cancelQuery, onError, apiFile))
-                        {
-                            CleanupTempFiles(apiFile.id);
-                            yield break;
-                        }
-
                         yield return null;
                     }
 
                     if (!string.IsNullOrEmpty(errorStr))
                     {
-                        Error(onError, apiFile, "Checking upload status failed.", errorStr);
+                        Error(OnError, apiFile, "Checking upload status failed.", errorStr);
                         if (!worthRetry)
                         {
                             CleanupTempFiles(apiFile.id);
@@ -977,12 +900,10 @@ namespace KiraiMod
             // cleanup and wait for it to finish
             yield return MelonCoroutines.Start(CleanupTempFilesInternal(apiFile.id));
 
-            Success(onSuccess, apiFile, "Upload complete!");
-            
-
+            Success(OnSuccess, apiFile, "Upload complete!");
         }
 
-        public IEnumerator CreateOptimizedFileInternal(string filename, string outputFilename, Action<FileOpResult> onSuccess, Action<string> onError)
+        public IEnumerator CreateOptimizedFileInternal(string path, string outputpath, Action<FileOpResult> onSuccess, Action<string> OnError)
         {
 
           // assume it's a .gz, or a .unitypackage
@@ -990,7 +911,7 @@ namespace KiraiMod
 
 #if !UNITY_ANDROID
 
-            if (!IsGZipCompressed(filename))
+            if (!IsGZipCompressed(path))
             {
                 // nothing to do
                 if (onSuccess != null)
@@ -998,7 +919,7 @@ namespace KiraiMod
                 yield break;
             }
 
-            bool isUnityPackage = string.Compare(Path.GetExtension(filename), ".unitypackage", true) == 0;
+            bool isUnityPackage = string.Compare(Path.GetExtension(path), ".unitypackage", true) == 0;
 
             yield return null;
 
@@ -1007,12 +928,12 @@ namespace KiraiMod
             Stream inStream = null;
             try
             {
-                inStream = new DotZLib.GZipStream(filename, kGzipBufferSize);
+                inStream = new DotZLib.GZipStream(path, kGzipBufferSize);
             }
             catch (Exception e)
             {
-                if (onError != null)
-                    onError("Couldn't read file: " + filename + "\n" + e.Message);
+                if (OnError != null)
+                    OnError("Couldn't read file: " + path + "\n" + e.Message);
                 yield break;
             }
 
@@ -1022,14 +943,14 @@ namespace KiraiMod
             DotZLib.GZipStream outStream = null;
             try
             {
-                outStream = new DotZLib.GZipStream(outputFilename, DotZLib.CompressLevel.Best, true, kGzipBufferSize);    // this lib supports rsyncable output
+                outStream = new DotZLib.GZipStream(outputpath, DotZLib.CompressLevel.Best, true, kGzipBufferSize);    // this lib supports rsyncable output
             }
             catch (Exception e)
             {
                 if (inStream != null)
                     inStream.Close();
-                if (onError != null)
-                    onError("Couldn't create output file: " + outputFilename + "\n" + e.Message);
+                if (OnError != null)
+                    OnError("Couldn't create output file: " + outputpath + "\n" + e.Message);
                 yield break;
             }
 
@@ -1045,21 +966,21 @@ namespace KiraiMod
                     // scan package and make list of asset guids we don't want
                     List<string> assetGuidsToStrip = new List<string>();
                     {
-                        byte[] filenameBuf = new byte[4096];
+                        byte[] pathBuf = new byte[4096];
                         MelonLoader.ICSharpCode.SharpZipLib.Tar.TarInputStream tarInputStream = new MelonLoader.ICSharpCode.SharpZipLib.Tar.TarInputStream(inStream);
                         MelonLoader.ICSharpCode.SharpZipLib.Tar.TarEntry tarEntry = tarInputStream.GetNextEntry();
                         while (tarEntry != null)
                         {
                             if (tarEntry.Size > 0 && tarEntry.Name.EndsWith("/pathname", StringComparison.OrdinalIgnoreCase))
                             {
-                                int bytesRead = tarInputStream.Read(filenameBuf, 0, (int)tarEntry.Size);
+                                int bytesRead = tarInputStream.Read(pathBuf, 0, (int)tarEntry.Size);
                                 if (bytesRead > 0)
                                 {
-                                    string assetFilename = System.Text.ASCIIEncoding.ASCII.GetString(filenameBuf, 0, bytesRead);
-                                    if (kUnityPackageAssetNameFilters.Any(r => r.IsMatch(assetFilename)))
+                                    string assetpath = System.Text.ASCIIEncoding.ASCII.GetString(pathBuf, 0, bytesRead);
+                                    if (kUnityPackageAssetNameFilters.Any(r => r.IsMatch(assetpath)))
                                     {
-                                        string assetGuid = assetFilename.Substring(0, assetFilename.IndexOf('/'));
-                                        // DebugLog("-- stripped file from package: " + assetGuid + " - " + assetFilename);
+                                        string assetGuid = assetpath.Substring(0, assetpath.IndexOf('/'));
+                                        // DebugLog("-- stripped file from package: " + assetGuid + " - " + assetpath);
                                         assetGuidsToStrip.Add(assetGuid);
                                     }
                                 }
@@ -1074,7 +995,7 @@ namespace KiraiMod
                     // rescan input .tar and copy only entries we want to the output
                     {
                         inStream.Close();
-                        inStream = new DotZLib.GZipStream(filename, kGzipBufferSize);
+                        inStream = new DotZLib.GZipStream(path, kGzipBufferSize);
 
                         MelonLoader.ICSharpCode.SharpZipLib.Tar.TarOutputStream tarOutputStream = new MelonLoader.ICSharpCode.SharpZipLib.Tar.TarOutputStream(outStream);
 
@@ -1104,8 +1025,8 @@ namespace KiraiMod
                         inStream.Close();
                     if (outStream != null)
                         outStream.Close();
-                    if (onError != null)
-                        onError("Failed to strip and recompress file." + "\n" + e.Message);
+                    if (OnError != null)
+                        OnError("Failed to strip and recompress file." + "\n" + e.Message);
                     yield break;
                 }
             }
@@ -1126,8 +1047,8 @@ namespace KiraiMod
                         inStream.Close();
                     if (outStream != null)
                         outStream.Close();
-                    if (onError != null)
-                        onError("Failed to recompress file." + "\n" + e.Message);
+                    if (OnError != null)
+                        OnError("Failed to recompress file." + "\n" + e.Message);
                     yield break;
                 }
             }
@@ -1146,8 +1067,8 @@ namespace KiraiMod
                 onSuccess(FileOpResult.Success);
 #else
             yield return null;
-            //if (onError != null)
-            //    onError("Not supported on ANDROID platform.");
+            //if (OnError != null)
+            //    OnError("Not supported on ANDROID platform.");
 
             DebugLog("CreateOptimizedFile: Android unsupported");
             if (onSuccess != null)
@@ -1156,7 +1077,7 @@ namespace KiraiMod
 #endif
         }
 
-        public IEnumerator CreateFileSignatureInternal(string filename, string outputSignatureFilename, Action onSuccess, Action<string> onError)
+        public IEnumerator CreateFileSignatureInternal(string path, string outputSignaturepath, Action onSuccess, Action<string> OnError)
         {
             yield return null;
 
@@ -1168,23 +1089,23 @@ namespace KiraiMod
 
             try
             {
-                inStream = librsync.net.Librsync.ComputeSignature(File.OpenRead(filename));
+                inStream = librsync.net.Librsync.ComputeSignature(File.OpenRead(path));
             }
             catch (Exception e)
             {
-                if (onError != null)
-                    onError("Couldn't open input file: " + e.Message);
+                if (OnError != null)
+                    OnError("Couldn't open input file: " + e.Message);
                 yield break;
             }
 
             try
             {
-                outStream = File.Open(outputSignatureFilename, FileMode.Create, FileAccess.Write);
+                outStream = File.Open(outputSignaturepath, FileMode.Create, FileAccess.Write);
             }
             catch (Exception e)
             {
-                if (onError != null)
-                    onError("Couldn't create output file: " + e.Message);
+                if (OnError != null)
+                    OnError("Couldn't create output file: " + e.Message);
                 yield break;
             }
 
@@ -1196,8 +1117,8 @@ namespace KiraiMod
                 }
                 catch (Exception e)
                 {
-                    if (onError != null)
-                        onError("Couldn't read file: " + e.Message);
+                    if (OnError != null)
+                        OnError("Couldn't read file: " + e.Message);
                     yield break;
                 }
 
@@ -1211,8 +1132,8 @@ namespace KiraiMod
                 }
                 catch (Exception e)
                 {
-                    if (onError != null)
-                        onError("Couldn't read file: " + e.Message);
+                    if (OnError != null)
+                        OnError("Couldn't read file: " + e.Message);
                     yield break;
                 }
 
@@ -1225,8 +1146,8 @@ namespace KiraiMod
                 }
                 catch (Exception e)
                 {
-                    if (onError != null)
-                        onError("Couldn't write file: " + e.Message);
+                    if (OnError != null)
+                        OnError("Couldn't write file: " + e.Message);
                     yield break;
                 }
 
@@ -1239,8 +1160,8 @@ namespace KiraiMod
                 }
                 catch (Exception e)
                 {
-                    if (onError != null)
-                        onError("Couldn't write file: " + e.Message);
+                    if (OnError != null)
+                        OnError("Couldn't write file: " + e.Message);
                     yield break;
                 }
             }
@@ -1254,7 +1175,7 @@ namespace KiraiMod
                 onSuccess();
         }
 
-        public IEnumerator CreateFileDeltaInternal(string newFilename, string existingFileSignaturePath, string outputDeltaFilename, Action onSuccess, Action<string> onError)
+        public IEnumerator CreateFileDeltaInternal(string newpath, string existingFileSignaturePath, string outputDeltapath, Action onSuccess, Action<string> OnError)
         {
             yield return null;
 
@@ -1266,23 +1187,23 @@ namespace KiraiMod
 
             try
             {
-                inStream = librsync.net.Librsync.ComputeDelta(File.OpenRead(existingFileSignaturePath), File.OpenRead(newFilename));
+                inStream = librsync.net.Librsync.ComputeDelta(File.OpenRead(existingFileSignaturePath), File.OpenRead(newpath));
             }
             catch (Exception e)
             {
-                if (onError != null)
-                    onError("Couldn't open input file: " + e.Message);
+                if (OnError != null)
+                    OnError("Couldn't open input file: " + e.Message);
                 yield break;
             }
 
             try
             {
-                outStream = File.Open(outputDeltaFilename, FileMode.Create, FileAccess.Write);
+                outStream = File.Open(outputDeltapath, FileMode.Create, FileAccess.Write);
             }
             catch (Exception e)
             {
-                if (onError != null)
-                    onError("Couldn't create output file: " + e.Message);
+                if (OnError != null)
+                    OnError("Couldn't create output file: " + e.Message);
                 yield break;
             }
 
@@ -1294,8 +1215,8 @@ namespace KiraiMod
                 }
                 catch (Exception e)
                 {
-                    if (onError != null)
-                        onError("Couldn't read file: " + e.Message);
+                    if (OnError != null)
+                        OnError("Couldn't read file: " + e.Message);
                     yield break;
                 }
 
@@ -1309,8 +1230,8 @@ namespace KiraiMod
                 }
                 catch (Exception e)
                 {
-                    if (onError != null)
-                        onError("Couldn't read file: " + e.Message);
+                    if (OnError != null)
+                        OnError("Couldn't read file: " + e.Message);
                     yield break;
                 }
 
@@ -1323,8 +1244,7 @@ namespace KiraiMod
                 }
                 catch (Exception e)
                 {
-                    if (onError != null)
-                        onError("Couldn't write file: " + e.Message);
+                    OnError?.Invoke("Couldn't write file: " + e.Message);
                     yield break;
                 }
 
@@ -1337,8 +1257,8 @@ namespace KiraiMod
                 }
                 catch (Exception e)
                 {
-                    if (onError != null)
-                        onError("Couldn't write file: " + e.Message);
+                    if (OnError != null)
+                        OnError("Couldn't write file: " + e.Message);
                     yield break;
                 }
             }
@@ -1348,52 +1268,31 @@ namespace KiraiMod
 
             yield return null;
 
-            if (onSuccess != null)
-                onSuccess();
+            onSuccess?.Invoke();
         }
 
-        protected static void Success(OnFileOpSuccess onSuccess, VRC.Core.ApiFile apiFile, string message)
+        protected static void Success(Action<ApiFile, string> OnSuccess, VRC.Core.ApiFile apiFile, string message)
         {
             if (apiFile == null)
                 apiFile = new VRC.Core.ApiFile();
 
-            if (onSuccess != null)
-                onSuccess(apiFile, message);
+            OnSuccess?.Invoke(apiFile, message);
         }
 
-        protected static void Error(OnFileOpError onError, VRC.Core.ApiFile apiFile, string error, string moreInfo = "")
+        protected static void Error(Action<ApiFile, string> OnError, VRC.Core.ApiFile apiFile, string error, string moreInfo = "")
         {
             if (apiFile == null)
                 apiFile = new VRC.Core.ApiFile();
 
-            if (onError != null)
-                onError(apiFile, error);
+            OnError?.Invoke(apiFile, error);
         }
 
-        protected static void Progress(OnFileOpProgress onProgress, VRC.Core.ApiFile apiFile, string status, string subStatus = "", float pct = 0.0f)
+        protected static void Progress(Action<ApiFile, string, string, float> OnProgress, VRC.Core.ApiFile apiFile, string status, string subStatus = "", float pct = 0.0f)
         {
             if (apiFile == null)
                 apiFile = new VRC.Core.ApiFile();
 
-            if (onProgress != null)
-                onProgress(apiFile, status, subStatus, pct);
-        }
-
-        protected static bool CheckCancelled(FileOpCancelQuery cancelQuery, OnFileOpError onError, VRC.Core.ApiFile apiFile)
-        {
-            if (apiFile == null)
-            {
-                return true;
-            }
-
-            if (cancelQuery != null && cancelQuery(apiFile))
-            {
-                if (onError != null)
-                    onError(apiFile, "Cancelled by user.");
-                return true;
-            }
-
-            return false;
+            OnProgress?.Invoke(apiFile, status, subStatus, pct);
         }
 
         protected static void CleanupTempFiles(string subFolderName)
@@ -1440,7 +1339,7 @@ namespace KiraiMod
             return Mathf.Clamp(timeoutMultiplier * SERVER_PROCESSING_WAIT_TIMEOUT_PER_CHUNK_SIZE, SERVER_PROCESSING_WAIT_TIMEOUT_PER_CHUNK_SIZE, SERVER_PROCESSING_MAX_WAIT_TIMEOUT);
         }
 
-        private bool uploadFileComponentValidateFileDesc(VRC.Core.ApiFile apiFile, string filename, string md5Base64, long fileSize, VRC.Core.ApiFile.Version.FileDescriptor fileDesc, Action<VRC.Core.ApiFile> onSuccess, Action<string> onError)
+        private bool uploadFileComponentValidateFileDesc(VRC.Core.ApiFile apiFile, string path, string md5Base64, long fileSize, VRC.Core.ApiFile.Version.FileDescriptor fileDesc, Action<VRC.Core.ApiFile> onSuccess, Action<string> OnError)
         {
             if (fileDesc.status != VRC.Core.ApiFile.Status.Waiting)
             {
@@ -1452,42 +1351,50 @@ namespace KiraiMod
 
             if (fileSize != fileDesc.sizeInBytes)
             {
-                if (onError != null)
-                    onError("File size does not match version descriptor");
+                if (OnError != null)
+                    OnError("File size does not match version descriptor");
                 return false;
             }
             if (string.Compare(md5Base64, fileDesc.md5) != 0)
             {
-                if (onError != null)
-                    onError("File MD5 does not match version descriptor");
+                if (OnError != null)
+                    OnError("File MD5 does not match version descriptor");
                 return false;
             }
 
             // make sure file is right size
             long tempSize = 0;
             string errorStr = "";
-            if (!VRC.Tools.GetFileSize(filename, out tempSize, out errorStr))
+            if (!VRC.Tools.GetFileSize(path, out tempSize, out errorStr))
             {
-                if (onError != null)
-                    onError("Couldn't get file size");
+                if (OnError != null)
+                    OnError("Couldn't get file size");
                 return false;
             }
             if (tempSize != fileSize)
             {
-                if (onError != null)
-                    onError("File size does not match input size");
+                if (OnError != null)
+                    OnError("File size does not match input size");
                 return false;
             }
 
             return true;
         }
 
-        private IEnumerator uploadFileComponentDoSimpleUpload(VRC.Core.ApiFile apiFile, VRC.Core.ApiFile.Version.FileDescriptor.Type fileDescriptorType, string filename, string md5Base64, long fileSize, Action<VRC.Core.ApiFile> onSuccess, Action<string> onError, Action<long, long> onProgess, FileOpCancelQuery cancelQuery)
+        private IEnumerator uploadFileComponentDoSimpleUpload(
+            ApiFile apiFile, 
+            ApiFile.Version.FileDescriptor.Type fileDescriptorType, 
+            string path, 
+            string md5Base64, 
+            long fileSize, 
+            Action<ApiFile> onSuccess, 
+            Action<string> OnError, 
+            Action<long, long> onProgess)
         {
-            OnFileOpError onCancelFunc = delegate (VRC.Core.ApiFile file, string s)
+            Action<ApiFile, string> onCancelFunc = delegate (VRC.Core.ApiFile file, string s)
             {
-                if (onError != null)
-                    onError(s);
+                if (OnError != null)
+                    OnError(s);
             };
 
             string uploadUrl = "";
@@ -1516,17 +1423,13 @@ namespace KiraiMod
 
                 while (wait)
                 {
-                    if (CheckCancelled(cancelQuery, onCancelFunc, apiFile))
-                    {
-                        yield break;
-                    }
                     yield return null;
                 }
 
                 if (!string.IsNullOrEmpty(errorStr))
                 {
-                    if (onError != null)
-                        onError(errorStr);
+                    if (OnError != null)
+                        OnError(errorStr);
                     if (!worthRetry)
                         yield break;
                 }
@@ -1542,7 +1445,7 @@ namespace KiraiMod
             {
                 bool wait = true;
                 string errorStr = "";
-                HttpRequest req = VRC.Core.ApiFile.PutSimpleFileToURL(uploadUrl, filename, GetMimeTypeFromExtension(Path.GetExtension(filename)), md5Base64, (System.Action)delegate
+                HttpRequest req = VRC.Core.ApiFile.PutSimpleFileToURL(uploadUrl, path, GetMimeTypeFromExtension(Path.GetExtension(path)), md5Base64, (System.Action)delegate
                 {
                     wait = false;
                 }, (System.Action<string>)delegate (string error)
@@ -1558,19 +1461,13 @@ namespace KiraiMod
                 });
                 while (wait)
                 {
-                    if (CheckCancelled(cancelQuery, onCancelFunc, apiFile))
-                    {
-                        if (req != null)
-                            req.Abort();
-                        yield break;
-                    }
                     yield return null;
                 }
 
                 if (!string.IsNullOrEmpty(errorStr))
                 {
-                    if (onError != null)
-                        onError(errorStr);
+                    if (OnError != null)
+                        OnError(errorStr);
                     yield break;
                 }
             }
@@ -1586,8 +1483,7 @@ namespace KiraiMod
                 bool worthRetry = false;
                 apiFile.FinishUpload(fileDescriptorType, null, (System.Action<ApiContainer>)delegate (ApiContainer c)
                 {
-                    MelonLogger.LogWarning("YOU CAN IGNORE THE FOLLOWING CASTING ERROR!");
-                    apiFile = c.Model.Cast<VRC.Core.ApiFile>();
+                    apiFile = SDK.ReinterpretCast<ApiModel, ApiFile>(c.Model);
                 }, (System.Action<ApiContainer>)delegate (ApiContainer c)
                 {
                     errorStr = "Failed to finish upload: " + c.Error;
@@ -1599,17 +1495,13 @@ namespace KiraiMod
                 });
                 while (wait)
                 {
-                    if (CheckCancelled(cancelQuery, onCancelFunc, apiFile))
-                    {
-                        yield break;
-                    }
                     yield return null;
                 }
 
                 if (!string.IsNullOrEmpty(errorStr))
                 {
-                    if (onError != null)
-                        onError(errorStr);
+                    if (OnError != null)
+                        OnError(errorStr);
                     if (!worthRetry)
                         yield break;
                 }
@@ -1623,15 +1515,23 @@ namespace KiraiMod
 
         }
 
-        private IEnumerator uploadFileComponentDoMultipartUpload(VRC.Core.ApiFile apiFile, VRC.Core.ApiFile.Version.FileDescriptor.Type fileDescriptorType, string filename, string md5Base64, long fileSize, Action<VRC.Core.ApiFile> onSuccess, Action<string> onError, Action<long, long> onProgess, FileOpCancelQuery cancelQuery)
+        private IEnumerator uploadFileComponentDoMultipartUpload(
+            ApiFile apiFile, 
+            ApiFile.Version.FileDescriptor.Type fileDescriptorType, 
+            string path, 
+            string md5Base64, 
+            long fileSize, 
+            Action<ApiFile> onSuccess, 
+            Action<string> OnError, 
+            Action<long, long> onProgess)
         {
             FileStream fs = null;
-            OnFileOpError onCancelFunc = delegate (VRC.Core.ApiFile file, string s)
+            Action<ApiFile, string> onCancelFunc = delegate (VRC.Core.ApiFile file, string s)
             {
                 if (fs != null)
                     fs.Close();
-                if (onError != null)
-                    onError(s);
+                if (OnError != null)
+                    OnError(s);
             };
 
             // query multipart upload status.
@@ -1658,17 +1558,13 @@ namespace KiraiMod
                     });
                     while (wait)
                     {
-                        if (CheckCancelled(cancelQuery, onCancelFunc, apiFile))
-                        {
-                            yield break;
-                        }
                         yield return null;
                     }
 
                     if (!string.IsNullOrEmpty(errorStr))
                     {
-                        if (onError != null)
-                            onError(errorStr);
+                        if (OnError != null)
+                            OnError(errorStr);
                         if (!worthRetry)
                             yield break;
                     }
@@ -1681,12 +1577,12 @@ namespace KiraiMod
             // split file into chunks
             try
             {
-                fs = File.OpenRead(filename);
+                fs = File.OpenRead(path);
             }
             catch (Exception e)
             {
-                if (onError != null)
-                    onError("Couldn't open file: " + e.Message);
+                if (OnError != null)
+                    OnError("Couldn't open file: " + e.Message);
                 yield break;
             }
 
@@ -1710,16 +1606,16 @@ namespace KiraiMod
                 catch (Exception e)
                 {
                     fs.Close();
-                    if (onError != null)
-                        onError("Couldn't read file: " + e.Message);
+                    if (OnError != null)
+                        OnError("Couldn't read file: " + e.Message);
                     yield break;
                 }
 
                 if (bytesRead != bytesToRead)
                 {
                     fs.Close();
-                    if (onError != null)
-                        onError("Couldn't read file: read incorrect number of bytes from stream");
+                    if (OnError != null)
+                        OnError("Couldn't read file: read incorrect number of bytes from stream");
                     yield break;
                 }
 
@@ -1750,18 +1646,14 @@ namespace KiraiMod
                     });
                     while (wait)
                     {
-                        if (CheckCancelled(cancelQuery, onCancelFunc, apiFile))
-                        {
-                            yield break;
-                        }
                         yield return null;
                     }
 
                     if (!string.IsNullOrEmpty(errorStr))
                     {
                         fs.Close();
-                        if (onError != null)
-                            onError(errorStr);
+                        if (OnError != null)
+                            OnError(errorStr);
                         if (!worthRetry)
                             yield break;
                     }
@@ -1778,7 +1670,7 @@ namespace KiraiMod
                     bool wait = true;
                     string errorStr = "";
 
-                    VRC.HttpRequest req = VRC.Core.ApiFile.PutMultipartDataToURL(uploadUrl, buffer, bytesRead, GetMimeTypeFromExtension(Path.GetExtension(filename)), (System.Action<string>)delegate (string etag)
+                    VRC.HttpRequest req = VRC.Core.ApiFile.PutMultipartDataToURL(uploadUrl, buffer, bytesRead, GetMimeTypeFromExtension(Path.GetExtension(path)), (System.Action<string>)delegate (string etag)
                     {
                         if (!string.IsNullOrEmpty(etag))
                         {
@@ -1799,25 +1691,19 @@ namespace KiraiMod
                  });
             while (wait)
                     {
-                        if (CheckCancelled(cancelQuery, onCancelFunc, apiFile))
-                        {
-                            if (req != null)
-                                req.Abort();
-                            yield break;
-                        }
                         yield return null;
                     }
 
                     if (!string.IsNullOrEmpty(errorStr))
                     {
                         fs.Close();
-                        if (onError != null)
-                            onError(errorStr);
+                        if (OnError != null)
+                            OnError(errorStr);
                         yield break;
                     }
                 }
             }
-
+            
             // finish upload
             while (true)
             {
@@ -1835,8 +1721,7 @@ namespace KiraiMod
 
                 apiFile.FinishUpload(fileDescriptorType, _etags, (System.Action<ApiContainer>)delegate (ApiContainer c)
                 {
-                    MelonLogger.LogWarning("YOU CAN IGNORE THE FOLLOWING CASTING ERROR!");
-                    apiFile = c.Model.Cast<VRC.Core.ApiFile>();
+                    apiFile = SDK.ReinterpretCast<ApiModel, ApiFile>(c.Model);
                     wait = false;
                 }, (System.Action<ApiContainer>)delegate (ApiContainer c)
                 {
@@ -1849,18 +1734,14 @@ namespace KiraiMod
                 });
                 while (wait)
                 {
-                    if (CheckCancelled(cancelQuery, onCancelFunc, apiFile))
-                    {
-                        yield break;
-                    }
                     yield return null;
                 }
 
                 if (!string.IsNullOrEmpty(errorStr))
                 {
                     fs.Close();
-                    if (onError != null)
-                        onError(errorStr);
+                    if (OnError != null)
+                        OnError(errorStr);
                     if (!worthRetry)
                         yield break;
                 }
@@ -1875,12 +1756,19 @@ namespace KiraiMod
             fs.Close();
         }
 
-        private IEnumerator uploadFileComponentVerifyRecord(VRC.Core.ApiFile apiFile, VRC.Core.ApiFile.Version.FileDescriptor.Type fileDescriptorType, string filename, string md5Base64, long fileSize, VRC.Core.ApiFile.Version.FileDescriptor fileDesc, Action<VRC.Core.ApiFile> onSuccess, Action<string> onError, Action<long, long> onProgess, FileOpCancelQuery cancelQuery)
+        private IEnumerator uploadFileComponentVerifyRecord(
+            ApiFile apiFile, 
+            ApiFile.Version.FileDescriptor.Type fileDescriptorType, 
+            string path, 
+            string md5Base64, 
+            long fileSize, 
+            ApiFile.Version.FileDescriptor fileDesc, 
+            Action<ApiFile> onSuccess,
+            Action<string> OnError, Action<long, long> onProgess)
         {
-            OnFileOpError onCancelFunc = delegate (VRC.Core.ApiFile file, string s)
+            Action<ApiFile, string> onCancelFunc = delegate (ApiFile file, string s)
             {
-                if (onError != null)
-                    onError(s);
+                OnError?.Invoke(s);
             };
 
             float initialStartTime = Time.realtimeSinceStartup;
@@ -1893,16 +1781,16 @@ namespace KiraiMod
             {
                 if (apiFile == null)
                 {
-                    if (onError != null)
-                        onError("ApiFile is null");
+                    if (OnError != null)
+                        OnError("ApiFile is null");
                     yield break;
                 }
 
                 var desc = apiFile.GetFileDescriptor(apiFile.GetLatestVersionNumber(), fileDescriptorType);
                 if (desc == null)
                 {
-                    if (onError != null)
-                        onError("File descriptor is null ('" + fileDescriptorType + "')");
+                    if (OnError != null)
+                        OnError("File descriptor is null ('" + fileDescriptorType + "')");
                     yield break;
                 }
 
@@ -1915,15 +1803,10 @@ namespace KiraiMod
                 // wait for next poll
                 while (Time.realtimeSinceStartup - startTime < waitDelay)
                 {
-                    if (CheckCancelled(cancelQuery, onCancelFunc, apiFile))
-                    {
-                        yield break;
-                    }
-
                     if (Time.realtimeSinceStartup - initialStartTime > timeout)
                     {
-                        if (onError != null)
-                            onError("Couldn't verify upload status: Timed out wait for server processing");
+                        if (OnError != null)
+                            OnError("Couldn't verify upload status: Timed out wait for server processing");
                         yield break;
                     }
 
@@ -1950,18 +1833,13 @@ namespace KiraiMod
                     });
                     while (wait)
                     {
-                        if (CheckCancelled(cancelQuery, onCancelFunc, apiFile))
-                        {
-                            yield break;
-                        }
-
                         yield return null;
                     }
 
                     if (!string.IsNullOrEmpty(errorStr))
                     {
-                        if (onError != null)
-                            onError(errorStr);
+                        if (OnError != null)
+                            OnError(errorStr);
                         if (!worthRetry)
                             yield break;
                     }
@@ -1978,28 +1856,36 @@ namespace KiraiMod
                 onSuccess(apiFile);
         }
 
-        private IEnumerator UploadFileComponentInternal(VRC.Core.ApiFile apiFile, VRC.Core.ApiFile.Version.FileDescriptor.Type fileDescriptorType, string filename, string md5Base64, long fileSize, Action<VRC.Core.ApiFile> onSuccess, Action<string> onError, Action<long, long> onProgess, FileOpCancelQuery cancelQuery)
+        private IEnumerator UploadFileComponentInternal(
+            ApiFile apiFile, 
+            ApiFile.Version.FileDescriptor.Type fileDescriptorType, 
+            string path, 
+            string md5Base64, 
+            long fileSize, 
+            Action<ApiFile> onSuccess, 
+            Action<string> OnError, 
+            Action<long, long> onProgess)
         {
             VRC.Core.ApiFile.Version.FileDescriptor fileDesc = apiFile.GetFileDescriptor(apiFile.GetLatestVersionNumber(), fileDescriptorType);
 
-            if (!uploadFileComponentValidateFileDesc(apiFile, filename, md5Base64, fileSize, fileDesc, onSuccess, onError))
+            if (!uploadFileComponentValidateFileDesc(apiFile, path, md5Base64, fileSize, fileDesc, onSuccess, OnError))
                 yield break;
 
             switch (fileDesc.category)
             {
                 case VRC.Core.ApiFile.Category.Simple:
-                    yield return uploadFileComponentDoSimpleUpload(apiFile, fileDescriptorType, filename, md5Base64, fileSize, onSuccess, onError, onProgess, cancelQuery);
+                    yield return uploadFileComponentDoSimpleUpload(apiFile, fileDescriptorType, path, md5Base64, fileSize, onSuccess, OnError, onProgess);
                     break;
                 case VRC.Core.ApiFile.Category.Multipart:
-                    yield return uploadFileComponentDoMultipartUpload(apiFile, fileDescriptorType, filename, md5Base64, fileSize, onSuccess, onError, onProgess, cancelQuery);
+                    yield return uploadFileComponentDoMultipartUpload(apiFile, fileDescriptorType, path, md5Base64, fileSize, onSuccess, OnError, onProgess);
                     break;
                 default:
-                    if (onError != null)
-                        onError("Unknown file category type: " + fileDesc.category);
+                    if (OnError != null)
+                        OnError("Unknown file category type: " + fileDesc.category);
                     yield break;
             }
 
-            yield return uploadFileComponentVerifyRecord(apiFile, fileDescriptorType, filename, md5Base64, fileSize, fileDesc, onSuccess, onError, onProgess, cancelQuery);
+            yield return uploadFileComponentVerifyRecord(apiFile, fileDescriptorType, path, md5Base64, fileSize, fileDesc, onSuccess, OnError, onProgess);
         }
     }
 }

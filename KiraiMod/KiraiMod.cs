@@ -9,7 +9,8 @@ using UnityEngine;
 
 [assembly: MelonInfo(typeof(KiraiMod.KiraiMod), "KiraiMod", null, "Kirai Chan#8315")]
 [assembly: MelonGame("VRChat", "VRChat")]
-[assembly: MelonOptionalDependencies("KiraiUI", "KiraiRPC", "KiraiLib")]
+[assembly: MelonOptionalDependencies("KiraiUI", "KiraiRPC")]
+[assembly: AssemblyMetadata("Iya", "IyaPlaceholder")]
 
 namespace KiraiMod
 {
