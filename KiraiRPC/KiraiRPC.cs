@@ -136,11 +136,6 @@ namespace KiraiMod
             {
                 ProcessRPC(__0, System.Text.Encoding.UTF8.GetString(__1.ParameterBytes).Substring(6));
             }
-
-            if (__1.EventType == VrcEventType.ActivateCustomTrigger)
-            {
-                ProcessRPC(__0, __1.ParameterString);
-            }
         }
 
         private static void ProcessRPC(Player player, string rpc)
@@ -239,40 +234,21 @@ namespace KiraiMod
                 return;
             }
 
-            if (isSDK3)
+            handler.TriggerEvent(
+            new VrcEvent
             {
-                handler.TriggerEvent(
-                new VrcEvent
-                {
-                    EventType = VrcEventType.SendRPC,
-                    Name = "SendRPC",
-                    ParameterObject = handler.gameObject,
-                    ParameterInt = Player.prop_Player_0.field_Private_VRCPlayerApi_0.playerId,
-                    ParameterFloat = 0f,
-                    ParameterString = "UdonSyncRunProgramAsRPC",
-                    ParameterBoolOp = VrcBooleanOp.Unused,
-                    ParameterBytes = Networking.EncodeParameters(new Il2CppSystem.Object[] {
+                EventType = VrcEventType.SendRPC,
+                Name = "SendRPC",
+                ParameterObject = handler.gameObject,
+                ParameterInt = Player.prop_Player_0.field_Private_VRCPlayerApi_0.playerId,
+                ParameterFloat = 0f,
+                ParameterString = "UdonSyncRunProgramAsRPC",
+                ParameterBoolOp = VrcBooleanOp.Unused,
+                ParameterBytes = Networking.EncodeParameters(new Il2CppSystem.Object[] {
                         raw
-                    })
-                },
-                VrcBroadcastType.AlwaysUnbuffered, VRCPlayer.field_Internal_Static_VRCPlayer_0.gameObject, 0f);
-            }
-            else
-            {
-                handler.TriggerEvent(
-                new VrcEvent
-                {
-                    EventType = VrcEventType.ActivateCustomTrigger,
-                    Name = "",
-                    ParameterObject = handler.gameObject,
-                    ParameterInt = 0,
-                    ParameterFloat = 0f,
-                    ParameterString = raw,
-                    ParameterBoolOp = VrcBooleanOp.Unused,
-                    ParameterBytes = new Il2CppStructArray<byte>(0L)
-                },
-                VrcBroadcastType.AlwaysUnbuffered, VRCPlayer.field_Internal_Static_VRCPlayer_0.gameObject, 0f);
-            }
+                })
+            },
+            VrcBroadcastType.AlwaysUnbuffered, VRCPlayer.field_Internal_Static_VRCPlayer_0.gameObject, 0f);
         }
 
         private static void LogWithPadding(string src, bool passed)
