@@ -77,6 +77,8 @@ namespace KiraiMod
             public float fItemOrbitSize;
             public float fItemOrbitSpeed;
 
+            public string szWorldCrash = "avtr_f3739df2-b502-4728-ba19-3099772c2de3";
+
             [BeforeEncode]
             public void BeforeEncode()
             {
@@ -91,35 +93,40 @@ namespace KiraiMod
 
             public void Set(bool load)
             {
-                Move(load, ref Shared.modules.portal.infinite,    ref bInfinitePortals  );
-                Move(load, ref Shared.modules.kos.state,          ref bAutoKOS          );
-                Move(load, ref Shared.modules.nameplates.state,   ref bNameplates       );
-                Move(load, ref Shared.modules.nameplates.RGB,     ref bNameplatesRGB    );
-                Move(load, ref Shared.modules.headlight.state,    ref bHeadlight        );
-                Move(load, ref Shared.modules.aliases.state,      ref bAliases          );
-                Move(load, ref Shared.modules.flight.directional, ref bDirectionalFlight);
-                Move(load, ref Shared.modules.esp.state,          ref bESP              );
-                Move(load, ref Shared.modules.misc.BindsNumpad,   ref bBindsNumpad      );
-                Move(load, ref Shared.modules.misc.BindsTab,      ref bBindsTab         );
-                Move(load, ref Shared.modules.misc.BindsAlt,      ref bBindsAlt         );
-                Move(load, ref Shared.modules.misc.bAnnoyance,    ref bAnnoyance        );
-                Move(load, ref Shared.modules.tracers.Players,    ref bTracerPlayers    );
-                Move(load, ref Shared.modules.tracers.Pickups,    ref bTracerPickups    );
-                Move(load, ref Shared.modules.tracers.Triggers,   ref bTracerTriggers   );
-                Move(load, ref Shared.modules.playerlist.state,   ref bPlayerList       );
-                Move(load, ref Shared.modules.speed.SpeedRun,     ref fRun              );
-                Move(load, ref Shared.modules.speed.SpeedWalk,    ref fWalk             );
-                Move(load, ref Shared.modules.flight.speed,       ref fFly              );
-                Move(load, ref Shared.modules.portal.distance,    ref fPortalDistance   );
-                Move(load, ref Shared.modules.orbit.speed,        ref fOrbitSpeed       );
-                Move(load, ref Shared.modules.orbit.distance,     ref fOrbitDistance    );
-                Move(load, ref Shared.modules.itemOrbit.speed,    ref fItemOrbitSize    );
-                Move(load, ref Shared.modules.itemOrbit.size,     ref fItemOrbitSpeed   );
-                Move(load, ref Shared.modules.misc.bUseClipboard, ref bUseClipboard     );
-
-                Move(load, ref General.fRGBSpeed,                 ref fRGBSpeed         );
-
-                Move(load, ref Shared.modules.misc.bPersistantQuickMenu, ref bPersistantQM);
+                #region bool
+                Move(load, ref Shared.modules.portal.infinite,           ref bInfinitePortals  );
+                Move(load, ref Shared.modules.kos.state,                 ref bAutoKOS          );
+                Move(load, ref Shared.modules.nameplates.state,          ref bNameplates       );
+                Move(load, ref Shared.modules.nameplates.RGB,            ref bNameplatesRGB    );
+                Move(load, ref Shared.modules.headlight.state,           ref bHeadlight        );
+                Move(load, ref Shared.modules.aliases.state,             ref bAliases          );
+                Move(load, ref Shared.modules.flight.directional,        ref bDirectionalFlight);
+                Move(load, ref Shared.modules.esp.state,                 ref bESP              );
+                Move(load, ref Shared.modules.misc.BindsNumpad,          ref bBindsNumpad      );
+                Move(load, ref Shared.modules.misc.BindsTab,             ref bBindsTab         );
+                Move(load, ref Shared.modules.misc.BindsAlt,             ref bBindsAlt         );
+                Move(load, ref Shared.modules.misc.bAnnoyance,           ref bAnnoyance        );
+                Move(load, ref Shared.modules.tracers.Players,           ref bTracerPlayers    );
+                Move(load, ref Shared.modules.tracers.Pickups,           ref bTracerPickups    );
+                Move(load, ref Shared.modules.tracers.Triggers,          ref bTracerTriggers   );
+                Move(load, ref Shared.modules.playerlist.state,          ref bPlayerList       );
+                Move(load, ref Shared.modules.misc.bUseClipboard,        ref bUseClipboard     );
+                Move(load, ref Shared.modules.misc.bPersistantQuickMenu, ref bPersistantQM     );
+                #endregion
+                #region float
+                Move(load, ref Shared.modules.speed.SpeedRun,            ref fRun              );
+                Move(load, ref Shared.modules.speed.SpeedWalk,           ref fWalk             );
+                Move(load, ref Shared.modules.flight.speed,              ref fFly              );
+                Move(load, ref Shared.modules.portal.distance,           ref fPortalDistance   );
+                Move(load, ref Shared.modules.orbit.speed,               ref fOrbitSpeed       );
+                Move(load, ref Shared.modules.orbit.distance,            ref fOrbitDistance    );
+                Move(load, ref Shared.modules.itemOrbit.speed,           ref fItemOrbitSize    );
+                Move(load, ref Shared.modules.itemOrbit.size,            ref fItemOrbitSpeed   );
+                Move(load, ref General.fRGBSpeed,                        ref fRGBSpeed         );
+                #endregion
+                #region string
+                Move(load, ref Shared.modules.misc.newAvtr,              ref szWorldCrash      );
+                #endregion
 
                 if (load) Shared.modules.OnConfigLoaded();
             }
@@ -134,6 +141,12 @@ namespace KiraiMod
             {
                 if (load) prop1 = prop2;
                 else      prop2 = prop1;
+            }
+
+            public void Move(bool load, ref string prop1, ref string prop2)
+            {
+                if (load) prop1 = prop2;
+                else prop2 = prop1;
             }
 
             public void LOSS(bool load, Modules.ModuleBase module, bool state) // Load Only SetState

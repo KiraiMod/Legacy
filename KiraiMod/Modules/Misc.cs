@@ -8,9 +8,9 @@ namespace KiraiMod.Modules
     public class Misc : ModuleBase
     {
         public bool bUseClipboard;
-        public bool bAntiMenu;
         public bool bAnnoyance;
         public bool bPersistantQuickMenu;
+        public string newAvtr;
 
         public bool WorldCrash;
         public bool BindsNumpad;
@@ -32,7 +32,6 @@ namespace KiraiMod.Modules
             new ModuleInfo("Change\nPedestals", "Change all pedestals to an avatar ID", ButtonType.Button, 3, Shared.PageIndex.buttons2, nameof(ChangePedestals)),
             new ModuleInfo("Join World\nvia ID", "Join a world using a full instance id", ButtonType.Button, 6, Shared.PageIndex.buttons2, nameof(JoinWorldByID)),
             new ModuleInfo("Clipboard", "Use the clipboard instead of a popup input", ButtonType.Toggle, 10, Shared.PageIndex.toggles2, nameof(bUseClipboard)),
-            new ModuleInfo("Anti Menu", "Make other people unable to click their menus", ButtonType.Toggle, 3, Shared.PageIndex.toggles3, nameof(bAntiMenu)),
             new ModuleInfo("Annoyance Mode", "Orbit things around the targets head instead of their feet", ButtonType.Toggle, 9, Shared.PageIndex.toggles2, nameof(bAnnoyance)),
             new ModuleInfo("Persistant QuickMenu", "Keep the Quick Menu open when moving around", ButtonType.Toggle, 2, Shared.PageIndex.toggles3, nameof(bPersistantQuickMenu)),
             new ModuleInfo("Numpad Binds", "Use Numlock + Keypad to activate binds", ButtonType.Toggle, 1, Shared.PageIndex.toggles3, nameof(BindsNumpad)),
@@ -42,11 +41,6 @@ namespace KiraiMod.Modules
             new ModuleInfo("Spawn\nPrefab", "Spawns the first dynamic prefab in the world", ButtonType.Button, 8, Shared.PageIndex.buttons2, nameof(SpawnDynamicPrefab)),
             new ModuleInfo("World\nCrash", "Change your avatar to a world crasher safely", ButtonType.Toggle, 6, Shared.PageIndex.toggles3, nameof(WorldCrash)),
         };
-
-        public override void OnStateChange(bool state)
-        {
-            if (!state) bAntiMenu = false;
-        }
 
         public override void OnConfigLoaded()
         {
@@ -230,7 +224,7 @@ namespace KiraiMod.Modules
                 {
                     field_Internal_ApiAvatar_0 = new VRC.Core.ApiAvatar
                     {
-                        id = state ? "avtr_c6c149c6-1249-4dfb-ab1a-ebb7c4f24e3e" : oldAvtr
+                        id = state ? newAvtr : oldAvtr
                     }
                 }
             }.ChangeToSelectedAvatar();

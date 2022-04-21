@@ -47,15 +47,6 @@ namespace KiraiMod
                 }
             }
 
-            if (!MelonHandler.Mods.Any(m => m.Assembly.GetName().Name == "AdvancedSafety"))
-            {
-                if (MelonHandler.Mods.Any(m => m.Info.Name == ""))
-                {
-                    MessageBox.Show("AdvancedSafety by knah is required to prevent crashes with Notorious", "Potential Incompatbility");
-                    Process.Start("https://github.com/knah/VRCMods");
-                }
-            }
-
             Shared.harmony = Harmony.HarmonyInstance.Create("KiraiMod");
 
             Shared.modules = new Modules.Modules();
@@ -175,7 +166,6 @@ namespace KiraiMod
                 if (Input.GetKeyDown(KeyCode.Keypad5)) Shared.modules.orbit.SetState();
                 if (Input.GetKeyDown(KeyCode.Keypad6)) Shared.Options.bWorldTriggers ^= true;
                 if (Input.GetKeyDown(KeyCode.Keypad7)) Shared.modules.hideself.SetState();
-                if (Input.GetKeyDown(KeyCode.Keypad8)) Shared.modules.misc.bAntiMenu ^= true;
                 if (Input.GetKeyDown(KeyCode.KeypadMinus))
 #if DEBUG
                 {
@@ -196,7 +186,6 @@ namespace KiraiMod
                     if (Input.GetKeyDown(KeyCode.Q)) Shared.modules.orbit.SetState();
                     if (Input.GetKeyDown(KeyCode.T)) Shared.Options.bWorldTriggers ^= true;
                     if (Input.GetKeyDown(KeyCode.C)) Shared.modules.hideself.SetState();
-                    if (Input.GetKeyDown(KeyCode.A)) Shared.modules.misc.bAntiMenu ^= true;
                 }
             }
             else if (Shared.modules.misc.BindsAlt)
@@ -210,7 +199,6 @@ namespace KiraiMod
                     if (Input.GetKeyDown(KeyCode.Alpha5)) Shared.modules.orbit.SetState();
                     if (Input.GetKeyDown(KeyCode.Alpha6)) Shared.Options.bWorldTriggers ^= true;
                     if (Input.GetKeyDown(KeyCode.Alpha7)) Shared.modules.hideself.SetState();
-                    if (Input.GetKeyDown(KeyCode.Alpha8)) Shared.modules.misc.bAntiMenu ^= true;
                 }
             }
 

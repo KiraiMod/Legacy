@@ -24,8 +24,7 @@ namespace KiraiMod.Modules
             {
                 try
                 {
-                    if (Shared.modules.misc.bAntiMenu) Helper.PortalPosition(Vector3.negativeInfinity, Quaternion.identity);
-                    else if (state && Shared.TargetPlayer != null) Helper.PortalPlayer(Shared.TargetPlayer, Shared.modules.portal.distance, Shared.modules.portal.infinite);
+                    if (state && Shared.TargetPlayer != null) Helper.PortalPlayer(Shared.TargetPlayer, Shared.modules.portal.distance, Shared.modules.portal.infinite);
                 } 
                 catch (Exception e)
                 {
