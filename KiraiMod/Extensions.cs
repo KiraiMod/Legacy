@@ -25,12 +25,12 @@ namespace KiraiMod
 
         public static bool IsKOS(this APIUser player)
         {
-            return Shared.modules.kos.kosList.Contains(Utils.SHA256(player.displayName));
+            return Shared.modules.kos.kosList.Contains(Utils.SHA256(player.id));
         }
 
         public static bool IsStreamer(this APIUser player)
         {
-            return Shared.modules.kos.streamers.Contains(Utils.SHA256(player.displayName));
+            return Shared.modules.kos.streamers.Contains(Utils.SHA256(player.id));
         }
 
         public static bool IsMaster(this Player player)
