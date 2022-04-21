@@ -16,6 +16,11 @@ namespace KiraiMod.Modules
             Refresh();
 		}
 
+        public override void OnConfigLoaded()
+        {
+            Refresh();
+        }
+
         public override void OnPlayerJoined(Player player)
         {
 			if (state) Enable(player);

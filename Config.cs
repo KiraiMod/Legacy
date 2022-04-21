@@ -57,20 +57,22 @@ namespace KiraiMod
 
             public void Set(bool load)
             {
-                MoveEx(load, ref Shared.modules.kos.state,        ref bKOS,            "p0/auto-kos"        );
-                MoveEx(load, ref Shared.modules.portal.state,     ref bInfinite,       "p0/infinite-portals");
-                MoveEx(load, ref Shared.modules.modlog.state,     ref bModLog,         "p1/mod-log"         );
-                MoveEx(load, ref Shared.modules.nameplates.state, ref bNameplates,     "p1/nameplates"      );
-                MoveEx(load, ref Shared.modules.nameplates.rgb,   ref bNameplatesRGB,  "p1/nameplate-rgb"   );
-                MoveEx(load, ref Shared.modules.headlight.state,  ref bHeadlight,      "p1/headlight"       );
+                Move(load, ref Shared.modules.kos.state,        ref bKOS           );
+                Move(load, ref Shared.modules.portal.state,     ref bInfinite      );
+                Move(load, ref Shared.modules.modlog.state,     ref bModLog        );
+                Move(load, ref Shared.modules.nameplates.state, ref bNameplates    );
+                Move(load, ref Shared.modules.nameplates.rgb,   ref bNameplatesRGB );
+                Move(load, ref Shared.modules.headlight.state,  ref bHeadlight     );
 
-                MoveEx(load, ref Shared.modules.speed.speedRun,   ref fRun,            "p3/walk-speed"      );
-                MoveEx(load, ref Shared.modules.speed.speedWalk,  ref fWalk,           "p3/run-speed"       );
-                MoveEx(load, ref Shared.modules.flight.speed,     ref fFly,            "p3/flight-speed"    );
-                MoveEx(load, ref Shared.modules.portal.distance,  ref fPortalDistance, "p3/portal-distance" );
-                MoveEx(load, ref Shared.modules.orbit.speed,      ref fOrbitSpeed,     "p3/orbit-speed"     );
-                MoveEx(load, ref Shared.modules.orbit.distance,   ref fOrbitDistance,  "p3/orbit-distance"  );
-                MoveEx(load, ref Utils.fRGBSpeed,                 ref fRGBSpeed,       "p3/rgb-speed"       );
+                Move(load, ref Shared.modules.speed.speedRun,   ref fRun           );
+                Move(load, ref Shared.modules.speed.speedWalk,  ref fWalk          );
+                Move(load, ref Shared.modules.flight.speed,     ref fFly           );
+                Move(load, ref Shared.modules.portal.distance,  ref fPortalDistance);
+                Move(load, ref Shared.modules.orbit.speed,      ref fOrbitSpeed    );
+                Move(load, ref Shared.modules.orbit.distance,   ref fOrbitDistance );
+                Move(load, ref Utils.fRGBSpeed,                 ref fRGBSpeed      );
+
+                if (load) Shared.modules.OnConfigLoaded();
             }
 
             public void Move(bool load, ref float prop1, ref float prop2)
@@ -83,20 +85,6 @@ namespace KiraiMod
             {
                 if (load) prop1 = prop2;
                 else      prop2 = prop1;
-            }
-
-            public void MoveEx(bool load, ref float prop1, ref float prop2, string id)
-            {
-                if (true || Shared.menu == null) Move(load, ref prop1, ref prop2); 
-                else if (load) { if (!Shared.menu.Set(id, prop2)) prop1 = prop2; }
-                else prop2 = prop1;
-            }
-
-            public void MoveEx(bool load, ref bool prop1, ref bool prop2, string id)
-            {
-                if (true || Shared.menu == null) Move(load, ref prop1, ref prop2);
-                else if (load) { if (!Shared.menu.Set(id, prop2)) prop1 = prop2; }
-                else prop2 = prop1;
             }
         }
     }

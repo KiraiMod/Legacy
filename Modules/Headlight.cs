@@ -1,7 +1,5 @@
 ﻿using MelonLoader;
 using UnityEngine;
-using VRC;
-using VRC.SDKBase;
 
 namespace KiraiMod.Modules
 {
@@ -14,6 +12,16 @@ namespace KiraiMod.Modules
         };
 
         public override void OnStateChange(bool state)
+        {
+            Refresh();
+        }
+
+        public override void OnConfigLoaded()
+        {
+            Refresh();
+        }
+
+        public void Refresh()
         {
             if (light == null) MelonCoroutines.Start(Initialize(state));
             else light.enabled = state;

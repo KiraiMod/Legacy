@@ -1,5 +1,4 @@
 ﻿using MelonLoader;
-using System.Reflection;
 using VRC;
 
 namespace KiraiMod.Modules
@@ -21,6 +20,7 @@ namespace KiraiMod.Modules
         }
 
         public virtual void OnStateChange(bool state) { }
+        public virtual void OnConfigLoaded() { }
 
         public virtual void OnPlayerJoined(Player player) { }
         public virtual void OnPlayerLeft(Player player) { }

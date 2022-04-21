@@ -127,7 +127,19 @@ namespace KiraiMod
                     }
                     else if (info.type == Modules.ButtonType.Button)
                     {
-
+                        MethodInfo reference = module.GetType().GetMethod(info.reference, BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
+                        if (reference == null)
+                        {
+                            MelonModLogger.LogWarning($"Failed to find method {info.reference} on {module.GetType()}");
+                            continue;
+                        }
+                        Utils.GetGenericLayout(info.index, out int x, out int y);
+                        Shared.menu.CreateButton(Utils.CreateID(info.label, info.page),
+                            info.label, info.description, x, y, Shared.menu.pages[info.page].transform,
+                            new System.Action(() =>
+                            {
+                                reference.Invoke(module, null);
+                            }));
                     }
                     else if (info.type == Modules.ButtonType.Slider)
                     {

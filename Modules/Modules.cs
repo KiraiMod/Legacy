@@ -57,5 +57,13 @@ namespace KiraiMod.Modules
                 modules[i].OnUpdate();
             }
         }
+
+        public void OnConfigLoaded()
+        {
+            for (int i = 0; i < modules.Count; i++)
+            {
+                modules[i].OnConfigLoaded();
+            }
+        }
     }
 }
