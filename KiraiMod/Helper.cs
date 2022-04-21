@@ -66,8 +66,9 @@ namespace KiraiMod
             Shared.targetPlayer = null;
         }
 
-        public static System.Collections.IEnumerator CrashPlayer(VRC_Pickup pickup, Player player)
+        public static System.Collections.IEnumerator CrashPlayer(VRCSDK2.VRC_ObjectSync pickup, Player player)
         {
+            Networking.SetOwner(Networking.LocalPlayer, pickup.gameObject);
             for (int i = 0; i < 90; i++)
             {
                 pickup.transform.position = player.transform.position;
@@ -80,11 +81,10 @@ namespace KiraiMod
 
         public static void CrashSelected()
         {
-            VRC_Pickup pickup = Resources.FindObjectsOfTypeAll<VRC_Pickup>().FirstOrDefault(p =>
-                p.GetComponent<VRCSDK2.VRC_ObjectSync>() != null && // totally not overengineered
-                p.GetComponents<Collider>().Concat(p.GetComponentsInChildren<Collider>()).Any(c => !c.isTrigger && ((1016111 >> c.gameObject.layer) & 1) == 1)
+            VRCSDK2.VRC_ObjectSync sync = Resources.FindObjectsOfTypeAll<VRCSDK2.VRC_ObjectSync>().FirstOrDefault(o =>
+                o.GetComponents<Collider>().Concat(o.GetComponentsInChildren<Collider>()).Any(c => !c.isTrigger && ((1016111 >> c.gameObject.layer) & 1) == 1)
             );
-            if (pickup != null) MelonCoroutines.Start(CrashPlayer(pickup, Shared.targetPlayer));
+            if (sync != null) MelonCoroutines.Start(CrashPlayer(sync, Shared.targetPlayer));
             else Utils.HUDMessage("World has no valid pickups");
         }
     }
