@@ -98,8 +98,8 @@ namespace KiraiMod
                 Move(load, ref Shared.modules.tracers.Pickups,    ref bTracerPickups    );
                 Move(load, ref Shared.modules.tracers.Triggers,   ref bTracerTriggers   );
 
-                Move(load, ref Shared.modules.speed.speedRun,     ref fRun              );
-                Move(load, ref Shared.modules.speed.speedWalk,    ref fWalk             );
+                Move(load, ref Shared.modules.speed.SpeedRun,     ref fRun              );
+                Move(load, ref Shared.modules.speed.SpeedWalk,    ref fWalk             );
                 Move(load, ref Shared.modules.flight.speed,       ref fFly              );
                 Move(load, ref Shared.modules.portal.distance,    ref fPortalDistance   );
                 Move(load, ref Shared.modules.orbit.speed,        ref fOrbitSpeed       );

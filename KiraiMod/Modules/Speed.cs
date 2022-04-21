@@ -6,14 +6,14 @@
         private float oSpeedWalk;
         private float oSpeedStrafe;
 
-        public float speedRun = 10;
-        public float speedWalk = 8;
+        public float SpeedRun = 10;
+        public float SpeedWalk = 8;
 
         public new ModuleInfo[] info =
         {
             new ModuleInfo("Speed", "Change movement speed", ButtonType.Toggle, 0, Menu.PageIndex.options1, nameof(state)),
-            new ModuleInfo("Run Speed", ButtonType.Slider, 0, Menu.PageIndex.sliders1, nameof(speedRun), 0, 32),
-            new ModuleInfo("Walk Speed", ButtonType.Slider, 1, Menu.PageIndex.sliders1, nameof(speedWalk), 0, 32)
+            new ModuleInfo("Run Speed", ButtonType.Slider, 0, Menu.PageIndex.sliders1, nameof(SpeedRun), 0, 32),
+            new ModuleInfo("Walk Speed", ButtonType.Slider, 1, Menu.PageIndex.sliders1, nameof(SpeedWalk), 0, 32)
         };
 
         public override void OnStateChange(bool state)
@@ -49,9 +49,9 @@
 
         public void Enable(LocomotionInputController movement)
         {
-            movement.runSpeed = speedRun;
-            movement.walkSpeed = speedWalk;
-            movement.strafeSpeed = speedWalk;
+            movement.runSpeed = SpeedRun;
+            movement.walkSpeed = SpeedWalk;
+            movement.strafeSpeed = SpeedWalk;
         }
 
         public void Disable(LocomotionInputController movement)
@@ -61,28 +61,28 @@
             movement.strafeSpeed = oSpeedStrafe;
         }
 
-        public void SetWalkSpeed(float value)
+        public void OnValueChangeSpeedWalk(float value)
         {
             LocomotionInputController movement = VRCPlayer.field_Internal_Static_VRCPlayer_0.GetComponentInChildren<LocomotionInputController>();
 
             if (movement == null) return;
 
-            if (movement.walkSpeed != speedWalk) oSpeedWalk = movement.walkSpeed;
-            if (movement.strafeSpeed != speedWalk) oSpeedStrafe = movement.strafeSpeed;
+            if (movement.walkSpeed != SpeedWalk) oSpeedWalk = movement.walkSpeed;
+            if (movement.strafeSpeed != SpeedWalk) oSpeedStrafe = movement.strafeSpeed;
 
-            speedWalk = value;
+            SpeedWalk = value;
             if (state) Enable(movement);
         }
 
-        public void SetRunSpeed(float value)
+        public void OnValueChangeSpeedRun(float value)
         {
             LocomotionInputController movement = VRCPlayer.field_Internal_Static_VRCPlayer_0.GetComponentInChildren<LocomotionInputController>();
 
             if (movement == null) return;
 
-            if (movement.runSpeed != speedRun) oSpeedRun = movement.runSpeed;
+            if (movement.runSpeed != SpeedRun) oSpeedRun = movement.runSpeed;
 
-            speedRun = value;
+            SpeedRun = value;
             if (state) Enable(movement);
         }
     }

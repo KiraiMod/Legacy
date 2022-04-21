@@ -357,7 +357,7 @@ namespace KiraiMod
             private UnityEngine.UI.Slider uiSlider;
 
             public GameObject self;
-            public Action OnChange;
+            public Action<float> OnChange;
 
             public float value;
 
@@ -365,6 +365,7 @@ namespace KiraiMod
             {
                 QuickMenu qm = QuickMenu.prop_QuickMenu_0;
                 this.initial = initial;
+                this.OnChange = OnChange;
 
                 GameObject slider = UnityEngine.Object.Instantiate(VRCUiManager.prop_VRCUiManager_0.menuContent.transform.Find("Screens/Settings/AudioDevicePanel/VolumeSlider"), parent).gameObject;
 
@@ -384,7 +385,7 @@ namespace KiraiMod
                 {
                     uiSlider.onValueChanged.RemoveAllListeners();
                     uiSlider.onValueChanged.AddListener(new Action<float>(value => {
-                        SetValue(value);
+                        _SetValue(value);
                     }));
                     MelonCoroutines.Start(DelayedInit());
                 }));
@@ -430,8 +431,16 @@ namespace KiraiMod
             {
                 this.value = value;
                 if (!initialized) initial = value;
-                valueText.text = value.ToString("0.00");
+
                 uiSlider.value = value;
+                _SetValue(value);
+                MelonLogger.Log("fuk");
+            }
+
+            private void _SetValue(float value)
+            {
+                valueText.text = value.ToString("0.00");
+                OnChange.Invoke(value);
             }
 
             private System.Collections.IEnumerator DelayedInit()

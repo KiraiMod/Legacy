@@ -232,11 +232,18 @@ namespace KiraiMod
                         float cval = (float)reference.GetValue(module);
 
                         Utils.GetSliderLayout(info.index, out float x, out float y);
+                        MethodInfo onValueChange = module.GetType().GetMethod($"OnValueChange{info.reference}", BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
                         Shared.menu.CreateSlider(Utils.CreateID(info.label, info.page),
-                            info.label, x, y, info.min, info.max, cval, Shared.menu.pages[info.page].transform, new System.Action<float>((value) =>
+                            info.label, x, y, info.min, info.max, cval, Shared.menu.pages[info.page].transform, onValueChange == null ? new System.Action<float>((value) =>
                             {
                                 reference.SetValue(module, value);
+                            }) : new System.Action<float>((value) =>
+                            {
+                                onValueChange.Invoke(module, new object[] { value });
                             }));
+#if DEBUG
+                            MelonLogger.Log($"{module.GetType().Name}.{info.reference}: {(onValueChange == null ? "Acchi" : "Kocchi")}");
+#endif
                     }
                     else
                     {
