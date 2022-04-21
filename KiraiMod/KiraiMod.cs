@@ -18,18 +18,6 @@ namespace KiraiMod
             if (Random.Range(1, 8192) == 1)
                 MelonLogger.Log(Utils.StringIya);
 
-
-#pragma warning disable 0162
-            try
-            {
-                if (BuildInfo.Version != "0.2.7.2")
-                {
-                    MelonLogger.Log("You should update");
-                    System.Diagnostics.Process.Start("https://github.com/HerpDerpinstine/MelonLoader/releases/latest");
-                }
-            } catch (System.Exception) {}
-#pragma warning restore 0162
-
             System.IO.Stream stream = Assembly.GetManifestResourceStream("KiraiMod.resources.assetbundle");
             System.IO.MemoryStream mem = new System.IO.MemoryStream((int)stream.Length);
             stream.CopyTo(mem);
