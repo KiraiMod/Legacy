@@ -76,19 +76,19 @@ namespace KiraiMod.Modules
         {
 			if (!state || !RGB || PlayerManager.field_Private_Static_PlayerManager_0?.field_Private_List_1_Player_0 == null) return;
 
-			foreach (Player player in PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0)
-				if (player.IsFriend())
-					player.field_Internal_VRCPlayer_0.nameplate.uiName.color = KiraiLib.GetRainbow(Config.General.fRGBSpeed);
-        }
+            foreach (Player player in PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0)
+                if (player.IsFriend())
+                    player.field_Internal_VRCPlayer_0.field_Public_PlayerNameplate_0.field_Public_TextMeshProUGUI_0.color = KiraiLib.GetRainbow(Config.General.fRGBSpeed);
+		}
 
 		public void OnStateChangeRGB(bool state)
         {
 			if (!state) return;
 
-			foreach (Player player in PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0)
-				if (player?.IsFriend() ?? false)
-					player.field_Internal_VRCPlayer_0.nameplate.uiName.color = player.field_Private_APIUser_0.GetTrustColor();
-		}
+            foreach (Player player in PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0)
+                if (player?.IsFriend() ?? false)
+                    player.field_Internal_VRCPlayer_0.field_Public_PlayerNameplate_0.field_Public_TextMeshProUGUI_0.color = player.field_Private_APIUser_0.GetTrustColor();
+        }
 
         private IEnumerator DelayedRefresh()
 		{
@@ -104,13 +104,12 @@ namespace KiraiMod.Modules
 			Transform contents = player.transform.Find("Player Nameplate/Canvas/Nameplate/Contents");
 			Transform stats = contents.Find("Quick Stats");
 
-			player.field_Internal_VRCPlayer_0.nameplate.uiNameBackground.color = player.field_Private_APIUser_0.GetTrustColor();
-			player.field_Internal_VRCPlayer_0.nameplate.uiNameVoicePulse.color = new Color(1, 0, 1);
-			player.field_Internal_VRCPlayer_0.nameplate.uiNameVoiceGlow.color = new Color(1, 0, 1);
-
-			player.field_Internal_VRCPlayer_0.nameplate.uiIconBackground.color = player.field_Private_APIUser_0.GetTrustColor();
-			player.field_Internal_VRCPlayer_0.nameplate.uiIconVoicePulse.color = new Color(1, 0, 1);
-			player.field_Internal_VRCPlayer_0.nameplate.uiIconVoiceGlow.color = new Color(1, 0, 1);
+			player.field_Internal_VRCPlayer_0.field_Public_PlayerNameplate_0.field_Public_Graphic_0.color = player.field_Private_APIUser_0.GetTrustColor();
+			player.field_Internal_VRCPlayer_0.field_Public_PlayerNameplate_0.field_Public_Graphic_2.color = player.field_Private_APIUser_0.GetTrustColor();
+			player.field_Internal_VRCPlayer_0.field_Public_PlayerNameplate_0.field_Public_Graphic_4.color = new Color(1, 0, 1);
+			player.field_Internal_VRCPlayer_0.field_Public_PlayerNameplate_0.field_Public_Graphic_6.color = new Color(1, 0, 1);
+			player.field_Internal_VRCPlayer_0.field_Public_PlayerNameplate_0.field_Public_Graphic_7.color = new Color(1, 0, 1);
+			player.field_Internal_VRCPlayer_0.field_Public_PlayerNameplate_0.field_Public_Graphic_8.color = new Color(1, 0, 1);
 
 			stats.GetComponent<ImageThreeSlice>().color = Utils.Colors.primary;
 

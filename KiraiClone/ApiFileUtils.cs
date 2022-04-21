@@ -102,7 +102,7 @@ namespace KiraiMod
             if (extension == ".delta")
                 return "application/x-rsync-delta";
 
-            MelonLogger.LogWarning("Unknown file extension for mime-type: " + extension);
+            MelonLogger.Warning("Unknown file extension for mime-type: " + extension);
             return "application/octet-stream";
         }
 
@@ -260,7 +260,7 @@ namespace KiraiMod
             // check for server side errors from last upload
             if (apiFile.IsInErrorState())
             {
-                MelonLogger.LogWarning("ApiFile: " + apiFile.id + ": server failed to process last uploaded, deleting failed version");
+                MelonLogger.Warning("ApiFile: " + apiFile.id + ": server failed to process last uploaded, deleting failed version");
 
                 while (true)
                 {

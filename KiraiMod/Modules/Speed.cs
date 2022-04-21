@@ -26,9 +26,9 @@
 
             if (state)
             {
-                oSpeedRun = movement.runSpeed;
-                oSpeedWalk = movement.walkSpeed;
-                oSpeedStrafe = movement.strafeSpeed;
+                oSpeedRun = movement.field_Public_Single_0;
+                oSpeedWalk = movement.field_Public_Single_2;
+                oSpeedStrafe = movement.field_Public_Single_1;
 
                 Enable(movement);
             } else Disable(movement);
@@ -49,16 +49,16 @@
 
         public void Enable(LocomotionInputController movement)
         {
-            movement.runSpeed = SpeedRun;
-            movement.walkSpeed = SpeedWalk;
-            movement.strafeSpeed = SpeedWalk;
+            movement.field_Public_Single_0 = SpeedRun;
+            movement.field_Public_Single_2 = SpeedWalk;
+            movement.field_Public_Single_1 = SpeedWalk;
         }
 
         public void Disable(LocomotionInputController movement)
         {
-            movement.runSpeed = oSpeedRun;
-            movement.walkSpeed = oSpeedWalk;
-            movement.strafeSpeed = oSpeedStrafe;
+            movement.field_Public_Single_0 = oSpeedRun;
+            movement.field_Public_Single_2 = oSpeedWalk;
+            movement.field_Public_Single_1 = oSpeedStrafe;
         }
 
         public void OnValueChangeSpeedWalk(float value)
@@ -67,8 +67,8 @@
 
             if (movement == null) return;
 
-            if (movement.walkSpeed != SpeedWalk) oSpeedWalk = movement.walkSpeed;
-            if (movement.strafeSpeed != SpeedWalk) oSpeedStrafe = movement.strafeSpeed;
+            if (movement.field_Public_Single_2 != SpeedWalk) oSpeedWalk = movement.field_Public_Single_2;
+            if (movement.field_Public_Single_1 != SpeedWalk) oSpeedStrafe = movement.field_Public_Single_1;
 
             SpeedWalk = value;
             if (state) Enable(movement);
@@ -80,10 +80,11 @@
 
             if (movement == null) return;
 
-            if (movement.runSpeed != SpeedRun) oSpeedRun = movement.runSpeed;
+            if (movement.field_Public_Single_0 != SpeedRun) oSpeedRun = movement.field_Public_Single_0;
 
             SpeedRun = value;
             if (state) Enable(movement);
         }
+
     }
 }

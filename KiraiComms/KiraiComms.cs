@@ -9,7 +9,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using VRC;
 
-[assembly: MelonInfo(typeof(KiraiMod.KiraiComms), "KiraiComms", null, "Kirai Chan#8315 & Brass")]
+[assembly: MelonInfo(typeof(KiraiMod.KiraiComms), "KiraiComms", "1", "Kirai Chan#8315 & Brass")]
 [assembly: MelonGame("VRChat", "VRChat")]
 
 namespace KiraiMod
@@ -18,13 +18,26 @@ namespace KiraiMod
     {
         static KiraiComms()
         {
-            Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("KiraiMod.Lib.KiraiLibLoader.dll");
+            Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(
+#if DEBUG
+                "KiraiMod.Lib.KiraiLib.dll"
+#else
+                "KiraiMod.Lib.KiraiLibLoader.dll"
+#endif
+                );
+
             MemoryStream mem = new MemoryStream((int)stream.Length);
             stream.CopyTo(mem);
 
             Assembly.Load(mem.ToArray());
 
-            new Action(() => KiraiLibLoader.Load())();
+            new Action(() =>
+#if DEBUG
+                KiraiLib.NoOp()
+#else
+                KiraiLibLoader.Load()
+#endif
+            )();
         }
 
         private Action<int, string> SendRPC;
@@ -119,7 +132,7 @@ namespace KiraiMod
             else
             {
                 halt = true;
-                MelonLogger.LogError("Didn't find KiraiRPC, stopping...");
+                MelonLogger.Error("Didn't find KiraiRPC, stopping...");
             }
         }
 
@@ -131,7 +144,7 @@ namespace KiraiMod
             {
                 NetworkManager
                     .field_Internal_Static_NetworkManager_0
-                    .field_Internal_ObjectPublicHa1UnT1Unique_1_Player_1
+                    .field_Internal_VRCEventDelegate_1_Player_1
                     .field_Private_HashSet_1_UnityAction_1_T_0
                     .Add(new Action<Player>(player => OnPlayerLeft(player)));
                 LogWithPadding("OnPlayerLeft", true);
@@ -172,7 +185,7 @@ namespace KiraiMod
 
         private static void LogWithPadding(string src, bool passed)
         {
-            MelonLogger.Log($"Hooking {src}...".PadRight(71, ' ') + (passed ? "Passed" : "Failed"));
+            MelonLogger.Msg($"Hooking {src}...".PadRight(71, ' ') + (passed ? "Passed" : "Failed"));
         }
 
         private static Player NameToPlayer(string name)

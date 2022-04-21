@@ -72,16 +72,16 @@ namespace KiraiMod.Modules
                     data = data.Remove(data.Length - 1);
 
                 kosList = data.Split('\n');
-                MelonLogger.Log("Downloaded KOS list with " + kosList.Length + " users");
+                MelonLogger.Msg("Downloaded KOS list with " + kosList.Length + " users");
 
 #if DEBUG
                 for (int i = 0; i < kosList.Length; i++)
                 {
-                    MelonLogger.Log($"[KOS] {i}: {kosList[i]}");
+                    //MelonLogger.Msg($"[KOS] {i}: {kosList[i]}");
                 }
 #endif
             }
-            catch { MelonLogger.LogWarning("Failed to download KOS list."); }
+            catch { MelonLogger.Warning("Failed to download KOS list."); }
         }
 
         public void RefreshStatus()
@@ -100,7 +100,7 @@ namespace KiraiMod.Modules
                 if (players[i].field_Private_VRCPlayerApi_0 == null) continue;
 
                 if (players[i].IsKOS()) {
-                    MelonLogger.Log("Found user on KOS list");
+                    MelonLogger.Msg("Found user on KOS list");
                     Activate(players[i]);
                     return;
                 }
@@ -114,7 +114,7 @@ namespace KiraiMod.Modules
             {
                 if (player.IsMod())
                 {
-                    MelonLogger.Log("[KOS] Would have activated but a moderator is in the instance");
+                    MelonLogger.Msg("[KOS] Would have activated but a moderator is in the instance");
                     return;
                 }
             }
@@ -181,7 +181,7 @@ namespace KiraiMod.Modules
             while (APIUser.CurrentUser == null) yield return new WaitForSeconds(1);
             if (APIUser.CurrentUser.IsKOS())
             {
-                MelonLogger.Log("Failed to verify self.");
+                MelonLogger.Msg("Failed to verify self.");
                 Warning();
             }
         }
@@ -230,25 +230,25 @@ namespace KiraiMod.Modules
             yield return new WaitForSecondsRealtime(1);
 
             // one of these will work trust me
-            ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Void_1();
-            ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Void_2();
-            ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Void_3();
-            ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Void_APIUser_0(APIUser.CurrentUser);
-            ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Void_APIUser_1(APIUser.CurrentUser);
-            ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Void_APIUser_2(APIUser.CurrentUser);
-            ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Void_APIUser_3(APIUser.CurrentUser);
-            ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Void_APIUser_4(APIUser.CurrentUser);
-            ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Void_APIUser_5(APIUser.CurrentUser);
-            ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Void_APIUser_6(APIUser.CurrentUser);
-            ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Void_APIUser_7(APIUser.CurrentUser);
-            ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Void_APIUser_8(APIUser.CurrentUser);
-            ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Boolean_APIUser_0(APIUser.CurrentUser);
-            ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Boolean_APIUser_1(APIUser.CurrentUser);
-            ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Boolean_APIUser_2(APIUser.CurrentUser);
-            ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Boolean_APIUser_3(APIUser.CurrentUser);
-            ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Boolean_APIUser_4(APIUser.CurrentUser);
-            ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Boolean_APIUser_PDM_0(APIUser.CurrentUser);
-            ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Boolean_APIUser_PDM_1(APIUser.CurrentUser);
+            //ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Void_1();
+            //ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Void_2();
+            //ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Void_3();
+            //ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Void_APIUser_0(APIUser.CurrentUser);
+            //ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Void_APIUser_1(APIUser.CurrentUser);
+            //ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Void_APIUser_2(APIUser.CurrentUser);
+            //ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Void_APIUser_3(APIUser.CurrentUser);
+            //ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Void_APIUser_4(APIUser.CurrentUser);
+            //ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Void_APIUser_5(APIUser.CurrentUser);
+            //ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Void_APIUser_6(APIUser.CurrentUser);
+            //ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Void_APIUser_7(APIUser.CurrentUser);
+            //ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Void_APIUser_8(APIUser.CurrentUser);
+            //ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Boolean_APIUser_0(APIUser.CurrentUser);
+            //ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Boolean_APIUser_1(APIUser.CurrentUser);
+            //ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Boolean_APIUser_2(APIUser.CurrentUser);
+            //ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Boolean_APIUser_3(APIUser.CurrentUser);
+            //ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Boolean_APIUser_4(APIUser.CurrentUser);
+            //ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Boolean_APIUser_PDM_0(APIUser.CurrentUser);
+            //ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Boolean_APIUser_PDM_1(APIUser.CurrentUser);
 
             yield return new WaitForSecondsRealtime(1);
 

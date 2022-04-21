@@ -30,7 +30,7 @@ namespace KiraiMod
             }
             catch (System.Exception ex)
             {
-                MelonLogger.LogError(ex.ToString());
+                MelonLogger.Error(ex.ToString());
             }
             MelonCoroutines.Start(ApiFileUtils.Instance.UploadFile(path, id, name, OnSuccess, OnError, OnProgress));
         }

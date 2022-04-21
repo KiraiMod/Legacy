@@ -22,17 +22,17 @@ namespace KiraiMod
 
         public void Save()
         {
-            MelonLogger.Log("Saving to config");
+            MelonLogger.Msg("Saving to config");
             System.IO.File.WriteAllText(config, JSON.Dump(options));
         }
 
         public void Load()
         {
-            MelonLogger.Log("Loading from config");
+            MelonLogger.Msg("Loading from config");
 
             if (!System.IO.File.Exists(config))
             {
-                MelonLogger.Log("Config did not exist, creating new one with current values");
+                MelonLogger.Msg("Config did not exist, creating new one with current values");
                 MessageBox.Show("KiraiMod is not a public mod and redistribution is prohibited.\nIf you did not recieve the mod from the server then you are running an illegitimate copy.", "Copyright Notice");
                 System.IO.File.WriteAllText(config, JSON.Dump(options));
             }

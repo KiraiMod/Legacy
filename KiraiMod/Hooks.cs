@@ -58,28 +58,6 @@ namespace KiraiMod
             }
             catch { LogWithPadding("RPCs", false); }
 
-            //try
-            //{
-            //    Shared.harmony.Patch(typeof(ObjectPublicIPhotonPeerListenerObStBoStObCoDiBo2ObUnique)
-            //        .GetMethod(nameof(ObjectPublicIPhotonPeerListenerObStBoStObCoDiBo2ObUnique
-            //        .Method_Public_Virtual_New_Boolean_Byte_Object_ObjectPublicObByObInByObObUnique_SendOptions_0),
-            //        BindingFlags.Public | BindingFlags.Instance),
-            //        new HarmonyMethod(typeof(Hooks).GetMethod(nameof(SendOperationPrefix), BindingFlags.NonPublic | BindingFlags.Static)));
-
-            //    MelonLogger.Log("Hooking SendOperationPrefix... Passed");
-            //}
-            //catch { MelonLogger.LogWarning("Hooking SendOperationPrefix... Failed"); }
-
-            //try
-            //{
-            //    Shared.harmony.Patch(typeof(ObjectPublicIPhotonPeerListenerObStBoStObCoDiBo2ObUnique)
-            //        .GetMethod(nameof(ObjectPublicIPhotonPeerListenerObStBoStObCoDiBo2ObUnique.OnEvent), BindingFlags.Public | BindingFlags.Instance),
-            //        new HarmonyMethod(typeof(Hooks).GetMethod(nameof(OnEvent), BindingFlags.NonPublic | BindingFlags.Static)));
-
-            //    MelonLogger.Log("Hooking OnEvent... Passed");
-            //}
-            //catch { MelonLogger.LogWarning("Hooking OnEvent... Failed"); }
-
             try
             {
                 Shared.harmony.Patch(typeof(VRCAvatarManager)
@@ -112,23 +90,21 @@ namespace KiraiMod
             }
             else
             {
-                MelonLogger.Log("Not hooking UnityEngine.UI.Text because Aliases is off.");
-                MelonLogger.Log("Not hooking TMPro.TMP_Text because Aliases is off.");
+                MelonLogger.Msg("Not hooking UnityEngine.UI.Text because Aliases is off.");
+                MelonLogger.Msg("Not hooking TMPro.TMP_Text because Aliases is off.");
             }
 
-            var QMMethodsByCC = typeof(QuickMenu).GetMethods()
-                .Where(m => m.Name.Contains("Method_Public_Void_") && m.Name.Length == 20)
-                .OrderByDescending(m => (Attribute.GetCustomAttribute(m, typeof(UnhollowerBaseLib.Attributes.CallerCountAttribute)) as UnhollowerBaseLib.Attributes.CallerCountAttribute).Count);
+            //var QMMethodsByCC = typeof(QuickMenu).GetMethods()
+            //    .Where(m => m.Name.Contains("Method_Public_Void_") && m.Name.Length == 20)
+            //    .OrderByDescending(m => (Attribute.GetCustomAttribute(m, typeof(UnhollowerBaseLib.Attributes.CallerCountAttribute)) as UnhollowerBaseLib.Attributes.CallerCountAttribute).Count);
 
-            var QMMethodsByXR = QMMethodsByCC.Skip(2).OrderByDescending(m => UnhollowerRuntimeLib.XrefScans.XrefScanner.XrefScan(m).Count());
+            //var QMMethodsByXR = QMMethodsByCC.Skip(2).OrderByDescending(m => UnhollowerRuntimeLib.XrefScans.XrefScanner.XrefScan(m).Count());
 
             try
             {
-                Shared.harmony.Patch(QMMethodsByXR.ElementAt(0),
+                Shared.harmony.Patch(typeof(QuickMenu)
+                    .GetMethod(nameof(QuickMenu.Method_Private_Void_2), BindingFlags.Instance | BindingFlags.Public),
                     new HarmonyMethod(typeof(Hooks).GetMethod(nameof(OnMenuOpened), BindingFlags.NonPublic | BindingFlags.Static)));
-
-                //Shared.harmony.Patch(QMMethodsByXR.ElementAt(1),
-                //    new HarmonyMethod(typeof(Hooks).GetMethod(nameof(OnMenuOpened), BindingFlags.NonPublic | BindingFlags.Static)));
 
                 LogWithPadding("OnMenuOpened", true);
             }
@@ -136,8 +112,9 @@ namespace KiraiMod
 
             try
             {
-                Shared.harmony.Patch(QMMethodsByCC.ElementAt(1),
-                    new HarmonyMethod(typeof(Hooks).GetMethod(nameof(OnMenuClosed), BindingFlags.NonPublic | BindingFlags.Static)));
+                Shared.harmony.Patch(typeof(QuickMenu)
+                        .GetMethod(nameof(QuickMenu.Method_Public_Void_Boolean_2), BindingFlags.Instance | BindingFlags.Public),
+                        new HarmonyMethod(typeof(Hooks).GetMethod(nameof(OnMenuClosed), BindingFlags.NonPublic | BindingFlags.Static)));
 
                 LogWithPadding("OnMenuClosed", true);
             }
@@ -169,7 +146,7 @@ namespace KiraiMod
             {
                 NetworkManager
                     .field_Internal_Static_NetworkManager_0
-                    .field_Internal_ObjectPublicHa1UnT1Unique_1_Player_0
+                    .field_Internal_VRCEventDelegate_1_Player_0
                     .field_Private_HashSet_1_UnityAction_1_T_0
                     .Add(new Action<Player>(player => OnPlayerJoined(player)));
                 LogWithPadding("OnPlayerJoined", true);
@@ -180,7 +157,7 @@ namespace KiraiMod
             {
                 NetworkManager
                     .field_Internal_Static_NetworkManager_0
-                    .field_Internal_ObjectPublicHa1UnT1Unique_1_Player_1
+                    .field_Internal_VRCEventDelegate_1_Player_1
                     .field_Private_HashSet_1_UnityAction_1_T_0
                     .Add(new Action<Player>(player => OnPlayerLeft(player)));
                 LogWithPadding("OnPlayerLeft", true);
@@ -206,33 +183,33 @@ namespace KiraiMod
 #if DEBUG
         private static void Test1()
         {
-            MelonLogger.Log("Test1 called");
+            MelonLogger.Msg("Test1 called");
         }
 
         private static void Test2()
         {
-            MelonLogger.Log("Test2 called");
+            MelonLogger.Msg("Test2 called");
         }
 
         private static void Test3()
         {
-            MelonLogger.Log("Test3 called");
+            MelonLogger.Msg("Test3 called");
         }
 
         private static void Test4()
         {
-            MelonLogger.Log("Test4 called");
+            MelonLogger.Msg("Test4 called");
         }
 
         private static void Test5()
         {
-            MelonLogger.Log("Test5 called");
+            MelonLogger.Msg("Test5 called");
         }
 #endif
 
         private static void OnPlayerJoined(Player player)
         {
-            MelonLogger.Log(player.field_Private_VRCPlayerApi_0.displayName + " joined");
+            MelonLogger.Msg(player.field_Private_VRCPlayerApi_0.displayName + " joined");
             Shared.modules.OnPlayerJoined(player);
 
             if (player.IsMod()) KiraiLib.Logger.Log("A moderator is in your lobby.");
@@ -240,7 +217,7 @@ namespace KiraiMod
 
         private static void OnPlayerLeft(Player player)
         {
-            MelonLogger.Log(player.field_Private_VRCPlayerApi_0.displayName + " left");
+            MelonLogger.Msg(player.field_Private_VRCPlayerApi_0.displayName + " left");
 
             Shared.modules.OnPlayerLeft(player);
             
@@ -260,25 +237,12 @@ namespace KiraiMod
             if (Shared.Options.bWorldTriggers && __2 == VrcBroadcastType.Local) __2 = VrcBroadcastType.AlwaysUnbuffered;
         }
 
-        //private static void SendOperationPrefix(ref byte __0, ref Il2CppSystem.Object __1, ref ObjectPublicObByObInByObObUnique __2, ref ExitGames.Client.Photon.SendOptions __3)
-        //{
-        //}
-
-        //private static void OnEvent(ref ExitGames.Client.Photon.EventData __0)
-        //{
-        //    if (__0 == null) return;
-
-        //    if (__0.Code == 33)
-        //    {
-
-        //    }
-        //}
-
         private static void OnMenuOpened()
         {
 #if DEBUG
-            MelonLogger.Log("Menu Opened");
+            MelonLogger.Msg("Menu Opened");
 #endif
+
             if (Shared.modules.playerlist.state)
             {
                 Shared.modules.playerlist.parent.active = true;
@@ -297,7 +261,7 @@ namespace KiraiMod
                 if (Shared.modules.playerlist.state)
                     Shared.modules.playerlist.parent.active = false;
 #if DEBUG
-                MelonLogger.Log("Menu Closing");
+                MelonLogger.Msg("Menu Closing");
 #endif
             } 
 
@@ -334,7 +298,7 @@ namespace KiraiMod
 
         private static void LogWithPadding(string src, bool passed)
         {
-            MelonLogger.Log($"Hooking {src}...".PadRight(73, ' ') + (passed ? "Passed" : "Failed"));
+            MelonLogger.Msg($"Hooking {src}...".PadRight(73, ' ') + (passed ? "Passed" : "Failed"));
         }
     }
 }

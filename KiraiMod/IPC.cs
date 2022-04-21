@@ -18,7 +18,7 @@ namespace KiraiMod
 
         public IPC()
         {
-            MelonLogger.Log("[IPC] Starting");
+            MelonLogger.Msg("[IPC] Starting");
 
             listener = new HttpListener();
             listener.Prefixes.Add("http://*:53065/");
@@ -34,14 +34,14 @@ namespace KiraiMod
                 MelonCoroutines.Start(Forwarder());
             }
             catch (Exception e) { 
-                MelonLogger.Log("[IPC] Failed to start"); 
-                MelonLogger.LogError(e.ToString()); 
+                MelonLogger.Msg("[IPC] Failed to start"); 
+                MelonLogger.Error(e.ToString()); 
             }
         }
 
         ~IPC()
         {
-            MelonLogger.Log("[IPC] Stoping");
+            MelonLogger.Msg("[IPC] Stoping");
 
             try
             {
@@ -50,8 +50,8 @@ namespace KiraiMod
             }
             catch (Exception e)
             {
-                MelonLogger.Log("[IPC] Failed to stop");
-                MelonLogger.LogError(e.ToString());
+                MelonLogger.Msg("[IPC] Failed to stop");
+                MelonLogger.Error(e.ToString());
             }
         }
 
@@ -64,7 +64,7 @@ namespace KiraiMod
                 if (execute)
                 {
                     try { method.Invoke(null, null); }
-                    catch { MelonLogger.Log("[IPC] Forwarder failed to execute method."); }
+                    catch { MelonLogger.Msg("[IPC] Forwarder failed to execute method."); }
 
                     execute = false;
                 }
@@ -82,7 +82,7 @@ namespace KiraiMod
                     HttpListenerContext ctx = listener.GetContext();
                     if (!ctx.Request.IsLocal)
                     {
-                        MelonLogger.Log("[IPC] Non local attempted to access IPC.");
+                        MelonLogger.Msg("[IPC] Non local attempted to access IPC.");
                         ctx.Response.StatusCode = 403;
                         byte[] resp = System.Text.Encoding.UTF8.GetBytes("Forbidden. This incident has be reported.");
                         ctx.Response.OutputStream.Write(resp, 0, resp.Length);
@@ -95,7 +95,7 @@ namespace KiraiMod
                 }
                 catch (Exception e)
                 {
-                    MelonLogger.Log($"[IPC] {e.Message}");
+                    MelonLogger.Msg($"[IPC] {e.Message}");
                     break;
                 }
             }
@@ -103,14 +103,14 @@ namespace KiraiMod
 
         public void GET(HttpListenerContext ctx)
         {
-            MelonLogger.Log("Sending Web UI");
+            MelonLogger.Msg("Sending Web UI");
             ctx.Response.ContentType = "text/html";
 
             try
             {
                 System.IO.Stream resource = Assembly.GetExecutingAssembly().GetManifestResourceStream("KiraiMod.WebUI.html");
                 resource.CopyTo(ctx.Response.OutputStream);
-            } catch { MelonLogger.LogError("Failed to get Web UI"); }
+            } catch { MelonLogger.Error("Failed to get Web UI"); }
 
             ctx.Response.Close();
         }
@@ -168,20 +168,20 @@ namespace KiraiMod
             method = typeof(Registry).GetMethod(args[0], BindingFlags.Public | BindingFlags.Static);
             if (method == null)
             {
-                MelonLogger.Log("[IPC] Unknown method");
+                MelonLogger.Msg("[IPC] Unknown method");
                 return 404;
             }
 
             if (!execute)
             {
                 execute = true;
-            } else MelonLogger.LogWarning("[IPC] Forwarder is busy!");
+            } else MelonLogger.Warning("[IPC] Forwarder is busy!");
 
             try
             {
                 method.Invoke(null, null);
             }
-            catch { MelonLogger.Log("[IPC] Unknown exception within reflection invocation."); }
+            catch { MelonLogger.Msg("[IPC] Unknown exception within reflection invocation."); }
             
             return 200;
         }
@@ -194,7 +194,7 @@ namespace KiraiMod
             PropertyInfo prop = typeof(Registry).GetProperty(args[0], BindingFlags.Public | BindingFlags.Static);
             if (prop == null)
             {
-                MelonLogger.Log("[IPC] Unknown property");
+                MelonLogger.Msg("[IPC] Unknown property");
                 return 404;
             }
 
@@ -210,7 +210,7 @@ namespace KiraiMod
             PropertyInfo prop = typeof(Registry).GetProperty(args[0], BindingFlags.Public | BindingFlags.Static);
             if (prop == null)
             {
-                MelonLogger.Log("[IPC] Unknown property");
+                MelonLogger.Msg("[IPC] Unknown property");
                 return 404;
             }
 

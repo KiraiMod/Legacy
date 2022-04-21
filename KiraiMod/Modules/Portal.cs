@@ -56,7 +56,7 @@ namespace KiraiMod.Modules
                 }
                 catch (Exception e)
                 {
-                    MelonLogger.LogError(e.Message);
+                    MelonLogger.Error(e.Message);
                 }
 
                 yield return new WaitForSeconds(5.0f);

@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
-[assembly: MelonInfo(typeof(KiraiMod.KiraiUI), "KiraiUI", null, "Kirai Chan#8315")]
+[assembly: MelonInfo(typeof(KiraiMod.KiraiUI), "KiraiUI", "1", "Kirai Chan#8315")]
 [assembly: MelonGame("VRChat", "VRChat")]
 [assembly: MelonOptionalDependencies("SmallUserVolume")]
 
@@ -51,18 +51,18 @@ namespace KiraiMod
         {
             instance = this;
 
-            if (!MelonHandler.Mods.Any(m => m.Assembly.GetName().Name == "SmallUserVolume"))
-            {
-                System.IO.Stream stream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("KiraiMod.Lib.SmallUserVolume.dll");
-                System.IO.MemoryStream mem = new System.IO.MemoryStream((int)stream.Length);
-                stream.CopyTo(mem);
+            //if (!MelonHandler.Mods.Any(m => m.Assembly.GetName().Name == "SmallUserVolume"))
+            //{
+            //    System.IO.Stream stream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("KiraiMod.Lib.SmallUserVolume.dll");
+            //    System.IO.MemoryStream mem = new System.IO.MemoryStream((int)stream.Length);
+            //    stream.CopyTo(mem);
 
-                System.Reflection.Assembly.Load(mem.ToArray());
+            //    System.Reflection.Assembly.Load(mem.ToArray());
 
-                new Action(() => { 
-                    MelonHandler.Mods.Add(new SmallUserVolume.Class());
-                })();
-            }
+            //    new Action(() => { 
+            //        MelonHandler.Mods.Add(new SmallUserVolume.Class());
+            //    })();
+            //}
 
             MelonMod mod = MelonHandler.Mods.FirstOrDefault(m => m.Assembly.GetName().Name == "KiraiMod");
 
@@ -92,23 +92,23 @@ namespace KiraiMod
             ActionMenu = UIRoot?.Find("ActionMenu");
             QuickMenuNewElements = QuickMenu.prop_QuickMenu_0.transform.Find("QuickMenu_NewElements");
             Fireball = GameObject.Find("_Application/CursorManager/BlueFireballMouse").transform;
-            EarlyAccessText = SelectionMenu?.Find("EarlyAccessText")?.GetComponent<Text>();
+            //EarlyAccessText = SelectionMenu?.Find("EarlyAccessText")?.GetComponent<Text>();
             #endregion
 
             #region Compatibility
             if (!MelonHandler.Mods.Any(mod => mod.Assembly.GetName().Name == "KiraiMod"))
             {
                 // we have no dom so we will do it ourselves -\_(._.)_/-
-                MelonLogger.Log("KiraiMod not found. Maintaining full control.");
+                MelonLogger.Msg("KiraiMod not found. Maintaining full control.");
 
                 Store();
                 Apply();
             }
-            else MelonLogger.Log("KiraiMod found! Forfeiting all control.");
+            else MelonLogger.Msg("KiraiMod found! Forfeiting all control.");
 
             if (MelonHandler.Mods.Any(mod => mod.Assembly.GetName().Name == "FClient"))
             {
-                MelonLogger.Log("FClient detected, not moving QuickMenu around.");
+                MelonLogger.Msg("FClient detected, not moving QuickMenu around.");
                 CompatibilityModule.NoMovement = true;
             }
             #endregion
@@ -275,7 +275,7 @@ namespace KiraiMod
                         if (i == tmp3.childCount - 1) tmp1 = tmp3.GetChild(i).GetComponentInChildren<Image>();
                         else tmp1 = tmp3.GetChild(i).GetComponent<Image>();
 
-                        if (tmp1 != null) tmp1.color = op == 0 ? Color.clear : Color.white;
+                        if (tmp1 != null) tmp1.color = op == 0 ? UnityEngine.Color.clear : UnityEngine.Color.white;
                     }
             }
 
@@ -288,13 +288,13 @@ namespace KiraiMod
                 if (op == 0)
                 {
                     ddt.enabled = false;
-                    tmp4.text = $"Version {VRCApplicationSetup.prop_VRCApplicationSetup_0.buildNumber}                                          {version}";
+                    //tmp4.text = $"Version {VRCApplicationSetup.prop_VRCApplicationSetup_0.buildNumber}                                          {version}";
                 }
                 else if (op == 2) ddt.enabled = true;
             }
 
-            if (op == 1) Memory.EarlyAccessText = EarlyAccessText.text;
-            else if (op == 2) EarlyAccessText.text = Memory.EarlyAccessText;
+            //if (op == 1) Memory.EarlyAccessText = EarlyAccessText.text;
+            //else if (op == 2) EarlyAccessText.text = Memory.EarlyAccessText;
         }
     }
 }

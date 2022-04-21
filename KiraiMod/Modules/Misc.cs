@@ -222,7 +222,7 @@ namespace KiraiMod.Modules
 
             new VRC.UI.PageAvatar
             {
-                avatar = new VRC.SimpleAvatarPedestal
+                field_Public_SimpleAvatarPedestal_0 = new VRC.SimpleAvatarPedestal
                 {
                     field_Internal_ApiAvatar_0 = new VRC.Core.ApiAvatar
                     {

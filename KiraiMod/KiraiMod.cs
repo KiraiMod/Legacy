@@ -8,7 +8,7 @@ using System.Reflection;
 using System.Windows.Forms;
 using UnityEngine;
 
-[assembly: MelonInfo(typeof(KiraiMod.KiraiMod), "KiraiMod", null, "Kirai Chan#8315")]
+[assembly: MelonInfo(typeof(KiraiMod.KiraiMod), "KiraiMod", "1", "Kirai Chan#8315")]
 [assembly: MelonGame("VRChat", "VRChat")]
 [assembly: MelonOptionalDependencies("KiraiUI", "KiraiRPC")]
 [assembly: AssemblyMetadata("Iya", "IyaPlaceholder")]
@@ -45,10 +45,10 @@ namespace KiraiMod
 
         public override void OnApplicationStart()
         {
-            MelonLogger.Log("Starting");
+            MelonLogger.Msg("Starting");
 
             if (UnityEngine.Random.Range(1, 8192) == 1)
-                MelonLogger.Log(Utils.StringIya);
+                MelonLogger.Msg(Utils.StringIya);
 
             if (int.TryParse(((string)typeof(BuildInfo).GetField(nameof(BuildInfo.Version)).GetValue(null)).Replace(".", ""), out int version))
             {
@@ -60,14 +60,14 @@ namespace KiraiMod
                         Process.Start("https://github.com/HerpDerpinstine/MelonLoader/releases/latest");
                     } else if (version > buildVer)
                     {
-                        MelonLogger.LogError("Your MelonLoader is too new.");
-                        MelonLogger.LogError("This mod is written for MelonLoader version " + BuildInfo.Version);
-                        MelonLogger.LogWarning("The mod may work correctly however support will not be provided.");
+                        MelonLogger.Error("Your MelonLoader is too new.");
+                        MelonLogger.Error("This mod is written for MelonLoader version " + BuildInfo.Version);
+                        MelonLogger.Warning("The mod may work correctly however support will not be provided.");
                     }
                 }
             }
 
-            Shared.harmony = Harmony.HarmonyInstance.Create("KiraiMod");
+            Shared.harmony = Harmony;
             Shared.http = new HttpClient();
 
             Shared.modules = new Modules.Modules();
@@ -80,7 +80,7 @@ namespace KiraiMod
 
             if (MelonHandler.Mods.Any(mod => mod.Assembly.GetName().Name.Contains("KiraiRPC")))
             {
-                MelonLogger.Log("Found KiraiRPC, using it");
+                MelonLogger.Msg("Found KiraiRPC, using it");
                 new Action(() =>
                 {
                     var KiraiSendRPC = KiraiRPC.GetSendRPC("KiraiMod");
@@ -141,7 +141,7 @@ namespace KiraiMod
 
             KiraiLib.Callbacks.OnUIReload += () => 
             {
-                MelonLogger.Log("OnUIReload");
+                MelonLogger.Msg("OnUIReload");
                 VRChat_OnUiManagerInit();
 
                 Shared.unloaded = false;
@@ -149,7 +149,7 @@ namespace KiraiMod
 
             KiraiLib.Callbacks.OnUIUnload += () =>
             {
-                MelonLogger.Log("OnUIUnload");
+                MelonLogger.Msg("OnUIUnload");
 
                 Shared.unloaded = true;
             };
@@ -201,7 +201,7 @@ namespace KiraiMod
 
                 }
 #else
-                    MelonLogger.Log("Alive");
+                    MelonLogger.Msg("Alive");
 #endif
                 if (Input.GetKeyDown(KeyCode.KeypadMultiply)) Helper.Teleport(new Vector3(0, 0, 0));
             }
@@ -234,7 +234,7 @@ namespace KiraiMod
             if (Input.GetKeyDown(KeyCode.Delete)) Unload();
         }
 
-        public override void OnLevelWasLoaded(int level)
+        public override void OnSceneWasLoaded(int buildIndex, string sceneName)
         {
             if (bUnload) return;
 
@@ -246,7 +246,7 @@ namespace KiraiMod
 
         public override void VRChat_OnUiManagerInit()
         {
-            MelonLogger.Log("OnUiManagerInit");
+            MelonLogger.Msg("OnUiManagerInit");
 
             KiraiLib.UI.Initialize();
 
@@ -295,7 +295,7 @@ namespace KiraiMod
                             FieldInfo reference = module.GetType().GetField(info.reference, BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
                             if (reference == null)
                             {
-                                MelonLogger.LogWarning($"Failed to find property {info.reference} on {module.GetType()}");
+                                MelonLogger.Warning($"Failed to find property {info.reference} on {module.GetType()}");
                                 continue;
                             }
                             bool cval = (bool)reference.GetValue(module);
@@ -312,9 +312,9 @@ namespace KiraiMod
 
                                     cval = !cval;
 
-                                    MelonLogger.Log($"{module.GetType().Name}.{info.reference} {(cval ? "On" : "Off")}");
+                                    MelonLogger.Msg($"{module.GetType().Name}.{info.reference} {(cval ? "On" : "Off")}");
 #if DEBUG
-                                    MelonLogger.Log($"cval: {cval}, state: {state}");
+                                    MelonLogger.Msg($"cval: {cval}, state: {state}");
 #endif
                                     reference.SetValue(module, state);
 
@@ -322,7 +322,7 @@ namespace KiraiMod
                                 }));
 
 #if DEBUG
-                            MelonLogger.Log($"{module.GetType().Name}.{info.reference}: {(onStateChange == null ? "Acchi" : "Kocchi")}");
+                            MelonLogger.Msg($"{module.GetType().Name}.{info.reference}: {(onStateChange == null ? "Acchi" : "Kocchi")}");
 #endif
                         }
                     }
@@ -331,7 +331,7 @@ namespace KiraiMod
                         MethodInfo reference = module.GetType().GetMethod(info.reference, BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
                         if (reference == null)
                         {
-                            MelonLogger.LogWarning($"Failed to find method {info.reference} on {module.GetType()}");
+                            MelonLogger.Warning($"Failed to find method {info.reference} on {module.GetType()}");
                             continue;
                         }
                         KiraiLib.UI.Button.Create(Utils.CreateID(info.label, (int)info.page),
@@ -346,7 +346,7 @@ namespace KiraiMod
                         FieldInfo reference = module.GetType().GetField(info.reference, BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
                         if (reference == null)
                         {
-                            MelonLogger.LogWarning($"Failed to find method {info.reference} on {module.GetType()}");
+                            MelonLogger.Warning($"Failed to find method {info.reference} on {module.GetType()}");
                             continue;
                         }
                         float cval = (float)reference.GetValue(module);
@@ -361,12 +361,12 @@ namespace KiraiMod
                                 onValueChange.Invoke(module, new object[] { value });
                             }));
 #if DEBUG
-                            MelonLogger.Log($"{module.GetType().Name}.{info.reference}: {(onValueChange == null ? "Acchi" : "Kocchi")}");
+                            MelonLogger.Msg($"{module.GetType().Name}.{info.reference}: {(onValueChange == null ? "Acchi" : "Kocchi")}");
 #endif
                     }
                     else
                     {
-                        MelonLogger.LogWarning($"[UI] Unknown object {info.label} on {module.GetType()}");
+                        MelonLogger.Warning($"[UI] Unknown object {info.label} on {module.GetType()}");
                     }
                 }
             }
@@ -381,7 +381,7 @@ namespace KiraiMod
         public void Unload()
         {
             if (bUnload) return;
-            MelonLogger.Log("Unloading");
+            MelonLogger.Msg("Unloading");
 
             bUnload = true;
 
@@ -404,7 +404,7 @@ namespace KiraiMod
             Unload();
 
             bUnload = false;
-            MelonLogger.Log("Reloading");
+            MelonLogger.Msg("Reloading");
             Shared.config.Load();
 
             KiraiLib.UI.Reload();

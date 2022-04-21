@@ -37,18 +37,18 @@ namespace KiraiMod.Pages
 
             KiraiLib.UI.Button.Create("p3/crash-self", "Crash Self", "Manually initiate a crash to GTFO", 2f, -1f, KiraiLib.UI.pages[Shared.PageRemap[(int)Shared.PageIndex.buttons1]].transform, new System.Action(() =>
             {
-                MelonLogger.Log("vvvvvvvvvvvvvvvvvvvvvvvvv");
-                MelonLogger.Log("Manually Initiated Crash.");
-                MelonLogger.Log("^^^^^^^^^^^^^^^^^^^^^^^^^");
+                MelonLogger.Msg("vvvvvvvvvvvvvvvvvvvvvvvvv");
+                MelonLogger.Msg("Manually Initiated Crash.");
+                MelonLogger.Msg("^^^^^^^^^^^^^^^^^^^^^^^^^");
                 System.Diagnostics.Process.Start("https://youtu.be/sWTYu8e3MK4");
                 System.Diagnostics.Process.GetCurrentProcess().Kill();
             }));
 
             KiraiLib.UI.Button.Create("p3/monkey", "Monkey button", "A button for monkeys that you probably shouldn't click", 2f, 0f, KiraiLib.UI.pages[Shared.PageRemap[(int)Shared.PageIndex.buttons2]].transform, new System.Action(() =>
             {
-                MelonLogger.Log("vvvvvvvvvvvvvvvvvvvvvvvvvvv");
-                MelonLogger.Log("Tried to use monkey button.");
-                MelonLogger.Log("^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+                MelonLogger.Msg("vvvvvvvvvvvvvvvvvvvvvvvvvvv");
+                MelonLogger.Msg("Tried to use monkey button.");
+                MelonLogger.Msg("^^^^^^^^^^^^^^^^^^^^^^^^^^^");
                 System.Diagnostics.Process.Start("https://youtu.be/cDqytGXoXWI");
                 System.Diagnostics.Process.GetCurrentProcess().Kill();
             }));

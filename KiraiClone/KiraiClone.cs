@@ -88,13 +88,13 @@ namespace KiraiMod
 
         public override void OnApplicationStart()
         {
-            MelonLogger.Log("Full recode by Kirai Chan et al");
-            MelonLogger.Log("$40 for something slower than hotswap?");
-            MelonLogger.Log("Good job Astro and Spacers.VIP but reuploader is flawed");
-            MelonLogger.Log("20 required assemblies? No thanks");
-            MelonLogger.Log("Shouldn't have banned me for association to Astro");
-            MelonLogger.Log("wikipedia.org/wiki/Clean_room_design");
-            MelonLogger.Log("Nothing from reuploader is stolen :D");
+            MelonLogger.Msg("Full recode by Kirai Chan et al");
+            MelonLogger.Msg("$40 for something slower than hotswap?");
+            MelonLogger.Msg("Good job Astro and Spacers.VIP but reuploader is flawed");
+            MelonLogger.Msg("20 required assemblies? No thanks");
+            MelonLogger.Msg("Shouldn't have banned me for association to Astro");
+            MelonLogger.Msg("wikipedia.org/wiki/Clean_room_design");
+            MelonLogger.Msg("Nothing from reuploader is stolen :D");
 
             UnhollowerRuntimeLib.ClassInjector.RegisterTypeInIl2Cpp<ApiFileUtils>();
             var go = new UnityEngine.GameObject();
@@ -266,7 +266,7 @@ namespace KiraiMod
                         (ApiFile a, string s1) => {
                             Log($"Failed to KiraiClone {name}");
 
-                            MelonLogger.Log(s1);
+                            MelonLogger.Msg(s1);
 
                             //Last();
                         },
@@ -275,7 +275,7 @@ namespace KiraiMod
                 (ApiFile a, string s) => {
                     Log($"Failed to KiraiClone {name}");
 
-                    MelonLogger.Log(s);
+                    MelonLogger.Msg(s);
 
                     //Last();
                 },
@@ -283,7 +283,7 @@ namespace KiraiMod
             }
             catch (Exception ex)
             {
-                MelonLogger.LogError(ex.ToString());
+                MelonLogger.Error(ex.ToString());
             }
         }
 
@@ -426,7 +426,7 @@ namespace KiraiMod
         private void Log(string str, float amt = 5)
         {
             KiraiLib.Logger.Log(str, amt);
-            MelonLogger.Log(str);
+            MelonLogger.Msg(str);
         }
     }
 }

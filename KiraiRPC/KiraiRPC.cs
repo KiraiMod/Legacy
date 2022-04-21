@@ -8,7 +8,7 @@ using VRC;
 using VRC.SDKBase;
 using static VRC.SDKBase.VRC_EventHandler;
 
-[assembly: MelonInfo(typeof(KiraiMod.KiraiRPC), "KiraiRPC", null, "Kirai Chan#8315")]
+[assembly: MelonInfo(typeof(KiraiMod.KiraiRPC), "KiraiRPC", "1", "Kirai Chan#8315")]
 [assembly: MelonGame("VRChat", "VRChat")]
 
 namespace KiraiMod
@@ -61,14 +61,14 @@ namespace KiraiMod
             harmony = HarmonyInstance.Create("KiraiRPC");
             MelonCoroutines.Start(Initialize());
 #if DEBUG
-            MelonLogger.Log(System.ConsoleColor.Cyan, $"{new string('v', 26)}\n");
-            MelonLogger.Log(System.ConsoleColor.Cyan, "Running a debug build");
-            MelonLogger.Log(System.ConsoleColor.Cyan, "Upload logs to #crash-logs\n");
-            MelonLogger.Log(System.ConsoleColor.Cyan, $"{new string('^', 26)}");
+            MelonLogger.Msg(System.ConsoleColor.Cyan, $"{new string('v', 26)}\n");
+            MelonLogger.Msg(System.ConsoleColor.Cyan, "Running a debug build");
+            MelonLogger.Msg(System.ConsoleColor.Cyan, "Upload logs to #crash-logs\n");
+            MelonLogger.Msg(System.ConsoleColor.Cyan, $"{new string('^', 26)}");
 #endif
         }
 
-        public override void OnLevelWasLoaded(int level)
+        public override void OnSceneWasLoaded(int level, string sceneName)
         {
             if (level != -1) return;
             handler = null;
@@ -99,7 +99,7 @@ namespace KiraiMod
             token = null;
 
 #if DEBUG
-            MelonLogger.Log($"Found Event listener after {sleep} seconds");
+            MelonLogger.Msg($"Found Event listener after {sleep} seconds");
 #endif
 
             SendRPC(0xD00);
@@ -130,6 +130,7 @@ namespace KiraiMod
 
         private static void OnRPC(ref Player __0, ref VrcEvent __1)
         {
+
             if (__0?.field_Private_APIUser_0 is null || __1 is null) return;
 
             if (__1.EventType == VrcEventType.SendRPC && __1.ParameterString == "UdonSyncRunProgramAsRPC")
@@ -145,26 +146,26 @@ namespace KiraiMod
             {
 #if DEBUG
                 if (player != Player.prop_Player_0)
-                    MelonLogger.Log($"Recieved {rpc}");
+                    MelonLogger.Msg($"Recieved {rpc}");
 #endif
 
                 if (rpc.Length < 5)
                 {
-                    MelonLogger.Log($"{player.field_Private_APIUser_0.displayName} sent a malformed kRPC (invalid size).");
+                    MelonLogger.Msg($"{player.field_Private_APIUser_0.displayName} sent a malformed kRPC (invalid size).");
                     return;
                 }
 
                 string sid = rpc.Substring(1, 3);
                 if (!int.TryParse(sid, System.Globalization.NumberStyles.HexNumber, null, out int id))
                 {
-                    MelonLogger.Log($"{player.field_Private_APIUser_0.displayName} sent a malformed kRPC (invalid id).");
+                    MelonLogger.Msg($"{player.field_Private_APIUser_0.displayName} sent a malformed kRPC (invalid id).");
                     return;
                 }
 
                 string slen = rpc.Substring(4, 1);
                 if (!int.TryParse(slen, System.Globalization.NumberStyles.HexNumber, null, out int len))
                 {
-                    MelonLogger.Log($"{player.field_Private_APIUser_0.displayName} sent a malformed kRPC (invalid length).");
+                    MelonLogger.Msg($"{player.field_Private_APIUser_0.displayName} sent a malformed kRPC (invalid length).");
                     return;
                 }
 
@@ -226,12 +227,12 @@ namespace KiraiMod
         public static void SendRPC(string raw)
         {
 #if DEBUG
-            MelonLogger.Log($"Sending {raw}");
+            MelonLogger.Msg($"Sending {raw}");
 #endif
 
             if (handler == null)
             {
-                MelonLogger.Log("Canceling RPC because handler is null.");
+                MelonLogger.Msg("Canceling RPC because handler is null.");
                 return;
             }
 
@@ -254,7 +255,7 @@ namespace KiraiMod
 
         private static void LogWithPadding(string src, bool passed)
         {
-            MelonLogger.Log($"Hooking {src}...".PadRight(73, ' ') + (passed ? "Passed" : "Failed"));
+            MelonLogger.Msg($"Hooking {src}...".PadRight(73, ' ') + (passed ? "Passed" : "Failed"));
         }
     }
 }

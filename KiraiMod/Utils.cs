@@ -59,11 +59,11 @@ namespace KiraiMod
                 if (instance.Type == UnhollowerRuntimeLib.XrefScans.XrefType.Global)
                 {
                     j++;
-                    MelonLogger.Log(instance.ReadAsObject()?.ToString());
+                    MelonLogger.Msg(instance.ReadAsObject()?.ToString());
                 }
             }
 
-            MelonLogger.Log($"Found {i} objects and {j} keywords");
+            MelonLogger.Msg($"Found {i} objects and {j} keywords");
         }
 
         public static Player GetPlayer(string name)

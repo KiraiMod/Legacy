@@ -26,7 +26,7 @@ namespace KiraiMod.Modules
 
             if (cached == null) 
             { 
-                MelonLogger.LogWarning("Failed to find Murder Logic 3 Death trigger.");
+                MelonLogger.Warning("Failed to find Murder Logic 3 Death trigger.");
                 return;
             }
 

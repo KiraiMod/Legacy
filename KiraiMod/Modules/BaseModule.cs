@@ -15,7 +15,7 @@ namespace KiraiMod.Modules
 
             state = n_state ?? !state;
 
-            MelonLogger.Log(GetType().Name + (state ? " On" : " Off"));
+            MelonLogger.Msg(GetType().Name + (state ? " On" : " Off"));
 
             OnStateChange(state);
         }

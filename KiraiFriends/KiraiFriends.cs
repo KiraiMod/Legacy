@@ -8,7 +8,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using VRC.SDKBase;
 
-[assembly: MelonInfo(typeof(KiraiMod.KiraiFriends), "KiraiFriends", null, "Kirai Chan#8315")]
+[assembly: MelonInfo(typeof(KiraiMod.KiraiFriends), "KiraiFriends", "1", "Kirai Chan#8315")]
 [assembly: MelonGame("VRChat", "VRChat")]
 
 namespace KiraiMod
@@ -55,7 +55,7 @@ namespace KiraiMod
                         else notifs = true;
                     }
                 }
-                catch { MelonLogger.Log("Malformed KiraiMod.config.json"); }
+                catch { MelonLogger.Msg("Malformed KiraiMod.config.json"); }
             }
 
             client = new HttpClient();
@@ -79,7 +79,7 @@ namespace KiraiMod
             }));
         }
 
-        public override void OnLevelWasLoaded(int level)
+        public override void OnSceneWasLoaded(int level, string sceneName)
         {
             if (level == -1 && active)
                 MelonCoroutines.Start(SetLocationDelayed());
@@ -221,7 +221,7 @@ namespace KiraiMod
         {
             VRCUiPopupManager
                 .field_Private_Static_VRCUiPopupManager_0
-                .Method_Public_Void_String_String_InputType_Boolean_String_Action_3_String_List_1_KeyCode_Text_Action_String_Boolean_Action_1_VRCUiPopup_PDM_1
+                .Method_Public_Void_String_String_InputType_Boolean_String_Action_3_String_List_1_KeyCode_Text_Action_String_Boolean_Action_1_VRCUiPopup_PDM_0
                 (
                     title,
                     initial,

@@ -15,7 +15,7 @@ namespace KiraiMod.Pages
             {
                 VRC.Player player = Utils.GetPlayer(QuickMenu.prop_QuickMenu_0.field_Private_APIUser_0.displayName);
 
-                MelonLogger.Log(System.ConsoleColor.Blue, QuickMenu.prop_QuickMenu_0.field_Private_APIUser_0.displayName);
+                MelonLogger.Msg(System.ConsoleColor.Blue, QuickMenu.prop_QuickMenu_0.field_Private_APIUser_0.displayName);
                 KiraiLib.Logger.Log($"<color=#00f>{QuickMenu.prop_QuickMenu_0.field_Private_APIUser_0.displayName}</color>", 10);
                 LogGroup("  User Info");
                 LogBody($"    ID: {QuickMenu.prop_QuickMenu_0.field_Private_APIUser_0.id}");
@@ -47,13 +47,13 @@ namespace KiraiMod.Pages
 
         private void LogGroup(string a)
         {
-            MelonLogger.Log(System.ConsoleColor.Green, a);
+            MelonLogger.Msg(System.ConsoleColor.Green, a);
             KiraiLib.Logger.Log($"<color=#0f0>{a}</color>", 10);
         }
 
         private void LogBody(string a)
         {
-            MelonLogger.Log(System.ConsoleColor.Cyan, a);
+            MelonLogger.Msg(System.ConsoleColor.Cyan, a);
             KiraiLib.Logger.Log($"<color=#0ff>{a}</color>", 10);
         }
     }
