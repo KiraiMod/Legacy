@@ -45,11 +45,9 @@ namespace KiraiMod.Modules
         {
             if (state && rgb)
             {
-                if (!PlayerManager.field_Private_Static_PlayerManager_0) return;
+                if (PlayerManager.field_Private_Static_PlayerManager_0?.field_Private_List_1_Player_0 == null) return;
 
                 List<Player> players = PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0;
-
-                if (players == null) return;
 
                 foreach (Player player in players)
                 {

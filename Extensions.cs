@@ -18,6 +18,7 @@ namespace KiraiMod
 
         public static bool IsKOS(this Player player)
         {
+            if (player == null || Shared.modules?.kos?.kosList == null) return false;
             return Shared.modules.kos.kosList.Contains(Utils.SHA256(player.field_Private_VRCPlayerApi_0.displayName));
         }
 
