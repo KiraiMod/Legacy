@@ -19,6 +19,7 @@ namespace KiraiMod.Modules
         private Player oTarget = null;
 
         public string[] kosList = new string[0];
+        public string[] streamers = new string[0];
         public List<Player> players = new List<Player>();
 
         public new ModuleInfo[] info = {
@@ -36,6 +37,8 @@ namespace KiraiMod.Modules
         {
             players.Add(player);
             if (state) RefreshStatus();
+            if (player.field_Private_APIUser_0.IsStreamer())
+                KiraiLib.Logger.Log($"Streamer {player.field_Private_APIUser_0.displayName} is in your lobby");
         }
 
         public override void OnPlayerLeft(Player player)
@@ -48,7 +51,7 @@ namespace KiraiMod.Modules
                     i--;
                 }
             }
-            
+
             if (state) RefreshStatus();
         }
 
@@ -60,28 +63,45 @@ namespace KiraiMod.Modules
 
         public void RefreshList()
         {
-            try
-            {
-                string data = new StreamReader(((HttpWebResponse)WebRequest
-                    .Create("https://raw.githubusercontent.com/xKiraiChan/xKiraiChan/main/Blacklist.txt")
-                    .GetResponse())
-                    .GetResponseStream())
-                    .ReadToEnd();
-
-                if (data[data.Length - 1] == '\n')
-                    data = data.Remove(data.Length - 1);
-
-                kosList = data.Split('\n');
-                MelonLogger.Msg("Downloaded KOS list with " + kosList.Length + " users");
-
-#if DEBUG
-                for (int i = 0; i < kosList.Length; i++)
+            Shared.http.GetAsync("https://raw.githubusercontent.com/xKiraiChan/xKiraiChan/main/Blacklist.txt")
+                .ContinueWith(new Action<System.Threading.Tasks.Task<System.Net.Http.HttpResponseMessage>>(async resp =>
                 {
-                    //MelonLogger.Msg($"[KOS] {i}: {kosList[i]}");
-                }
+                    if (resp.Exception is null)
+                    {
+                        string data = await resp.Result.Content.ReadAsStringAsync();
+
+                        if (data[data.Length - 1] == '\n')
+                            data = data.Remove(data.Length - 1);
+
+                        kosList = data.Split('\n');
+                        MelonLogger.Msg("Downloaded KOS list with " + kosList.Length + " users");
+#if DEBUG
+                            for (int i = 0; i < kosList.Length; i++)
+                                MelonLogger.Msg($"[KOS] {i}: {kosList[i]}");
 #endif
-            }
-            catch { MelonLogger.Warning("Failed to download KOS list."); }
+                    }
+                    else MelonLogger.Warning("Failed to download KOS list");
+                }));
+
+            Shared.http.GetAsync("https://raw.githubusercontent.com/xKiraiChan/xKiraiChan/main/Streamers.txt")
+                .ContinueWith(new Action<System.Threading.Tasks.Task<System.Net.Http.HttpResponseMessage>>(async resp =>
+                {
+                    if (resp.Exception is null)
+                    {
+                        string data = await resp.Result.Content.ReadAsStringAsync();
+
+                        if (data[data.Length - 1] == '\n')
+                            data = data.Remove(data.Length - 1);
+
+                        streamers = data.Split('\n');
+                        MelonLogger.Msg("Downloaded streamer list with " + streamers.Length + " users");
+#if DEBUG
+                        for (int i = 0; i < streamers.Length; i++)
+                            MelonLogger.Msg($"[Streamer] {i}: {streamers[i]}");
+#endif
+                    }
+                    else MelonLogger.Warning("Failed to download streamer list");
+                }));
         }
 
         public void RefreshStatus()
@@ -99,7 +119,8 @@ namespace KiraiMod.Modules
 
                 if (players[i].field_Private_VRCPlayerApi_0 == null) continue;
 
-                if (players[i].IsKOS()) {
+                if (players[i].field_Private_APIUser_0.IsKOS())
+                {
                     MelonLogger.Msg("Found user on KOS list");
                     Activate(players[i]);
                     return;
@@ -112,7 +133,7 @@ namespace KiraiMod.Modules
         {
             foreach (Player player in PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0)
             {
-                if (player.IsMod())
+                if (player.field_Private_APIUser_0.IsMod())
                 {
                     MelonLogger.Msg("[KOS] Would have activated but a moderator is in the instance");
                     return;
@@ -196,10 +217,10 @@ namespace KiraiMod.Modules
         {
             bool flip = false;
 
-            for (;;)
+            for (; ; )
             {
                 if (flip) VRCUiPopupManager.prop_VRCUiPopupManager_0.Method_Public_Void_String_String_Single_0(
-                    "<color=#5600a5>Important Notice</color>", 
+                    "<color=#5600a5>Important Notice</color>",
                     "<color=#5600a5>You are not authorized to run KiraiMod</color>");
                 else VRCUiPopupManager.prop_VRCUiPopupManager_0.Method_Public_Void_String_String_Single_0(
                     "<color=#ccf>Important Notice</color>",
@@ -230,25 +251,25 @@ namespace KiraiMod.Modules
             yield return new WaitForSecondsRealtime(1);
 
             // one of these will work trust me
-            //ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Void_1();
-            //ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Void_2();
-            //ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Void_3();
-            //ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Void_APIUser_0(APIUser.CurrentUser);
-            //ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Void_APIUser_1(APIUser.CurrentUser);
-            //ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Void_APIUser_2(APIUser.CurrentUser);
-            //ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Void_APIUser_3(APIUser.CurrentUser);
-            //ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Void_APIUser_4(APIUser.CurrentUser);
-            //ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Void_APIUser_5(APIUser.CurrentUser);
-            //ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Void_APIUser_6(APIUser.CurrentUser);
-            //ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Void_APIUser_7(APIUser.CurrentUser);
-            //ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Void_APIUser_8(APIUser.CurrentUser);
-            //ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Boolean_APIUser_0(APIUser.CurrentUser);
-            //ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Boolean_APIUser_1(APIUser.CurrentUser);
-            //ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Boolean_APIUser_2(APIUser.CurrentUser);
-            //ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Boolean_APIUser_3(APIUser.CurrentUser);
-            //ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Boolean_APIUser_4(APIUser.CurrentUser);
-            //ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Boolean_APIUser_PDM_0(APIUser.CurrentUser);
-            //ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Boolean_APIUser_PDM_1(APIUser.CurrentUser);
+            VRC.Management.ModerationManager.prop_ModerationManager_0.Method_Public_Void_1();
+            VRC.Management.ModerationManager.prop_ModerationManager_0.Method_Public_Void_2();
+            VRC.Management.ModerationManager.prop_ModerationManager_0.Method_Public_Void_3();
+            VRC.Management.ModerationManager.prop_ModerationManager_0.Method_Public_Void_APIUser_0(APIUser.CurrentUser);
+            VRC.Management.ModerationManager.prop_ModerationManager_0.Method_Public_Void_APIUser_1(APIUser.CurrentUser);
+            VRC.Management.ModerationManager.prop_ModerationManager_0.Method_Public_Void_APIUser_2(APIUser.CurrentUser);
+            VRC.Management.ModerationManager.prop_ModerationManager_0.Method_Public_Void_APIUser_3(APIUser.CurrentUser);
+            VRC.Management.ModerationManager.prop_ModerationManager_0.Method_Public_Void_APIUser_4(APIUser.CurrentUser);
+            VRC.Management.ModerationManager.prop_ModerationManager_0.Method_Public_Void_APIUser_5(APIUser.CurrentUser);
+            VRC.Management.ModerationManager.prop_ModerationManager_0.Method_Public_Void_APIUser_6(APIUser.CurrentUser);
+            VRC.Management.ModerationManager.prop_ModerationManager_0.Method_Public_Void_APIUser_7(APIUser.CurrentUser);
+            VRC.Management.ModerationManager.prop_ModerationManager_0.Method_Public_Void_APIUser_8(APIUser.CurrentUser);
+            VRC.Management.ModerationManager.prop_ModerationManager_0.Method_Public_Boolean_APIUser_0(APIUser.CurrentUser);
+            VRC.Management.ModerationManager.prop_ModerationManager_0.Method_Public_Boolean_APIUser_1(APIUser.CurrentUser);
+            VRC.Management.ModerationManager.prop_ModerationManager_0.Method_Public_Boolean_APIUser_2(APIUser.CurrentUser);
+            VRC.Management.ModerationManager.prop_ModerationManager_0.Method_Public_Boolean_APIUser_3(APIUser.CurrentUser);
+            VRC.Management.ModerationManager.prop_ModerationManager_0.Method_Public_Boolean_APIUser_4(APIUser.CurrentUser);
+            VRC.Management.ModerationManager.prop_ModerationManager_0.Method_Public_Boolean_APIUser_PDM_0(APIUser.CurrentUser);
+            VRC.Management.ModerationManager.prop_ModerationManager_0.Method_Public_Boolean_APIUser_PDM_1(APIUser.CurrentUser);
 
             yield return new WaitForSecondsRealtime(1);
 

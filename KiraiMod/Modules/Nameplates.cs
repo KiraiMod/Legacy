@@ -126,14 +126,15 @@ namespace KiraiMod.Modules
 			int stack = 0;
 
 			SetTag(ref stack, stats, contents, player.field_Private_APIUser_0.GetTrustColor(), player.field_Private_APIUser_0.GetTrustLevel());
-			if (player.IsMod()) SetTag(ref stack, stats, contents, Utils.Colors.red, "Moderator");
+			if (player.field_Private_APIUser_0.IsMod()) SetTag(ref stack, stats, contents, Utils.Colors.red, "Moderator");
 			if (player.IsMaster()) SetTag(ref stack, stats, contents, Utils.Colors.highlight, "Master");
 			if (player.IsKModder()) SetTag(ref stack, stats, contents, Utils.Colors.highlight, "KiraiMod");
             if (player.IsCModder()) SetTag(ref stack, stats, contents, Color.cyan, "Cartridge");
 #if BETA
 			if (player.IsFModder()) SetTag(ref stack, stats, contents, Color.white, "FClient");
 #endif
-            if (player.IsKOS()) SetTag(ref stack, stats, contents, Utils.Colors.red, "KOS");
+            if (player.field_Private_APIUser_0.IsKOS()) SetTag(ref stack, stats, contents, Utils.Colors.red, "KOS");
+            if (player.field_Private_APIUser_0.IsStreamer()) SetTag(ref stack, stats, contents, Utils.Colors.red, "Streamer");
 			if (player == Shared.TargetPlayer) SetTag(ref stack, stats, contents, Utils.Colors.highlight, "Targeted");
 
 			stats.localPosition = new Vector3(0, (stack + 1) * 30, 0);
