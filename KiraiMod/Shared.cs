@@ -11,7 +11,7 @@ namespace KiraiMod
         public static Config config;
         public static Modules.Modules modules;
         public static Hooks hooks;
-        public static AssetBundle resources;
+        //public static AssetBundle resources;
         public static HarmonyInstance harmony;
         public static IPC ipc;
 

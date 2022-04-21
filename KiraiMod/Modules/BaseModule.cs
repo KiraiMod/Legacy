@@ -35,7 +35,8 @@ namespace KiraiMod.Modules
         public string label = "No Label";
         public string description = "No Description";
         public ButtonType type = ButtonType.Undefined;
-        public int index = -1;
+        public float x = -1;
+        public float y = -1;
         public int page = -1;
         public string reference = null;
         public float min;
@@ -45,7 +46,20 @@ namespace KiraiMod.Modules
             this.label = label;
             this.description = description;
             this.type = type;
-            this.index = index;
+            Utils.GetGenericLayout(index, out int x, out int y);
+            this.x = x;
+            this.y = y;
+            this.page = (int)page;
+            this.reference = reference;
+        }
+
+        public ModuleInfo(string label, string description, ButtonType type, int x, int y, Menu.PageIndex page, string reference)
+        {
+            this.label = label;
+            this.description = description;
+            this.type = type;
+            this.x = x;
+            this.y = y;
             this.page = (int)page;
             this.reference = reference;
         }
@@ -54,7 +68,7 @@ namespace KiraiMod.Modules
         {
             this.label = label;
             this.type = type;
-            this.index = index;
+            Utils.GetSliderLayout(index, out x, out y);
             this.page = (int)page;
             this.reference = reference;
             this.min = min;

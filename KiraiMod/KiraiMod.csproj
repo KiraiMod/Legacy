@@ -203,9 +203,6 @@
     <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="resources.assetbundle" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="WebUI.html" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

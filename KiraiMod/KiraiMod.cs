@@ -30,12 +30,12 @@ namespace KiraiMod
                 }
             }
 
-            System.IO.Stream stream = Assembly.GetManifestResourceStream("KiraiMod.resources.assetbundle");
-            System.IO.MemoryStream mem = new System.IO.MemoryStream((int)stream.Length);
-            stream.CopyTo(mem);
+            //System.IO.Stream stream = Assembly.GetManifestResourceStream("KiraiMod.resources.assetbundle");
+            //System.IO.MemoryStream mem = new System.IO.MemoryStream((int)stream.Length);
+            //stream.CopyTo(mem);
 
-            Shared.resources = AssetBundle.LoadFromMemory(mem.ToArray(), 0);
-            Shared.resources.hideFlags |= HideFlags.DontUnloadUnusedAsset;
+            //Shared.resources = AssetBundle.LoadFromMemory(mem.ToArray(), 0);
+            //Shared.resources.hideFlags |= HideFlags.DontUnloadUnusedAsset;
 
             Shared.harmony = Harmony.HarmonyInstance.Create("KiraiMod");
 
@@ -153,7 +153,15 @@ namespace KiraiMod
             if (Input.GetKeyDown(KeyCode.KeypadMinus))
 #if DEBUG
             {
-
+                foreach (var a in VRC.PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0)
+                {
+                    if (a.field_Private_APIUser_0.displayName == (Input.GetKey(KeyCode.LeftAlt) ? "Sugar Loaf" : "Jedilevs"))
+                    {
+                        var c = Object.FindObjectsOfType<VRC.Udon.UdonBehaviour>().FirstOrDefault(b => b.name.ToLower().Contains("pedestal"));
+                        VRC.SDKBase.Networking.SetOwner(a.field_Private_VRCPlayerApi_0, c.gameObject);
+                        c.SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner, "_interact");
+                    }
+                }
             }
 #else
                 MelonLogger.Log("Alive");
@@ -176,9 +184,8 @@ namespace KiraiMod
         {
             Shared.menu = new Menu();
 
-            // make quick menu background flush
-            Shared.menu.qm.transform.Find("QuickMenu_NewElements/_Background/Panel").GetComponent<Image>().color = Color.white;
-            //.material = Shared.resources.LoadAsset_Internal("assets/uiglass.mat", Il2CppType.Of<Material>()).Cast<Material>();
+            if (!MelonHandler.Mods.Any(m => m.Assembly.GetName().Name == "KiraiUI"))
+                Shared.menu.qm.transform.Find("QuickMenu_NewElements/_Background/Panel").GetComponent<Image>().color = Color.white;
 
             if (MelonHandler.Mods.Any(mod => mod.Assembly.GetName().Name.Contains("KiraiUI")))
             {
@@ -196,7 +203,8 @@ namespace KiraiMod
             Shared.menu.CreatePage("kiraimod_buttons2");
             Shared.menu.CreatePage("kiraimod_sliders1");
             Shared.menu.CreatePage("kiraimod_xutils");
-            Shared.menu.CreatePage("kiraimod_udon");
+            Shared.menu.CreatePage("kiraimod_udon1");
+            Shared.menu.CreatePage("kiraimod_udon2");
 
             new Pages.Pages();
 
@@ -207,11 +215,10 @@ namespace KiraiMod
                 {
                     if (info.type == Modules.ButtonType.Toggle)
                     {
-                        Utils.GetGenericLayout(info.index, out int x, out int y);
                         if (info.reference == nameof(Modules.ModuleBase.state))
                         {
                             Shared.menu.CreateToggle(Utils.CreateID(info.label, info.page), module.state,
-                            info.label, info.description, x, y, Shared.menu.pages[info.page].transform,
+                            info.label, info.description, info.x, info.y, Shared.menu.pages[info.page].transform,
                             new System.Action<bool>(state =>
                             {
                                 module.SetState(state);
@@ -227,7 +234,7 @@ namespace KiraiMod
                             }
                             bool cval = (bool)reference.GetValue(module);
                             Shared.menu.CreateToggle(Utils.CreateID(info.label, info.page), cval,
-                                info.label, info.description, x, y, Shared.menu.pages[info.page].transform,
+                                info.label, info.description, info.x, info.y, Shared.menu.pages[info.page].transform,
                                 onStateChange == null
                                 ? new System.Action<bool>(state =>
                                 {
@@ -261,9 +268,8 @@ namespace KiraiMod
                             MelonLogger.LogWarning($"Failed to find method {info.reference} on {module.GetType()}");
                             continue;
                         }
-                        Utils.GetGenericLayout(info.index, out int x, out int y);
                         Shared.menu.CreateButton(Utils.CreateID(info.label, info.page),
-                            info.label, info.description, x, y, Shared.menu.pages[info.page].transform,
+                            info.label, info.description, info.x, info.y, Shared.menu.pages[info.page].transform,
                             new System.Action(() =>
                             {
                                 reference.Invoke(module, null);
@@ -279,10 +285,9 @@ namespace KiraiMod
                         }
                         float cval = (float)reference.GetValue(module);
 
-                        Utils.GetSliderLayout(info.index, out float x, out float y);
                         MethodInfo onValueChange = module.GetType().GetMethod($"OnValueChange{info.reference}", BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
                         Shared.menu.CreateSlider(Utils.CreateID(info.label, info.page),
-                            info.label, x, y, info.min, info.max, cval, Shared.menu.pages[info.page].transform, onValueChange == null ? new System.Action<float>((value) =>
+                            info.label, info.x, info.y, info.min, info.max, cval, Shared.menu.pages[info.page].transform, onValueChange == null ? new System.Action<float>((value) =>
                             {
                                 reference.SetValue(module, value);
                             }) : new System.Action<float>((value) =>

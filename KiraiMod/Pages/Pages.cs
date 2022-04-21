@@ -36,38 +36,22 @@ namespace KiraiMod.Pages
 
             Shared.menu.CreateButton("sliders1/goto-udon", "Next", "Opens KiraiMod's next page", -2f, 1f, Shared.menu.pages[(int)Menu.PageIndex.sliders1].transform, new System.Action(() =>
             {
-                Shared.menu.selected = (int)Menu.PageIndex.udon;
+                Shared.menu.selected = (int)Menu.PageIndex.udon1;
             }));
 
-            Shared.menu.CreateButton("udon/goto-sliders1", "Previous", "Opens KiraiMod's previous page", -2f, 0f, Shared.menu.pages[(int)Menu.PageIndex.udon].transform, new System.Action(() =>
+            Shared.menu.CreateButton("udon/goto-sliders1", "Previous", "Opens KiraiMod's previous page", -2f, 0f, Shared.menu.pages[(int)Menu.PageIndex.udon1].transform, new System.Action(() =>
             {
                 Shared.menu.selected = (int)Menu.PageIndex.sliders1;
             }));
 
-            Shared.menu.CreateButton("udon/refresh", "Refresh", "Fetch all UdonBehaviours again", 3f, 2f, Shared.menu.pages[(int)Menu.PageIndex.udon].transform, new System.Action(() =>
+            Shared.menu.CreateButton("udon1/goto-udon2", "Next", "Opens KiraiMod's next page", -2f, 1f, Shared.menu.pages[(int)Menu.PageIndex.udon1].transform, new System.Action(() =>
             {
-                Shared.modules.udon.OnLevelWasLoaded();
+                Shared.menu.selected = (int)Menu.PageIndex.udon2;
             }));
 
-            Shared.menu.CreateButton("udon/more", "Up", "See less UdonBheaviours", 3f, 1f, Shared.menu.pages[(int)Menu.PageIndex.udon].transform, new System.Action(() =>
+            Shared.menu.CreateButton("udon2/goto-udon1", "Previous", "Opens KiraiMod's previous page", -2f, 0f, Shared.menu.pages[(int)Menu.PageIndex.udon2].transform, new System.Action(() =>
             {
-                Shared.modules.udon.CurrentPage--;
-            }));
-
-            Shared.menu.CreateButton("udon/less", "Down", "See more UdonBehaviours", 3f, 0f, Shared.menu.pages[(int)Menu.PageIndex.udon].transform, new System.Action(() =>
-            {
-                Shared.modules.udon.CurrentPage++;
-            }));
-
-            Shared.menu.CreateButton("udon/broadcast", "Broadcast", "Broadcast an event to every UdonBehaviour", 3f, -1f, Shared.menu.pages[(int)Menu.PageIndex.udon].transform, new System.Action(() =>
-            {
-                if (Config.General.bUseClipboard)
-                    Helper.BroadcastCustomEvent(System.Windows.Forms.Clipboard.GetText().Trim());
-                else
-                    Utils.HUDInput("Custom event name", "Execute", "_interact", "", new System.Action<string>((resp) =>
-                    {
-                        Helper.BroadcastCustomEvent(resp.Trim());
-                    }));
+                Shared.menu.selected = (int)Menu.PageIndex.udon1;
             }));
         }
     }

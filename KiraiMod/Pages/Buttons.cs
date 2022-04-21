@@ -93,7 +93,7 @@ namespace KiraiMod.Pages
                 MelonLogger.Log("vvvvvvvvvvvvvvvvvvvvvvvvv");
                 MelonLogger.Log("Manually Initiated Crash.");
                 MelonLogger.Log("^^^^^^^^^^^^^^^^^^^^^^^^^");
-                Utils.Overflow();
+                Il2CppSystem.Environment.FailFast("Manually initiated crash");
             }));
 
             Shared.menu.CreateButton("p4/drop-all", "Drop All", "Drop every pickup in the world", -1f, 1f, Shared.menu.pages[(int)Menu.PageIndex.buttons2].transform, new Action(() =>

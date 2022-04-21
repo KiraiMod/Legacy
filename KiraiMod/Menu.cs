@@ -18,7 +18,8 @@ namespace KiraiMod
             buttons2,
             sliders1,
             xutils,
-            udon
+            udon1,
+            udon2
         }
 
         public QuickMenu qm;
@@ -125,7 +126,7 @@ namespace KiraiMod
             return CreateToggle($"p{page}/" + label.ToLower().Replace(' ', '-'), module.state, label, tooltip, x, y, pages[page].transform, new Action<bool>(state => module.SetState(state)));
         }
 
-        public Button CreateButton(string id, string label, string tooltip, float x, float y, Transform parent, Action OnClick)
+        public Button CreateButton(string id, string label, string tooltip, float x, float y, Transform parent, Action OnClick, bool managed = true)
         {
             if (Shared.config?.buttons != null && Shared.config.buttons.TryGetValue(id, out var value))
             {
@@ -134,7 +135,7 @@ namespace KiraiMod
             }
 
             Button button = new Button(label, tooltip, x, y, parent, OnClick);
-            objects.Add(id, button);
+            if (managed) objects.Add(id, button);
             return button;
         }
 
