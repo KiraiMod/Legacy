@@ -21,9 +21,10 @@ namespace KiraiMod.Pages
                     else
                     {
                         AviFav_.AvatarListHelper.AvatarListPassthru(ava);
-                        AviFav_.AvatarListHelper.Refresh(
-                            AviFavsPlus.AviFavPlus.CustomList.AList,
-                            AviFav_.Config.Config.DAvatars.Select(x => x.AvatarID).Reverse());
+
+                        //AviFav_.AvatarListHelper.Refresh(
+                        //    AviFavsPlus.AviFavPlus.CustomList.AList,
+                        //    AviFav_.Config.Config.DAvatars.Select(x => x.AvatarID).Reverse());
                     }
                 }));
             }
