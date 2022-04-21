@@ -38,10 +38,10 @@ namespace KiraiMod.Modules
         private int currentPage = 0;
         private int buttonPage = 0;
         private object token = null;
-        private string storedAlpha;
-        private string storedBeta;
-        private string storedGamma;
-        private string last;
+        private (int, string, bool) storedAlpha = (0, null, false);
+        private (int, string, bool) storedBeta = (0, null, false);
+        private (int, string, bool) storedGamma = (0, null, false);
+        private (int, string, bool) last = (0, null, false);
         private bool hasSet;
 
         public bool Networked = false;
@@ -140,9 +140,10 @@ namespace KiraiMod.Modules
 
                     button.onClick.AddListener(new System.Action(() =>
                     {
-                        ClearRegisters();
                         KiraiLib.UI.selected = Shared.PageRemap[(int)Shared.PageIndex.udon2];
                         selected = behaviours[current];
+                        last.Item1 = current;
+                        last.Item3 = true;
                         ButtonPage = 0;
                     }));
                 }
@@ -176,9 +177,9 @@ namespace KiraiMod.Modules
         {
             for (;;)
             {
-                if (storedAlpha != null) Execute(storedAlpha);
-                if (storedBeta != null) Execute(storedBeta);
-                if (storedGamma != null) Execute(storedGamma);
+                if (storedAlpha.Item3) Execute(storedAlpha.Item1, storedAlpha.Item2);
+                if (storedBeta.Item3) Execute(storedBeta.Item1, storedBeta.Item2);
+                if (storedGamma.Item3) Execute(storedGamma.Item1, storedGamma.Item2);
 
                 yield return new WaitForSecondsRealtime(0.1f);
             }
@@ -204,8 +205,8 @@ namespace KiraiMod.Modules
                 buttons.Add(KiraiLib.UI.Button.Create($"udon2/execute-{i + (buttonPage * 12) - 1}", name, "Execute this event", x, y,
                     KiraiLib.UI.pages[Shared.PageRemap[(int)Shared.PageIndex.udon2]].transform, new System.Action(() =>
                 {
-                    last = name;
-                    Execute(name);
+                    last.Item2 = name;
+                    Execute(last.Item1, last.Item2);
                 }), false));
             }
         }
@@ -228,27 +229,19 @@ namespace KiraiMod.Modules
             return null;
         }
 
-        private void Execute(string name)
+        private void Execute(int index, string name)
         {
             if (Networked)
             {
                 if (name.StartsWith("_")) KiraiLib.Logger.Log("Events starting with _ are non-networkable.");
-                selected.SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, name);
+                behaviours[index].SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, name);
             } else if (Targeted)
             {
                 if (name.StartsWith("_")) KiraiLib.Logger.Log("Events starting with _ are non-targetable.");
-                VRC.SDKBase.Networking.SetOwner(Shared.TargetPlayer.field_Private_VRCPlayerApi_0, selected.gameObject);
-                selected.SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner, name);
+                VRC.SDKBase.Networking.SetOwner(Shared.TargetPlayer.field_Private_VRCPlayerApi_0, behaviours[index].gameObject);
+                behaviours[index].SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner, name);
             }
-            else selected.SendCustomEvent(name);
-        }
-
-        private void ClearRegisters()
-        {
-            last = null;
-            ClearAlpha();
-            ClearBeta();
-            ClearGamma();
+            else behaviours[index].SendCustomEvent(name);
         }
 
         #region Buttons
@@ -261,9 +254,10 @@ namespace KiraiMod.Modules
                         KiraiLib.Logger.Log("Index is out of bounds");
                     else
                     {
-                        ClearRegisters();
                         KiraiLib.UI.selected = Shared.PageRemap[(int)Shared.PageIndex.udon2];
                         selected = behaviours[index - 1];
+                        last.Item1 = index - 1;
+                        last.Item3 = true;
                         ButtonPage = 0;
                     }
                 } // Keypad will never return an invalid or negative number
@@ -296,19 +290,12 @@ namespace KiraiMod.Modules
                 }));
         }
 
-        public void Up2()
-        {
-            ButtonPage--;
-        }
-
-        public void Down2()
-        {
-            ButtonPage++;
-        }
+        public void Up2() => ButtonPage--;
+        public void Down2() => ButtonPage++;
 
         public void SetAlpha()
         {
-            if (last is null) return;
+            if (!last.Item3) return;
 
             if (last == storedBeta) KiraiLib.Logger.Log("Value Already in Beta");
             else if (last == storedGamma) KiraiLib.Logger.Log("Value Already in Gamma");
@@ -321,7 +308,7 @@ namespace KiraiMod.Modules
 
         public void SetBeta()
         {
-            if (last is null) return;
+            if (!last.Item3) return;
 
             if (last == storedAlpha) KiraiLib.Logger.Log("Value Already in Alpha");
             else if (last == storedGamma) KiraiLib.Logger.Log("Value Already in Gamma");
@@ -334,7 +321,7 @@ namespace KiraiMod.Modules
 
         public void SetGamma()
         {
-            if (last is null) return;
+            if (!last.Item3) return;
 
             if (last == storedAlpha) KiraiLib.Logger.Log("Value Already in Alpha");
             else if (last == storedBeta) KiraiLib.Logger.Log("Value Already in Beta");
@@ -347,23 +334,23 @@ namespace KiraiMod.Modules
 
         public void ClearAlpha()
         {
-            if (storedAlpha is null) return; 
+            if (!storedAlpha.Item3) return; 
             KiraiLib.Logger.Log("Clearing Alpha register");
-            storedAlpha = null;
+            storedAlpha.Item3 = false;
         }
 
         public void ClearBeta()
         {
-            if (storedBeta is null) return; 
+            if (!storedBeta.Item3) return; 
             KiraiLib.Logger.Log("Clearing Beta register");
-            storedBeta = null;
+            storedBeta.Item3 = false;
         }
 
         public void ClearGamma()
         {
-            if (storedGamma is null) return; 
+            if (!storedGamma.Item3) return; 
             KiraiLib.Logger.Log("Clearing Gamma register");
-            storedGamma = null;
+            storedGamma.Item3 = false;
         }
         #endregion
     }
