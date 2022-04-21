@@ -18,6 +18,22 @@ namespace KiraiMod.Pages
             buttons = new Buttons();
             sliders = new Sliders();
 
+            Shared.menu.CreateToggle("toggles1/clipboard", Config.General.bUseClipboard, "Clipboard", "Use the clipboard instead of a popup input", 1f, -1f, Shared.menu.pages[(int)Menu.PageIndex.options2].transform, new System.Action<bool>((state) =>
+            {
+                Config.General.bUseClipboard = state;
+            }));
+
+            Shared.menu.CreateButton("buttons2/change-pedestals", "Change\nPedestals", "Change all pedestals to an avatar ID", 2f, 1f, Shared.menu.pages[(int)Menu.PageIndex.buttons2].transform, new System.Action(() =>
+            {
+                if (Config.General.bUseClipboard)
+                    Helper.SetPedestals(System.Windows.Forms.Clipboard.GetText().Trim());
+                else
+                    Utils.HUDInput("Avatar ID", "Set Pedestals", "avtr_????????-????-????-????-????????????", "", new System.Action<string>((resp) =>
+                    {
+                        Helper.SetPedestals(resp.Trim());
+                    }));
+            }));
+
             Shared.menu.CreateButton("sliders1/goto-udon", "Next", "Opens KiraiMod's next page", -2f, 1f, Shared.menu.pages[(int)Menu.PageIndex.sliders1].transform, new System.Action(() =>
             {
                 Shared.menu.selected = (int)Menu.PageIndex.udon;
@@ -45,12 +61,13 @@ namespace KiraiMod.Pages
 
             Shared.menu.CreateButton("udon/broadcast", "Broadcast", "Broadcast an event to every UdonBehaviour", 3f, -1f, Shared.menu.pages[(int)Menu.PageIndex.udon].transform, new System.Action(() =>
             {
-                string text = System.Windows.Forms.Clipboard.GetText().Trim();
-
-                foreach (VRC.Udon.UdonBehaviour ub in Shared.modules.udon.behaviours)
-                {
-                    ub.SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, text);
-                }
+                if (Config.General.bUseClipboard)
+                    Helper.BroadcastCustomEvent(System.Windows.Forms.Clipboard.GetText().Trim());
+                else
+                    Utils.HUDInput("Custom event name", "Execute", "_interact", "", new System.Action<string>((resp) =>
+                    {
+                        Helper.BroadcastCustomEvent(resp.Trim());
+                    }));
             }));
         }
     }

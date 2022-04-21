@@ -9,8 +9,6 @@ namespace KiraiMod
 {
     public class Utils
     {
-        public static float fRGBSpeed = 1f;
-
         public static class Colors
         {
             public readonly static Color primary = new Color(0.34f, 0f, 0.65f);
@@ -109,11 +107,41 @@ namespace KiraiMod
             VRCUiManager.prop_VRCUiManager_0.Method_Public_Void_String_PDM_0(message);
         }
 
+        public static void HUDInput(string title, string text, string placeholder, string initial, System.Action<string> OnAccept)
+        {
+            VRCUiPopupManager
+                .field_Private_Static_VRCUiPopupManager_0
+                .Method_Public_Void_String_String_InputType_Boolean_String_Action_3_String_List_1_KeyCode_Text_Action_String_Boolean_Action_1_VRCUiPopup_0
+                (
+                    title, 
+                    initial, 
+                    InputField.InputType.Standard,
+                    false, 
+                    text, 
+                    UnhollowerRuntimeLib
+                        .DelegateSupport
+                        .ConvertDelegate<
+                            Il2CppSystem.Action<string, List<KeyCode>, Text>
+                        >(
+                            new System.Action<string, List<KeyCode>, Text>(
+                                (a, b, c) => 
+                                {
+                                    OnAccept(a); 
+                                }
+                            )
+                        ), 
+                    null, 
+                    placeholder, 
+                    true, 
+                    null
+                );
+        }
+
         public static Color GetRainbow()
         {
-            return new Color((float)System.Math.Sin(fRGBSpeed * Time.time) * 0.5f + 0.5f,
-                (float)System.Math.Sin(fRGBSpeed * Time.time + (2 * 3.14 / 3)) * 0.5f + 0.5f,
-                (float)System.Math.Sin(fRGBSpeed * Time.time + (4 * 3.14 / 3)) * 0.5f + 0.5f);
+            return new Color((float)System.Math.Sin(Config.General.fRGBSpeed * Time.time) * 0.5f + 0.5f,
+                (float)System.Math.Sin(Config.General.fRGBSpeed * Time.time + (2 * 3.14 / 3)) * 0.5f + 0.5f,
+                (float)System.Math.Sin(Config.General.fRGBSpeed * Time.time + (4 * 3.14 / 3)) * 0.5f + 0.5f);
         }
 
         public static void GetGenericLayout(int i, out int x, out int y)

@@ -87,5 +87,23 @@ namespace KiraiMod
             if (sync != null) MelonCoroutines.Start(CrashPlayer(sync, Shared.targetPlayer));
             else Utils.HUDMessage("World has no valid pickups");
         }
+
+        public static void SetPedestals(string id)
+        {
+            if (!id.StartsWith("avtr_"))
+                Utils.HUDMessage("Invalid avatar ID");
+            else
+                foreach (var pedestal in Object.FindObjectsOfType<VRC_AvatarPedestal>())
+                {
+                    Networking.SetOwner(Networking.LocalPlayer, pedestal.gameObject);
+                    Networking.RPC(RPC.Destination.All, pedestal.gameObject, "SwitchAvatar", new Il2CppSystem.Object[] { id });
+                }
+        }
+
+        public static void BroadcastCustomEvent(string name)
+        {
+            foreach (VRC.Udon.UdonBehaviour ub in Shared.modules.udon.behaviours)
+                ub.SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, name);
+        }
     }
 }

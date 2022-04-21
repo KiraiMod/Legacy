@@ -153,6 +153,7 @@ namespace KiraiMod
             if (Input.GetKeyDown(KeyCode.KeypadMinus))
 #if DEBUG
             {
+
             }
 #else
                 MelonLogger.Log("Alive");

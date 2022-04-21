@@ -8,6 +8,12 @@ namespace KiraiMod
 {
     public class Config
     {
+        public class General
+        {
+            public static bool bUseClipboard = true;
+            public static float fRGBSpeed = 1f;
+        }
+
         private Options options = new Options();
 
         public static readonly string config = "kiraimod.config.json";
@@ -52,6 +58,7 @@ namespace KiraiMod
             public bool bAliases;
             public bool bDirectionalFlight;
             public bool bPlayerList;
+            public bool bUseClipboard;
 
             public bool bMuteSelfFriends;
             public bool bMuteSelfTargeted;
@@ -110,12 +117,11 @@ namespace KiraiMod
                 Move(load, ref Shared.modules.orbit.distance,     ref fOrbitDistance    );
                 Move(load, ref Shared.modules.itemOrbit.speed,    ref fItemOrbitSize    );
                 Move(load, ref Shared.modules.itemOrbit.size,     ref fItemOrbitSpeed   );
-                Move(load, ref Utils.fRGBSpeed,                   ref fRGBSpeed         );
 
-                if (load)
-                {
-                    Shared.modules.OnConfigLoaded();
-                }
+                Move(load, ref General.bUseClipboard,             ref bUseClipboard     );
+                Move(load, ref General.fRGBSpeed,                 ref fRGBSpeed         );
+
+                if (load) Shared.modules.OnConfigLoaded();
             }
 
             public void Move(bool load, ref float prop1, ref float prop2)
