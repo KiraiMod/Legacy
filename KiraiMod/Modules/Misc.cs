@@ -9,6 +9,11 @@ namespace KiraiMod.Modules
         public bool bUseClipboard;
         public bool bAntiMenu;
         public bool bAnnoyance;
+        public bool bPersistantQuickMenu;
+
+        public bool BindsNumpad;
+        public bool BindsTab;
+        public bool BindsAlt;
 
         public new ModuleInfo[] info =
         {
@@ -20,8 +25,12 @@ namespace KiraiMod.Modules
             new ModuleInfo("Change\nPedestals", "Change all pedestals to an avatar ID", ButtonType.Button, 3, Menu.PageIndex.buttons2, nameof(ChangePedestals)),
             new ModuleInfo("Join World\nvia ID", "Join a world using a full instance id", ButtonType.Button, 6, Menu.PageIndex.buttons2, nameof(JoinWorldByID)),
             new ModuleInfo("Clipboard", "Use the clipboard instead of a popup input", ButtonType.Toggle, 10, Menu.PageIndex.toggles2, nameof(bUseClipboard)),
-            new ModuleInfo("Anti Menu", "Make other people unable to click their menus", ButtonType.Toggle, 2, Menu.PageIndex.toggles3, nameof(bAntiMenu)),
+            new ModuleInfo("Anti Menu", "Make other people unable to click their menus", ButtonType.Toggle, 3, Menu.PageIndex.toggles3, nameof(bAntiMenu)),
             new ModuleInfo("Annoyance Mode", "Orbit things around the targets head instead of their feet", ButtonType.Toggle, 9, Menu.PageIndex.toggles2, nameof(bAnnoyance)),
+            new ModuleInfo("Persistant QuickMenu", "Keep the Quick Menu open when moving around", ButtonType.Toggle, 2, Menu.PageIndex.toggles3, nameof(bPersistantQuickMenu)),
+            new ModuleInfo("Numpad Binds", "Use Numlock + Keypad to activate binds", ButtonType.Toggle, 1, Menu.PageIndex.toggles3, nameof(BindsNumpad)),
+            new ModuleInfo("Tab Binds", "Use Tab + Alphabetical to activate binds", ButtonType.Toggle, 5, Menu.PageIndex.toggles3, nameof(BindsTab)),
+            new ModuleInfo("Alt Binds", "Use Alt + Numerical to activate binds", ButtonType.Toggle, 9, Menu.PageIndex.toggles3, nameof(BindsAlt)),
         };
 
         public override void OnStateChange(bool state)
@@ -32,6 +41,14 @@ namespace KiraiMod.Modules
         public override void OnConfigLoaded()
         {
             state = true;
+            MelonLoader.MelonCoroutines.Start(WaitForMenu());
+        }
+
+        public System.Collections.IEnumerator WaitForMenu()
+        {
+            while (Shared.menu is null) yield return new WaitForSeconds(1);
+
+            ReenableDefault();
         }
 
         public void ForcePickups()
@@ -94,5 +111,53 @@ namespace KiraiMod.Modules
                     Helper.JoinWorldById(resp.Trim());
                 }));
         }
+
+        public void OnStateChangeBindsNumpad(bool state)
+        {
+            if (state)
+            {
+                DisableOthers(0);
+            }
+            else ReenableDefault();
+        }
+
+        public void OnStateChangeBindsTab(bool state)
+        {
+            if (state)
+            {
+                DisableOthers(1);
+            }
+            else ReenableDefault();
+        }
+
+        public void OnStateChangeBindsAlt(bool state)
+        {
+            if (state)
+            {
+                DisableOthers(2);
+            }
+            else ReenableDefault();
+        }
+
+        private void DisableOthers(int target)
+        {
+            if (target > 0)
+                Shared.menu.Set(Utils.CreateID("Numpad Binds", (int)Menu.PageIndex.toggles3), false);
+
+            if (target != 1)
+                Shared.menu.Set(Utils.CreateID("Tab Binds", (int)Menu.PageIndex.toggles3), false);
+
+            if (target < 2)
+                Shared.menu.Set(Utils.CreateID("Alt Binds", (int)Menu.PageIndex.toggles3), false);
+        }
+
+        private void ReenableDefault()
+        {
+            if (BindsNumpad || BindsTab || BindsAlt) return;
+
+            BindsNumpad = true;
+            Shared.menu.Set(Utils.CreateID("Numpad Binds", (int)Menu.PageIndex.toggles3), true);
+        }
+
     }
 }

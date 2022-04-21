@@ -38,6 +38,7 @@ namespace KiraiMod.Modules
 		public override void OnPlayerLeft(Player player)
 		{
 			kiraimodders.Remove(player.field_Private_APIUser_0.displayName);
+			daymodders.Remove(player.field_Private_APIUser_0.displayName);
 
 			if (state) MelonCoroutines.Start(DelayedRefresh());
 		}
@@ -45,6 +46,7 @@ namespace KiraiMod.Modules
 		public override void OnLevelWasLoaded()
 		{
 			kiraimodders.Clear();
+			daymodders.Clear();
 		}
 
 		public override void OnAvatarInitialized(GameObject avatar, VRCAvatarManager manager)
@@ -52,7 +54,35 @@ namespace KiraiMod.Modules
 			if (state) Enable(manager.field_Private_VRCPlayer_0.field_Private_Player_0);
 		}
 
-		private IEnumerator DelayedRefresh()
+        public override void OnUpdate()
+        {
+			if (!state || !RGB || PlayerManager.field_Private_Static_PlayerManager_0?.field_Private_List_1_Player_0 == null) return;
+
+			foreach (Player player in PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0)
+            {
+				if (player.IsFriend())
+				{
+					player.transform.Find("Player Nameplate/Canvas/Nameplate/Contents/Main/Text Container/Name")
+						.GetComponent<TMPro.TextMeshProUGUI>().color = Utils.GetRainbow();
+				}
+			}
+        }
+
+		public void OnStateChangeRGB(bool state)
+        {
+			if (!state) return;
+
+			foreach (Player player in PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0)
+			{
+				if (player?.IsFriend() ?? false)
+				{
+					player.transform.Find("Player Nameplate/Canvas/Nameplate/Contents/Main/Text Container/Name")
+						.GetComponent<TMPro.TextMeshProUGUI>().color = player.field_Private_APIUser_0.GetTrustColor();
+				}
+			}
+		}
+
+        private IEnumerator DelayedRefresh()
 		{
 			yield return new WaitForSeconds(1);
 
@@ -177,11 +207,6 @@ namespace KiraiMod.Modules
 			text.text = content;
 
 			stack++;
-		}
-
-		public void OnStateChangeRGB(bool state)
-		{
-			if (!state) Refresh();
 		}
 	}
 }

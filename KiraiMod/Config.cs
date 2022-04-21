@@ -10,7 +10,6 @@ namespace KiraiMod
     {
         public class General
         {
-            public static bool bPersistantQuickMenu = false;
             public static float fRGBSpeed = 1f;
         }
 
@@ -61,9 +60,9 @@ namespace KiraiMod
             public bool bUseClipboard;
             public bool bPersistantQM;
 
-            //public bool bMuteSelfFriends;
-            //public bool bMuteSelfTargeted;
-            //public bool bMuteSelfFavorited;
+            public bool bBindsNumpad;
+            public bool bBindsTab;
+            public bool bBindsAlt;
             public bool bAnnoyance;
 
             public bool bTracerPlayers;
@@ -103,15 +102,14 @@ namespace KiraiMod
                 Move(load, ref Shared.modules.aliases.state,      ref bAliases          );
                 Move(load, ref Shared.modules.flight.directional, ref bDirectionalFlight);
                 Move(load, ref Shared.modules.esp.state,          ref bESP              );
-                //Move(load, ref Shared.modules.mute.Friends,       ref bMuteSelfFriends  );
-                //Move(load, ref Shared.modules.mute.Targeted,      ref bMuteSelfTargeted );
-                //Move(load, ref Shared.modules.mute.Favorited,     ref bMuteSelfFavorited);
+                Move(load, ref Shared.modules.misc.BindsNumpad,   ref bBindsNumpad      );
+                Move(load, ref Shared.modules.misc.BindsTab,      ref bBindsTab         );
+                Move(load, ref Shared.modules.misc.BindsAlt,      ref bBindsAlt         );
                 Move(load, ref Shared.modules.misc.bAnnoyance,    ref bAnnoyance        );
                 Move(load, ref Shared.modules.tracers.Players,    ref bTracerPlayers    );
                 Move(load, ref Shared.modules.tracers.Pickups,    ref bTracerPickups    );
                 Move(load, ref Shared.modules.tracers.Triggers,   ref bTracerTriggers   );
                 Move(load, ref Shared.modules.playerlist.state,   ref bPlayerList       );
-
                 Move(load, ref Shared.modules.speed.SpeedRun,     ref fRun              );
                 Move(load, ref Shared.modules.speed.SpeedWalk,    ref fWalk             );
                 Move(load, ref Shared.modules.flight.speed,       ref fFly              );
@@ -120,10 +118,11 @@ namespace KiraiMod
                 Move(load, ref Shared.modules.orbit.distance,     ref fOrbitDistance    );
                 Move(load, ref Shared.modules.itemOrbit.speed,    ref fItemOrbitSize    );
                 Move(load, ref Shared.modules.itemOrbit.size,     ref fItemOrbitSpeed   );
-
                 Move(load, ref Shared.modules.misc.bUseClipboard, ref bUseClipboard     );
-                Move(load, ref General.bPersistantQuickMenu,      ref bPersistantQM     );
+
                 Move(load, ref General.fRGBSpeed,                 ref fRGBSpeed         );
+
+                Move(load, ref Shared.modules.misc.bPersistantQuickMenu, ref bPersistantQM);
 
                 if (load) Shared.modules.OnConfigLoaded();
             }

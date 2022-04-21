@@ -35,10 +35,6 @@
             {
                 Shared.menu.selected = (int)Menu.PageIndex.udon1;
             }));
-
-            Shared.menu.CreateToggle("toggles3/persistant-quickmenu", Config.General.bPersistantQuickMenu, "Persistant QuickMenu", "Keep the Quick Menu open even when moving around", 0f, 1f, Shared.menu.pages[(int)Menu.PageIndex.toggles3].transform, new System.Action<bool>((state) => {
-                Config.General.bPersistantQuickMenu = state;
-            }));
         }
     }
 }

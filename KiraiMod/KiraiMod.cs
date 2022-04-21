@@ -134,34 +134,51 @@ namespace KiraiMod
                 Shared.menu.HandlePages();
             }
 
-            if (Input.GetKeyDown(KeyCode.Keypad1)) Shared.modules.speed.SetState();
-            if (Input.GetKeyDown(KeyCode.Keypad2)) Shared.modules.flight.SetState();
-            if (Input.GetKeyDown(KeyCode.Keypad3)) Shared.modules.noclip.SetState();
-            if (Input.GetKeyDown(KeyCode.Keypad4)) Shared.modules.esp.SetState();
-            if (Input.GetKeyDown(KeyCode.Keypad5)) Shared.modules.orbit.SetState();
-            if (Input.GetKeyDown(KeyCode.Keypad6)) Shared.Options.bWorldTriggers ^= true;
-            if (Input.GetKeyDown(KeyCode.Keypad7)) Shared.modules.hideself.SetState();
-            if (Input.GetKeyDown(KeyCode.Keypad8))
+            if (Shared.modules.misc.BindsNumpad)
             {
-                string text = System.Windows.Forms.Clipboard.GetText().Trim();
-                if (!text.StartsWith("avtr_"))
-                    Utils.HUDMessage("Invalid avatar ID in clipboard");
-                else
-                    foreach (var a in Object.FindObjectsOfType<VRC.SDKBase.VRC_AvatarPedestal>())
-                    {
-                        VRC.SDKBase.Networking.SetOwner(VRC.SDKBase.Networking.LocalPlayer, a.gameObject);
-                        VRC.SDKBase.Networking.RPC(VRC.SDKBase.RPC.Destination.All, a.gameObject, nameof(VRC.SDKBase.VRC_AvatarPedestal.SwitchAvatar), new Il2CppSystem.Object[] { text });
-                    }
-            }
-            if (Input.GetKeyDown(KeyCode.KeypadMinus))
+                if (Input.GetKeyDown(KeyCode.Keypad1)) Shared.modules.speed.SetState();
+                if (Input.GetKeyDown(KeyCode.Keypad2)) Shared.modules.flight.SetState();
+                if (Input.GetKeyDown(KeyCode.Keypad3)) Shared.modules.noclip.SetState();
+                if (Input.GetKeyDown(KeyCode.Keypad4)) Shared.modules.esp.SetState();
+                if (Input.GetKeyDown(KeyCode.Keypad5)) Shared.modules.orbit.SetState();
+                if (Input.GetKeyDown(KeyCode.Keypad6)) Shared.Options.bWorldTriggers ^= true;
+                if (Input.GetKeyDown(KeyCode.Keypad7)) Shared.modules.hideself.SetState();
+                if (Input.GetKeyDown(KeyCode.KeypadMinus))
 #if DEBUG
-            {
+                {
 
-            }
+                }
 #else
-                MelonLogger.Log("Alive");
+                    MelonLogger.Log("Alive");
 #endif
-            if (Input.GetKeyDown(KeyCode.KeypadMultiply)) Helper.Teleport(new Vector3(0, 0, 0));
+                if (Input.GetKeyDown(KeyCode.KeypadMultiply)) Helper.Teleport(new Vector3(0, 0, 0));
+            }
+            else if (Shared.modules.misc.BindsTab)
+            {
+                if (Input.GetKey(KeyCode.Tab))
+                {
+                    if (Input.GetKeyDown(KeyCode.W)) Shared.modules.speed.SetState();
+                    if (Input.GetKeyDown(KeyCode.F)) Shared.modules.noclip.SetState();
+                    if (Input.GetKeyDown(KeyCode.E)) Shared.modules.esp.SetState();
+                    if (Input.GetKeyDown(KeyCode.Q)) Shared.modules.orbit.SetState();
+                    if (Input.GetKeyDown(KeyCode.T)) Shared.Options.bWorldTriggers ^= true;
+                    if (Input.GetKeyDown(KeyCode.H)) Shared.modules.hideself.SetState();
+                }
+            }
+            else if (Shared.modules.misc.BindsAlt)
+            {
+                if (Input.GetKey(KeyCode.LeftAlt))
+                {
+                    if (Input.GetKeyDown(KeyCode.Alpha1)) Shared.modules.speed.SetState();
+                    if (Input.GetKeyDown(KeyCode.Alpha2)) Shared.modules.flight.SetState();
+                    if (Input.GetKeyDown(KeyCode.Alpha3)) Shared.modules.noclip.SetState();
+                    if (Input.GetKeyDown(KeyCode.Alpha4)) Shared.modules.esp.SetState();
+                    if (Input.GetKeyDown(KeyCode.Alpha5)) Shared.modules.orbit.SetState();
+                    if (Input.GetKeyDown(KeyCode.Alpha6)) Shared.Options.bWorldTriggers ^= true;
+                    if (Input.GetKeyDown(KeyCode.Alpha7)) Shared.modules.hideself.SetState();
+                }
+            }
+
             if (Input.GetKeyDown(KeyCode.Delete)) Unload();
         }
 

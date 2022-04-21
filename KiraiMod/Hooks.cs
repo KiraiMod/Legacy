@@ -233,7 +233,7 @@ namespace KiraiMod
 
         private static bool OnMenuClosed()
         {
-            bool continueExecuting = !Config.General.bPersistantQuickMenu ||
+            bool continueExecuting = !Shared.modules.misc.bPersistantQuickMenu ||
                 VRCUiManager.prop_VRCUiManager_0.prop_Boolean_0 ||
                 Input.GetKey(KeyCode.Escape) ||
                 Input.GetButton("Oculus_CrossPlatform_Button2") ||
