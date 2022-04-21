@@ -1,5 +1,6 @@
 ﻿using MelonLoader;
 using System.Reflection;
+using UnhollowerRuntimeLib;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -89,8 +90,8 @@ namespace KiraiMod
         {
             Shared.menu = new Menu();
 
-            //Shared.menu.qm.transform.Find("QuickMenu_NewElements/_Background/Panel").GetComponent<Image>().material = 
-            //    Shared.resources.LoadAsset_Internal("assets/uiglass.mat", Il2CppType.Of<Material>()).Cast<Material>();
+            Shared.menu.qm.transform.Find("QuickMenu_NewElements/_Background/Panel").GetComponent<Image>().color = Color.white;
+            //.material = Shared.resources.LoadAsset_Internal("assets/holoui.mat", Il2CppType.Of<Material>()).Cast<Material>();
 
             Shared.menu.CreatePage("kiraimod_options");
             Shared.menu.CreatePage("kiraimod_options2");
@@ -107,23 +108,30 @@ namespace KiraiMod
                 {
                     if (info.type == Modules.ButtonType.Toggle)
                     {
-                        FieldInfo reference = module.GetType().GetField(info.reference, BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
-                        if (reference == null)
-                        {
-                            MelonModLogger.LogWarning($"Failed to find property {info.reference} on {module.GetType()}");
-                            continue;
-                        }
                         Utils.GetGenericLayout(info.index, out int x, out int y);
-                        Shared.menu.CreateToggle(Utils.CreateID(info.label, info.page), (bool)reference.GetValue(module),
-                            info.label, info.description, x, y, Shared.menu.pages[info.page].transform, (info.reference == nameof(module.state)) ? 
-                            new System.Action<bool>(state => 
-                            {
-                                module.SetState(state);
-                            }) : 
+                        if (info.reference == nameof(Modules.ModuleBase.state))
+                        {
+                            Shared.menu.CreateToggle(Utils.CreateID(info.label, info.page), module.state,
+                            info.label, info.description, x, y, Shared.menu.pages[info.page].transform,
                             new System.Action<bool>(state =>
                             {
-                                reference.SetValue(module, state);
+                                module.SetState(state);
                             }));
+                        } else
+                        {
+                            FieldInfo reference = module.GetType().GetField(info.reference, BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
+                            if (reference == null)
+                            {
+                                MelonModLogger.LogWarning($"Failed to find property {info.reference} on {module.GetType()}");
+                                continue;
+                            }
+                            Shared.menu.CreateToggle(Utils.CreateID(info.label, info.page), (bool)reference.GetValue(module),
+                                info.label, info.description, x, y, Shared.menu.pages[info.page].transform,
+                                new System.Action<bool>(state =>
+                                {
+                                    reference.SetValue(module, state);
+                                }));
+                        }
                     }
                     else if (info.type == Modules.ButtonType.Button)
                     {
