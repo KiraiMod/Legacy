@@ -134,67 +134,9 @@ namespace KiraiMod
             Shared.modules.OnAvatarInitialized(__0, __instance);
         }
 
-        private static bool OnRPC(ref Player __0, ref VrcEvent __1, ref VrcBroadcastType __2)
+        private static void OnRPC(ref Player __0, ref VrcEvent __1, ref VrcBroadcastType __2)
         {
-            if (__1.ParameterObject != null &&
-                __0.field_Private_APIUser_0.id != VRC.Core.APIUser.CurrentUser.id &&
-                (float.IsNaN(__1.ParameterObject.transform.position.x) || 
-                float.IsNaN(__1.ParameterObject.transform.position.y) || 
-                float.IsNaN(__1.ParameterObject.transform.position.z)))
-            {
-                MelonLogger.Log($"Prevented {__0.field_Private_APIUser_0.displayName} ({__0.field_Private_APIUser_0.id}) from using Love's camera crash on you.");
-                return false;
-            }
-
             if (Shared.Options.bWorldTriggers && __2 == VrcBroadcastType.Local) __2 = VrcBroadcastType.AlwaysUnbuffered;
-
-            //switch (__1.EventType)
-            //{
-            //    case VrcEventType.SendRPC:
-            //        if (__1.ParameterObject.name == "ModerationManager")
-            //        {
-            //            string param = "";
-            //            foreach (byte b in __1.ParameterBytes)
-            //            {
-            //                param += (char)b;
-            //            }
-            //            string[] strs = param.Split('\0');
-            //            string uid = Regex.Replace(strs[2], "[^a-zA-Z0-9_.-]+", "", RegexOptions.Compiled);
-
-            //            if (__0.IsLocal() || Utils.GetPlayer(uid).IsLocal()) MelonCoroutines.Start(Shared.modules.mute.DelayedRefresh());
-            //            else Shared.modules.mute.Refresh();
-
-            //            switch (__1.ParameterString)
-            //            {
-            //                case "BlockStateChangeRPC":
-            //                    Shared.modules.modlog.Notify(__0.field_Private_APIUser_0, Utils.GetPlayer(uid).field_Private_APIUser_0,
-            //                        strs.Length == 3 ? ModerationAction.Blocked : ModerationAction.Unblocked);
-            //                    break;
-
-            //                case "MuteChangeRPC":
-            //                    Shared.modules.modlog.Notify(__0.field_Private_APIUser_0, Utils.GetPlayer(uid).field_Private_APIUser_0,
-            //                        strs.Length == 3 ? ModerationAction.Muted : ModerationAction.Unmuted);
-            //                    break;
-
-            //                case "ShowUserAvatarChangedRPC":
-            //                    Shared.modules.modlog.Notify(__0.field_Private_APIUser_0, Utils.GetPlayer(uid).field_Private_APIUser_0,
-            //                        strs.Length == 3 ? ModerationAction.Shown : ModerationAction.Hide);
-            //                    break;
-
-            //                case "ResetShowUserAvatarToDefaultRPC":
-            //                    Shared.modules.modlog.Notify(__0.field_Private_APIUser_0, Utils.GetPlayer(uid).field_Private_APIUser_0,
-            //                        ModerationAction.Reset);
-            //                    break;
-
-            //                default:
-            //                    MelonLogger.Log("Unknown moderation message " + __1.ParameterString);
-            //                    break;
-            //            }
-            //        }
-            //        break;
-            //}
-
-            return true;
         }
 
         //private static void SendOperationPrefix(ref byte __0, ref Il2CppSystem.Object __1, ref ObjectPublicObByObInByObObUnique __2, ref ExitGames.Client.Photon.SendOptions __3)

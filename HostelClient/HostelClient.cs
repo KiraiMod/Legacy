@@ -55,7 +55,6 @@ namespace KiraiMod
 
                 streamers = data.Split('\n');
                 MelonLogger.Log("Downloaded streamer list with " + streamers.Length + " streamers");
-
             }
             catch { MelonLogger.LogWarning("Failed to download streamer list."); }
         }
@@ -116,7 +115,7 @@ namespace KiraiMod
         {
             if (VRCUiManager.prop_VRCUiManager_0 == null) return;
 
-            VRCUiManager.prop_VRCUiManager_0.Method_Public_Void_String_PDM_0(message);
+            VRCUiManager.prop_VRCUiManager_0.Method_Public_Void_String_0(message);
         }
 
         public static bool Join(string id)
