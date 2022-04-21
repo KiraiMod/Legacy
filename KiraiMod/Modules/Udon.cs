@@ -254,7 +254,7 @@ namespace KiraiMod.Modules
         #region Buttons
         public void SelectIndex()
         {
-            KiraiLib.HUDKeypad("Select By Index", "Select", "73", (val) => {
+            KiraiLib.HUDKeypad("Select By Index", "Select", "5306", (val) => {
                 if (int.TryParse(val, out int index))
                 {
                     if (index >= behaviours.Length && index < 1)

@@ -110,7 +110,7 @@ namespace KiraiMod
             try
             {
                 harmony.Patch(typeof(VRC_EventDispatcherRFC)
-                    .GetMethod(nameof(VRC_EventDispatcherRFC.Method_Public_Void_Player_VrcEvent_VrcBroadcastType_Int32_Single_0), BindingFlags.Public | BindingFlags.Instance),
+                    .GetMethod(nameof(VRC_EventDispatcherRFC.Method_Public_Void_Player_VrcEvent_VrcBroadcastType_Int32_Single_1), BindingFlags.Public | BindingFlags.Instance),
                     new HarmonyMethod(typeof(KiraiRPC).GetMethod(nameof(OnRPC), BindingFlags.NonPublic | BindingFlags.Static)));
 
                 LogWithPadding("OnRPC", true);
@@ -247,7 +247,7 @@ namespace KiraiMod
                 ParameterString = "UdonSyncRunProgramAsRPC",
                 ParameterBoolOp = VrcBooleanOp.Unused,
                 ParameterBytes = Networking.EncodeParameters(new Il2CppSystem.Object[] {
-                        raw
+                    raw
                 })
             },
             VrcBroadcastType.AlwaysUnbuffered, VRCPlayer.field_Internal_Static_VRCPlayer_0.gameObject, 0f);
