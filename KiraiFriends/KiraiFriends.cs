@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using UnityEngine;
+using UnityEngine.UI;
 using VRC.SDKBase;
 
 [assembly: MelonInfo(typeof(KiraiMod.KiraiFriends), "KiraiFriends", null, "Kirai Chan#8315")]
@@ -65,7 +66,17 @@ namespace KiraiMod
 
         public override void OnUpdate()
         {
-            if (Input.GetKeyDown(KeyCode.Q)) VRChat_OnUiManagerInit();
+            if (Input.GetKeyDown(KeyCode.Pause) || Input.GetKeyDown(KeyCode.Break)) HUDInput("Join Kirai Friend by name", "Join", "Kirai Chan", "", new Action<string>((value) =>
+            {
+                string[] selected = null;
+                foreach (string[] user in online)
+                    if (user[0] == value) selected = user;
+
+                if (selected is null)
+                    HUDMessage("User is not online");
+                else 
+                    JoinWorldById(selected[1]);
+            }));
         }
 
         public override void OnLevelWasLoaded(int level)
@@ -201,6 +212,36 @@ namespace KiraiMod
             if (VRCUiManager.prop_VRCUiManager_0 == null) return;
 
             VRCUiManager.prop_VRCUiManager_0.Method_Public_Void_String_0(message);
+        }
+
+        public static void HUDInput(string title, string text, string placeholder, string initial, System.Action<string> OnAccept)
+        {
+            VRCUiPopupManager
+                .field_Private_Static_VRCUiPopupManager_0
+                .Method_Public_Void_String_String_InputType_Boolean_String_Action_3_String_List_1_KeyCode_Text_Action_String_Boolean_Action_1_VRCUiPopup_PDM_1
+                (
+                    title,
+                    initial,
+                    InputField.InputType.Standard,
+                    false,
+                    text,
+                    UnhollowerRuntimeLib
+                        .DelegateSupport
+                        .ConvertDelegate<
+                            Il2CppSystem.Action<string, Il2CppSystem.Collections.Generic.List<KeyCode>, Text>
+                        >(
+                            new System.Action<string, Il2CppSystem.Collections.Generic.List<KeyCode>, Text>(
+                                (a, b, c) =>
+                                {
+                                    OnAccept(a);
+                                }
+                            )
+                        ),
+                    null,
+                    placeholder,
+                    true,
+                    null
+                );
         }
 
         private void SetLocation(string replace = "")
