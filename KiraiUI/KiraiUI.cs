@@ -31,7 +31,7 @@ namespace KiraiMod
 
         public static class CompatibilityModule
         {
-            public static bool NoColors;
+            public static bool NoTheme;
             public static bool NoMovement;
             public static bool NoCompatibility;
         }
@@ -142,12 +142,24 @@ namespace KiraiMod
             Text tmp4;
             ParticleSystem tmp5;
 
-            if (CompatibilityModule.NoCompatibility || !CompatibilityModule.NoColors)
+            if (CompatibilityModule.NoCompatibility || !CompatibilityModule.NoTheme)
             {
                 #region Screen Colors
                 // screen background
                 tmp1 = Screens.Find("Backdrop/Backdrop/Background").GetComponent<Image>();
                 if (tmp1 != null) Utils.MoveImageColor(op, ref tmp1, ref Memory.screenBackground, Config.primary2);
+
+                tmp3 = Screens.Find("Backdrop/Header/Tabs/ViewPort/Content");
+
+                if (op != 1)
+                    for (int i = 0; i < tmp3.childCount; i++)
+                    {
+                        if (i == tmp3.childCount - 1) tmp1 = tmp3.GetChild(i).GetComponentInChildren<Image>();
+                        else tmp1 = tmp3.GetChild(i).GetComponent<Image>();
+
+                        if (tmp1 != null) tmp1.color = op == 0 ? Color.clear : Color.white;
+                    }
+
                 #endregion
                 #region HUD Colors
                 // mic off

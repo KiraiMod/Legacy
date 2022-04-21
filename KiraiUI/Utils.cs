@@ -81,5 +81,12 @@ namespace KiraiMod
             else if (op == 1) s = t.startColor;
             else t.startColor = s;
         }
+
+        public static void MoveImageActive(int op, ref Image t, ref bool s, bool i)
+        {
+            if (op == 0) t.enabled = i;
+            else if (op == 1) s = t.enabled;
+            else t.enabled = s;
+        }
     }
 }
