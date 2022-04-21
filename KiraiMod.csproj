@@ -54,6 +54,7 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
@@ -148,6 +149,7 @@
     <Compile Include="Modules\Flight.cs" />
     <Compile Include="Modules\GodMode.cs" />
     <Compile Include="Modules\Headlight.cs" />
+    <Compile Include="Modules\ItemESP.cs" />
     <Compile Include="Modules\ItemOrbit.cs" />
     <Compile Include="Modules\KOS.cs" />
     <Compile Include="Modules\ModLog.cs" />

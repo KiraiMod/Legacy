@@ -23,6 +23,7 @@ namespace KiraiMod.Modules
         public Mute mute;
         public ItemOrbit itemOrbit;
         public GodMode godMode;
+        public ItemESP itemesp;
 
         public List<ModuleBase> modules = new List<ModuleBase>();
 
@@ -43,6 +44,7 @@ namespace KiraiMod.Modules
             modules.Add(mute = new Mute());
             modules.Add(itemOrbit = new ItemOrbit());
             modules.Add(godMode = new GodMode());
+            modules.Add(itemesp = new ItemESP());
         }
 
         public void StartCoroutines()
