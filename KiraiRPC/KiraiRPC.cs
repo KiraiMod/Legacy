@@ -40,6 +40,7 @@ namespace KiraiMod
         public override void OnLevelWasLoaded(int level)
         {
             if (level != -1) return;
+            handler = null;
             MelonCoroutines.Start(WaitForLevelToLoad());
         }
 
@@ -54,6 +55,8 @@ namespace KiraiMod
             }
 
             if (sleep >= 12) yield break;
+
+            yield return new WaitForSeconds(15);
 
             SendRPC(SendType.Broadcast, "00");
         }
@@ -75,9 +78,9 @@ namespace KiraiMod
 
         private static void OnRPC(ref Player __0, ref VrcEvent __1, ref VrcBroadcastType __2)
         {
-            if (__0.field_Private_VRCPlayerApi_0.isLocal) return;
+            if (__0?.field_Private_VRCPlayerApi_0?.isLocal ?? true) return;
 
-            if (__1.EventType == VrcEventType.ActivateCustomTrigger)
+            if (__1?.EventType == VrcEventType.ActivateCustomTrigger)
             {
                 if (__1.ParameterString.Length < 1) return;
                 if (__1.ParameterString[0] == 'k')
@@ -120,13 +123,15 @@ namespace KiraiMod
 
         private static void OnGet(string id, string payload, Player player)
         {
+
             switch (id)
             {
                 case "00":
-                    SendRPC(SendType.Post, "00", 
-                        player.field_Private_APIUser_0.displayName.Length.ToString().PadLeft(2, '0') + 
-                        player.field_Private_APIUser_0.displayName + Config.modName);
-                    break;
+                    if (payload == Player.prop_Player_0.field_Private_APIUser_0.displayName)
+                        SendRPC(SendType.Post, "00",
+                            Player.prop_Player_0.field_Private_APIUser_0.displayName.Length.ToString().PadLeft(2, '0') +
+                            Player.prop_Player_0.field_Private_APIUser_0.displayName + Config.modName);
+                        break;
             }
         }
 
@@ -142,7 +147,6 @@ namespace KiraiMod
                 case "00":
                     if (!int.TryParse(payload.Substring(0, 2), out int length)) return;
 
-                    MelonLogger.Log($"{payload.Substring(2, length)} is using ${payload.Substring(2 + length)}");
                     callback.Invoke("PlayerUsingMod", new string[] { payload.Substring(2, length), payload.Substring(2 + length)});
                     break;
             }
@@ -153,7 +157,7 @@ namespace KiraiMod
             switch (id)
             {
                 case "00": // Who is using KiraiRPC
-                    SendRPC(SendType.Broadcast, "01", Player.prop_Player_0.field_Private_APIUser_0.displayName); // i am using krpc
+                    SendRPC(SendType.Broadcast, "01", player.field_Private_APIUser_0.displayName); // i am using krpc
                     break;
                 case "01": // I am using KiraiRPC!
                     MelonLogger.Log($"{player.field_Private_APIUser_0.displayName} is using the RPC system.");
@@ -186,6 +190,13 @@ namespace KiraiMod
 
         public static void SendRPC(string raw)
         {
+            MelonLogger.Log($"Sending {raw}");
+            if (handler == null)
+            {
+                MelonLogger.Log("Canceling RPC because handler is null.");
+                return;
+            }
+
             handler.TriggerEvent(
             new VrcEvent
             {
@@ -198,7 +209,7 @@ namespace KiraiMod
                 ParameterBoolOp = VrcBooleanOp.Unused,
                 ParameterBytes = new Il2CppStructArray<byte>(0L)
             },
-            VrcBroadcastType.AlwaysUnbuffered, VRCPlayer.field_Internal_Static_VRCPlayer_0.gameObject, 0f);;
+            VrcBroadcastType.AlwaysUnbuffered, VRCPlayer.field_Internal_Static_VRCPlayer_0.gameObject, 0f);
         }
 
         public enum SendType
