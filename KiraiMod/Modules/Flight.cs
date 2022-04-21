@@ -8,6 +8,7 @@ namespace KiraiMod.Modules
     public class Flight : ModuleBase
     {
         private Transform camera;
+        private bool stored = false;
 
         public Vector3 oGravity;
 
@@ -20,7 +21,22 @@ namespace KiraiMod.Modules
             new ModuleInfo("Flight Speed", ButtonType.Slider, 2, Shared.PageIndex.sliders1, nameof(speed), 0, 32)
         };
 
-        public override void OnStateChange(bool state)
+        public override void OnStateChange(bool state) => Execute(state);
+        public override void OnLevelWasLoaded()
+        {
+            if (!state) return;
+
+            MelonLoader.MelonCoroutines.Start(DelayedInit());
+        }
+
+        private System.Collections.IEnumerator DelayedInit()
+        {
+            while (VRCPlayer.field_Internal_Static_VRCPlayer_0 is null) yield return null;
+
+            Execute(true);
+        }
+
+        private void Execute(bool state)
         {
             if (VRCPlayer.field_Internal_Static_VRCPlayer_0 == null) return;
 
@@ -30,11 +46,18 @@ namespace KiraiMod.Modules
 
             if (state)
             {
-                oGravity = Physics.gravity;
+                if (!stored)
+                {
+                    stored = true;
+                    oGravity = Physics.gravity;
+                }
+
                 Physics.gravity = new Vector3(0, 0, 0);
             }
             else
             {
+                stored = false;
+
                 Physics.gravity = oGravity;
                 motion.Method_Public_Void_0();
             }
