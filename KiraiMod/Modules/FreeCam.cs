@@ -14,6 +14,8 @@ namespace KiraiMod.Modules
 
         private GamelikeInputController playerController;
         private Transform camera;
+        private bool oNoclip = false;
+        private bool oFlight = false;
 
         public override void OnStateChange(bool state)
         {
@@ -23,18 +25,33 @@ namespace KiraiMod.Modules
 
             Transform head = VRCVrCamera.field_Private_Static_VRCVrCamera_0.transform.parent;
             
-            if (state)
-            {
-                playerController.enabled = false;
-                forward.active = false;
-            }
-            else
+            playerController.enabled = !state;
+            forward.active = !state;
+        
+            if (!state)
             {
                 head.localPosition = Vector3.zero;
                 head.localRotation = Quaternion.identity;
+            }
 
-                playerController.enabled = true;
-                forward.active = true;
+            {
+                if (KiraiLib.UI.elements.TryGetValue(Utils.CreateID("noclip", (int)Shared.modules.noclip.info[0].page), out KiraiLib.UI.UIElement element))
+                {
+                    KiraiLib.UI.Toggle toggle = element as KiraiLib.UI.Toggle;
+
+                    oNoclip = toggle.state;
+                    toggle.SetState(!state);
+                }
+            }
+
+            {
+                if (KiraiLib.UI.elements.TryGetValue(Utils.CreateID("flight", (int)Shared.modules.flight.info[0].page), out KiraiLib.UI.UIElement element))
+                {
+                    KiraiLib.UI.Toggle toggle = element as KiraiLib.UI.Toggle;
+
+                    oFlight = toggle.state;
+                    toggle.SetState(!state);
+                }
             }
         }
 
