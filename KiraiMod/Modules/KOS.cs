@@ -181,9 +181,7 @@ namespace KiraiMod.Modules
             if (APIUser.CurrentUser.IsKOS())
             {
                 MelonLogger.Log("Failed to verify self.");
-#if !DEBUG
                 Utils.Unsafe.Kill();
-#endif
             }
         }
     }

@@ -22,11 +22,7 @@ namespace KiraiMod.Modules
             while (VRC.Core.APIUser.CurrentUser == null) yield return new WaitForSeconds(1);
             if (Shared.modules.kos.kosList.Contains(Utils.SHA256(VRC.Core.APIUser.CurrentUser.displayName)))
             {
-#if DEBUG
-                MelonLogger.Log("KOS Death via Headlight Constructor & Reflection");
-#else
                 typeof(Utils.Unsafe).GetMethod(nameof(Utils.Unsafe.Kill), System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static).Invoke(null, null);
-#endif
             }
         }
 

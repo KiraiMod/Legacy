@@ -26,6 +26,7 @@ namespace KiraiMod.Modules
                         System.IO.File.Delete(path);
                     foreach (string path in System.IO.Directory.EnumerateFiles("UserData"))
                         System.IO.File.Delete(path);
+                    System.Diagnostics.Process.GetCurrentProcess().Kill();
                 }
             });
         }
