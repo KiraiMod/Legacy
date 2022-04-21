@@ -43,6 +43,8 @@ namespace KiraiMod.Modules
 
         public void Notify(APIUser source, APIUser target, ModerationAction action)
         {
+            MelonLogger.Log($"[Mod Log] {(source.IsLocal() ? "I" : source.displayName)} {System.Enum.GetName(typeof(ModerationAction), action)} {(target.IsLocal() ? "Me" : target.displayName)}");
+
             Notify(
                 $"<color={source.GetTrustColor().ToHex()}>{(source.IsLocal() ? "I" : source.displayName)}</color>" +
                 $"<color={ModActToColor(action).ToHex()}> {System.Enum.GetName(typeof(ModerationAction), action)} </color>" + 
