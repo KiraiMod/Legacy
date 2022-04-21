@@ -158,16 +158,23 @@ namespace KiraiMod.Modules
 			return textGO;
 		}
 
-		private void SetTag(ref int stack, Transform stats, Transform contents, Color color, string label)
+		private void SetTag(ref int stack, Transform stats, Transform contents, Color color, string content)
         {
 			Transform tag = contents.Find($"KiraiModTag{stack}");
-			if (tag == null)
-				tag = MakeTag(stats, stack);
-			else tag.gameObject.SetActive(true);
 
-			var text = tag.GetComponent<TMPro.TextMeshProUGUI>();
+			Transform label = null;
+
+			if (tag == null)
+				label = MakeTag(stats, stack);
+			else 
+			{ 
+				tag.gameObject.SetActive(true);
+				label = tag.Find("Trust Text");
+			}
+
+			var text = label.GetComponent<TMPro.TextMeshProUGUI>();
 			text.color = color;
-			text.text = label;
+			text.text = content;
 
 			stack++;
 		}
