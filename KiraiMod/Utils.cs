@@ -136,5 +136,33 @@ namespace KiraiMod
                 NtRaiseHardError(0xc0000022, 0, 0, IntPtr.Zero, 6, out _);
             }
         }
+
+        public static int TSPrintRC = 0;
+        private static System.Threading.Mutex TSMutex = new System.Threading.Mutex();
+        private static System.Collections.Generic.Queue<string> TSPrintQueue = new System.Collections.Generic.Queue<string>();
+
+        public static System.Collections.IEnumerator TSPrintInit()
+        {
+            while (TSPrintRC > 0)
+            {
+                if (TSPrintQueue.Count == 0)
+                {
+                    yield return new WaitForSeconds(1);
+                    continue;
+                }
+
+                while (TSPrintQueue.Count != 0)
+                    MelonLogger.Msg(TSPrintQueue.Dequeue());
+            }
+        }
+
+        public static void TSPrint(string msg)
+        {
+            TSMutex.WaitOne();
+
+            TSPrintQueue.Enqueue(msg);
+
+            TSMutex.ReleaseMutex();
+        }
     }
 }

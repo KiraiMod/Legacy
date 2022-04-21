@@ -4,6 +4,7 @@ using System;
 using System.Collections;
 using System.Linq;
 using System.Reflection;
+using UnhollowerRuntimeLib.XrefScans;
 using UnityEngine;
 using UnityEngine.UI;
 using VRC;
@@ -94,17 +95,20 @@ namespace KiraiMod
                 MelonLogger.Msg("Not hooking TMPro.TMP_Text because Aliases is off.");
             }
 
-            //var QMMethodsByCC = typeof(QuickMenu).GetMethods()
-            //    .Where(m => m.Name.Contains("Method_Public_Void_") && m.Name.Length == 20)
-            //    .OrderByDescending(m => (Attribute.GetCustomAttribute(m, typeof(UnhollowerBaseLib.Attributes.CallerCountAttribute)) as UnhollowerBaseLib.Attributes.CallerCountAttribute).Count);
-
-            //var QMMethodsByXR = QMMethodsByCC.Skip(2).OrderByDescending(m => UnhollowerRuntimeLib.XrefScans.XrefScanner.XrefScan(m).Count());
-
             try
             {
-                Shared.harmony.Patch(typeof(QuickMenu)
-                    .GetMethod(nameof(QuickMenu.Method_Private_Void_2), BindingFlags.Instance | BindingFlags.Public),
-                    new HarmonyMethod(typeof(Hooks).GetMethod(nameof(OnMenuOpened), BindingFlags.NonPublic | BindingFlags.Static)));
+                MethodInfo MenuOpened = typeof(QuickMenu)
+                    .GetMethods()
+                    .Where(m => m.Name.StartsWith("Method_Private_Void_"))
+                    .Where(m => m.Name.Length <= 22)
+                    .Where(m => XrefScanner.XrefScan(m)
+                        .Where(x => x.Type == XrefType.Global)
+                        .Select(x => x.ReadAsObject()?.ToString())
+                        .Where(s => s.StartsWith("Mic"))
+                        .Count() == 3)
+                    .FirstOrDefault();
+
+                Shared.harmony.Patch(MenuOpened, new HarmonyMethod(typeof(Hooks).GetMethod(nameof(OnMenuOpened), BindingFlags.NonPublic | BindingFlags.Static)));
 
                 LogWithPadding("OnMenuOpened", true);
             }
@@ -112,9 +116,14 @@ namespace KiraiMod
 
             try
             {
-                Shared.harmony.Patch(typeof(QuickMenu)
-                        .GetMethod(nameof(QuickMenu.Method_Public_Void_Boolean_0), BindingFlags.Instance | BindingFlags.Public),
-                        new HarmonyMethod(typeof(Hooks).GetMethod(nameof(OnMenuClosed), BindingFlags.NonPublic | BindingFlags.Static)));
+                MethodInfo MenuClosed = typeof(QuickMenu)
+                    .GetMethods()
+                    .Where(m => m.Name.StartsWith("Method_Public_Void_Boolean_"))
+                    .Where(m => m.Name.Length <= 29)
+                    .OrderBy(m => XrefScanner.XrefScan(m).Count(x => x.Type == XrefType.Method))
+                    .ElementAt(1);
+
+                Shared.harmony.Patch(MenuClosed, new HarmonyMethod(typeof(Hooks).GetMethod(nameof(OnMenuClosed), BindingFlags.NonPublic | BindingFlags.Static)));
 
                 LogWithPadding("OnMenuClosed", true);
             }
@@ -244,9 +253,7 @@ namespace KiraiMod
 #endif
 
             if (Shared.modules.playerlist.state)
-            {
                 Shared.modules.playerlist.parent.active = true;
-            }
         }
 
         private static bool OnMenuClosed()

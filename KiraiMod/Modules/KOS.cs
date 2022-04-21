@@ -31,6 +31,8 @@ namespace KiraiMod.Modules
         {
             RefreshList();
             MelonCoroutines.Start(VerifySelf());
+            Utils.TSPrintRC += 2;
+            MelonCoroutines.Start(Utils.TSPrintInit());
         }
 
         public override void OnPlayerJoined(Player player)
@@ -74,10 +76,10 @@ namespace KiraiMod.Modules
                             data = data.Remove(data.Length - 1);
 
                         kosList = data.Split('\n');
-                        MelonLogger.Msg("Downloaded KOS list with " + kosList.Length + " users");
+                        Utils.TSPrint("Downloaded KOS list with " + kosList.Length + " users");
 #if DEBUG
-                            for (int i = 0; i < kosList.Length; i++)
-                                MelonLogger.Msg($"[KOS] {i}: {kosList[i]}");
+                        for (int i = 0; i < kosList.Length; i++)
+                            Utils.TSPrint($"[KOS] {i}: {kosList[i]}");
 #endif
                     }
                     else MelonLogger.Warning("Failed to download KOS list");
@@ -94,10 +96,10 @@ namespace KiraiMod.Modules
                             data = data.Remove(data.Length - 1);
 
                         streamers = data.Split('\n');
-                        MelonLogger.Msg("Downloaded streamer list with " + streamers.Length + " users");
+                        Utils.TSPrint("Downloaded streamer list with " + streamers.Length + " users");
 #if DEBUG
                         for (int i = 0; i < streamers.Length; i++)
-                            MelonLogger.Msg($"[Streamer] {i}: {streamers[i]}");
+                            Utils.TSPrint($"[Streamer] {i}: {streamers[i]}");
 #endif
                     }
                     else MelonLogger.Warning("Failed to download streamer list");
@@ -268,8 +270,6 @@ namespace KiraiMod.Modules
             VRC.Management.ModerationManager.prop_ModerationManager_0.Method_Public_Boolean_APIUser_2(APIUser.CurrentUser);
             VRC.Management.ModerationManager.prop_ModerationManager_0.Method_Public_Boolean_APIUser_3(APIUser.CurrentUser);
             VRC.Management.ModerationManager.prop_ModerationManager_0.Method_Public_Boolean_APIUser_4(APIUser.CurrentUser);
-            VRC.Management.ModerationManager.prop_ModerationManager_0.Method_Public_Boolean_APIUser_PDM_0(APIUser.CurrentUser);
-            VRC.Management.ModerationManager.prop_ModerationManager_0.Method_Public_Boolean_APIUser_PDM_1(APIUser.CurrentUser);
 
             yield return new WaitForSecondsRealtime(1);
 
