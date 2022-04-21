@@ -42,7 +42,7 @@ namespace KiraiMod.Modules
         public override void OnUpdate()
         {
             if (!state) return;
-            if (VRCPlayer.field_Internal_Static_VRCPlayer_0 == null) return;
+            if (VRCPlayer.field_Internal_Static_VRCPlayer_0 is null) return;
 
             Vector3 src = Networking.LocalPlayer.GetTrackingData(VRCPlayerApi.TrackingDataType.RightHand).position;
 
@@ -127,6 +127,7 @@ namespace KiraiMod.Modules
                 .Select(u => u.transform).ToArray();
             else cache2 = temp.Select(u => u.transform).ToArray();
         }
+
         private void Refresh3()
         {
             VRC_Trigger[] temp = Object.FindObjectsOfType<VRC_Trigger>();
@@ -153,13 +154,11 @@ namespace KiraiMod.Modules
             {
                 lr.positionCount = cache.Length * 2;
                 for (int i = 0; i < cache.Length; i++)
-                {
                     if (cache[i] != null)
                     {
                         lr.SetPosition(i * 2, src); //src
                         lr.SetPosition(i * 2 + 1, cache[i].transform.position); //dest
                     }
-                }
             }
         }
     }

@@ -15,23 +15,16 @@ namespace KiraiMod.Modules
         public override void OnStateChange(bool state)
         {
             foreach (Player player in PlayerManager.prop_PlayerManager_0.field_Private_List_1_Player_0)
-            {
                 HighlightPlayer(player, state);
-            }
         }
 
         public override void OnConfigLoaded()
         {
             foreach (Player player in PlayerManager.prop_PlayerManager_0.field_Private_List_1_Player_0)
-            {
                 HighlightPlayer(player, state);
-            }
         }
 
-        public override void OnPlayerJoined(Player player)
-        {
-            MelonCoroutines.Start(Delay(player));
-        }
+        public override void OnPlayerJoined(Player player) => MelonCoroutines.Start(Delay(player));
 
         public IEnumerator Delay(Player player)
         {

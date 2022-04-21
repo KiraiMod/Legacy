@@ -24,16 +24,6 @@ namespace KiraiMod.Modules
             foreach (string[] alias in Shared.config.aliases) __0 = __0.Replace(alias[0], alias[1]);
         }
 
-        public override void OnStateChange(bool state)
-        {
-            //if (state) GetSelfAlias();
-        }
-
-        public override void OnLevelWasLoaded()
-        {
-            //if (state) GetSelfAlias();
-        }
-
         public void GetSelfAlias()
         {
             if (Player.prop_Player_0?.field_Private_APIUser_0 == null) return;
@@ -42,7 +32,7 @@ namespace KiraiMod.Modules
             {
                 if (alias[0] == Player.prop_Player_0.field_Private_APIUser_0.displayName)
                     self = alias[1];
-                    return;
+                return;
             }
         }
     }

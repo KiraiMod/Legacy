@@ -14,8 +14,6 @@ namespace KiraiMod.Modules
         private VRC_AnimationController animController;
         private VRCVrIkController ikController;
 
-        public string messageToYou;
-
         public new ModuleInfo[] info =
         {
             new ModuleInfo("Collider Hider", "Move your collider to make yourself unclickable", ButtonType.Toggle, 6, Shared.PageIndex.toggles1, nameof(state))
@@ -50,8 +48,7 @@ namespace KiraiMod.Modules
 
                     changed = true;
                 }
-                else 
-                    changed = false;
+                else changed = false;
 
                 head.localPosition += new Vector3(0, 4 / head.parent.transform.localScale.y, 0);
             }
@@ -74,8 +71,7 @@ namespace KiraiMod.Modules
         {
             if (state)
                 yield return new WaitForSeconds(2);
-            else
-                yield return null;
+            else yield return null;
 
             ikController.field_Private_Boolean_0 = !state;
         }

@@ -38,15 +38,8 @@ namespace KiraiMod.Modules
         }
 #endif
 
-		public override void OnStateChange(bool state)
-		{
-			Refresh();
-		}
-
-		public override void OnConfigLoaded()
-		{
-			Refresh();
-		}
+		public override void OnStateChange(bool state) => Refresh();
+		public override void OnConfigLoaded() => Refresh();
 
 		public override void OnPlayerJoined(Player player)
 		{

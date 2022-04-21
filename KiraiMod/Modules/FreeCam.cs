@@ -106,9 +106,9 @@ namespace KiraiMod.Modules
 
             Transform head = VRCVrCamera.field_Private_Static_VRCVrCamera_0.transform.parent;
 
-            head.position += camera.right * Shared.modules.flight.speed * Time.deltaTime * x;
-            head.position += camera.forward * Shared.modules.flight.speed * Time.deltaTime * z;
-            head.position += camera.up * Shared.modules.flight.speed * Time.deltaTime * y;
+            head.position += camera.right * Shared.modules.flight.speed * Time.deltaTime * x * (Input.GetKey(KeyCode.LeftShift) ? 8 : 1);
+            head.position += camera.forward * Shared.modules.flight.speed * Time.deltaTime * z * (Input.GetKey(KeyCode.LeftShift) ? 8 : 1);
+            head.position += camera.up * Shared.modules.flight.speed * Time.deltaTime * y * (Input.GetKey(KeyCode.LeftShift) ? 8 : 1);
             head.rotation *= Quaternion.Euler(0, 
                 Networking.LocalPlayer.IsUserInVR() ?
                 (Input.GetAxis("Oculus_CrossPlatform_SecondaryThumbstickHorizontal") * 2) :

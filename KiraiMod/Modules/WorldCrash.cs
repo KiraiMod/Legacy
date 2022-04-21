@@ -86,9 +86,6 @@ namespace KiraiMod.Modules
             processed.Clear();
         }
 
-        public void Show()
-        {
-            Shared.modules.playerlist.RefreshEx(false);
-        }
+        public void Show() => Shared.modules.playerlist.RefreshEx(false);
     }
 }

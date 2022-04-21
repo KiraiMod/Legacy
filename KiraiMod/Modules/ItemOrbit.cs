@@ -64,7 +64,7 @@ namespace KiraiMod.Modules
 
         public void Recache()
         {
-            cached = UnityEngine.Object.FindObjectsOfType<VRC_Pickup>();
+            cached = Object.FindObjectsOfType<VRC_Pickup>();
         }
     }
 }

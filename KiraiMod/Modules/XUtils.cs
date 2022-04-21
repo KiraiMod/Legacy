@@ -87,18 +87,12 @@ namespace KiraiMod.Modules
             }
         }
 
-        public static void Disable()
-        {
-            Shared.modules.xutils.hit.collider.enabled = false;
-        }
-
+        public static void Disable() =>  Shared.modules.xutils.hit.collider.enabled = false;
         public static void Enable()
         {
             Collider[] colliders = Shared.modules.xutils.hit.collider.gameObject.GetComponentsInChildren<Collider>();
             for (int i = 0; i < colliders.Length; i++)
-            {
                 colliders[i].enabled = true;
-            }
         }
 
         public static void Destroy()
@@ -115,14 +109,7 @@ namespace KiraiMod.Modules
             KiraiLib.LogGameObject(Shared.modules.xutils.hit.collider.gameObject);
         }
 
-        public static void Portal()
-        {
-            Helper.PortalPosition(Shared.modules.xutils.hit.point, Quaternion.identity, Shared.modules.portal.infinite);
-        }
-
-        public static void Teleport()
-        {
-            Helper.Teleport(Shared.modules.xutils.hit.point);
-        }
+        public static void Portal() => Helper.PortalPosition(Shared.modules.xutils.hit.point, Quaternion.identity, Shared.modules.portal.infinite);
+        public static void Teleport() => Helper.Teleport(Shared.modules.xutils.hit.point);
     }
 }

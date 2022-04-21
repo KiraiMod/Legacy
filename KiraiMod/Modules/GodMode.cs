@@ -13,18 +13,12 @@ namespace KiraiMod.Modules
 
         public override void OnStateChange(bool state)
         {
-            if (cached == null)
-            {
+            if (cached is null)
                 foreach (VRC_Trigger trigger in UnityEngine.Object.FindObjectsOfType<VRC_Trigger>())
-                {
                     if (trigger.name == "Death")
-                    {
                         cached = trigger;
-                    }
-                }
-            }
 
-            if (cached == null) 
+            if (cached is null) 
             { 
                 MelonLogger.Warning("Failed to find Murder Logic 3 Death trigger.");
                 return;

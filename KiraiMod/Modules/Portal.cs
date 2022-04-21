@@ -60,17 +60,10 @@ namespace KiraiMod.Modules
                 }
 
                 yield return new WaitForSeconds(5.0f);
-                }
+            }
         }
 
-        public void PortalTarget()
-        {
-            Helper.PortalPlayer(Shared.TargetPlayer ?? VRCPlayer.field_Internal_Static_VRCPlayer_0.field_Private_Player_0, Shared.modules.portal.distance, Shared.modules.portal.infinite);
-        }
-
-        public void DeletePortals()
-        {
-            Helper.DeletePortals();
-        }
+        public void PortalTarget() => Helper.PortalPlayer(Shared.TargetPlayer ?? VRCPlayer.field_Internal_Static_VRCPlayer_0.field_Private_Player_0, Shared.modules.portal.distance, Shared.modules.portal.infinite);
+        public void DeletePortals() => Helper.DeletePortals();
     }
 }

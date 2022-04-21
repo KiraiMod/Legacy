@@ -18,11 +18,11 @@
 
         public override void OnStateChange(bool state)
         {
-            if (VRCPlayer.field_Internal_Static_VRCPlayer_0 == null) return;
+            if (VRCPlayer.field_Internal_Static_VRCPlayer_0 is null) return;
 
             LocomotionInputController movement = VRCPlayer.field_Internal_Static_VRCPlayer_0.GetComponentInChildren<LocomotionInputController>();
 
-            if (movement == null) return;
+            if (movement is null) return;
 
             if (state)
             {
@@ -42,7 +42,7 @@
 
             LocomotionInputController movement = VRCPlayer.field_Internal_Static_VRCPlayer_0.GetComponentInChildren<LocomotionInputController>();
 
-            if (movement == null) return;
+            if (movement is null) return;
 
             Enable(movement);
         }
@@ -65,7 +65,7 @@
         {
             LocomotionInputController movement = VRCPlayer.field_Internal_Static_VRCPlayer_0?.GetComponentInChildren<LocomotionInputController>();
 
-            if (movement == null) return;
+            if (movement is null) return;
 
             if (movement.field_Public_Single_2 != SpeedWalk) oSpeedWalk = movement.field_Public_Single_2;
             if (movement.field_Public_Single_1 != SpeedWalk) oSpeedStrafe = movement.field_Public_Single_1;
@@ -78,7 +78,7 @@
         {
             LocomotionInputController movement = VRCPlayer.field_Internal_Static_VRCPlayer_0?.GetComponentInChildren<LocomotionInputController>();
 
-            if (movement == null) return;
+            if (movement is null) return;
 
             if (movement.field_Public_Single_0 != SpeedRun) oSpeedRun = movement.field_Public_Single_0;
 

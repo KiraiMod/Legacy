@@ -138,27 +138,21 @@ namespace KiraiMod.Modules
         public void OnStateChangeBindsNumpad(bool state)
         {
             if (state)
-            {
                 DisableOthers(0);
-            }
             else ReenableDefault();
         }
 
         public void OnStateChangeBindsTab(bool state)
         {
             if (state)
-            {
                 DisableOthers(1);
-            }
             else ReenableDefault();
         }
 
         public void OnStateChangeBindsAlt(bool state)
         {
             if (state)
-            {
                 DisableOthers(2);
-            }
             else ReenableDefault();
         }
 
