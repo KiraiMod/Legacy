@@ -102,6 +102,9 @@ namespace KiraiMod.Modules
         {
             for (int i = 0; i < modules.Count; i++)
             {
+#if DEBUG
+                MelonLogger.Log($"Dispatching OnAvatarInitialized to {modules[i].GetType().Name}");
+#endif
                 modules[i].OnAvatarInitialized(avatar, instance);
             }
         }

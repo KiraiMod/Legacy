@@ -36,8 +36,6 @@ namespace KiraiMod.Modules
 
             VRCPlayer.field_Internal_Static_VRCPlayer_0.transform.position += new Vector3(0, state ? -4 : 4, 0);
 
-            MelonLoader.MelonLogger.Log($"{head.parent.localScale.x} {head.parent.localScale.y} {head.parent.localScale.z}");
-
             if (state)
             {
                 if (!Shared.modules.noclip.state)

@@ -80,8 +80,8 @@ namespace KiraiMod
             try
             {
                 Shared.harmony.Patch(typeof(VRCAvatarManager)
-                    .GetMethod(nameof(VRCAvatarManager.Method_Private_Boolean_GameObject_String_Single_PDM_0), BindingFlags.Instance | BindingFlags.Public), 
-                    null, new HarmonyMethod(typeof(Hooks).GetMethod(nameof(OnAvatarInitialized), BindingFlags.NonPublic | BindingFlags.Static)));
+                    .GetMethod(nameof(VRCAvatarManager.Method_Private_Boolean_GameObject_PDM_0), BindingFlags.Instance | BindingFlags.Public), 
+                    new HarmonyMethod(typeof(Hooks).GetMethod(nameof(OnAvatarInitialized), BindingFlags.NonPublic | BindingFlags.Static)));
 
                 MelonLogger.Log("Hooking OnAvatarInitialized... Passed");
             } catch { MelonLogger.Log("Hooking OnAvatarInitialized... Failed"); }
@@ -118,7 +118,7 @@ namespace KiraiMod
 
         private static void OnAvatarInitialized(GameObject __0, ref VRCAvatarManager __instance)
         {
-            if (__instance?.field_Private_VRCPlayer_0?.field_Private_Player_0?.field_Private_APIUser_0 == null) return;
+            if (__instance?.field_Private_VRCPlayer_0?.field_Private_Player_0?.field_Private_APIUser_0 == null || __0 == null) return;
 
             Shared.modules.OnAvatarInitialized(__0, __instance);
         }
