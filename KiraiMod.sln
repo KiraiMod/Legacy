@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KiraiRPC", "KiraiRPC\KiraiR
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KiraiComms", "KiraiComms\KiraiComms.csproj", "{DB387DB2-ECE9-43D7-ADD0-53EF2F9867F4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KiraiLog", "KiraiLog\KiraiLog.csproj", "{17F90117-F78E-449A-87F5-6A73E6777E6D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Beta|Any CPU = Beta|Any CPU
@@ -42,6 +44,12 @@ Global
 		{DB387DB2-ECE9-43D7-ADD0-53EF2F9867F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DB387DB2-ECE9-43D7-ADD0-53EF2F9867F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DB387DB2-ECE9-43D7-ADD0-53EF2F9867F4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17F90117-F78E-449A-87F5-6A73E6777E6D}.Beta|Any CPU.ActiveCfg = Beta|Any CPU
+		{17F90117-F78E-449A-87F5-6A73E6777E6D}.Beta|Any CPU.Build.0 = Beta|Any CPU
+		{17F90117-F78E-449A-87F5-6A73E6777E6D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17F90117-F78E-449A-87F5-6A73E6777E6D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17F90117-F78E-449A-87F5-6A73E6777E6D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17F90117-F78E-449A-87F5-6A73E6777E6D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
