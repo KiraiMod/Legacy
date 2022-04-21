@@ -59,6 +59,7 @@ namespace KiraiMod.Modules
         public override void OnLevelWasLoaded()
         {
             MelonLoader.MelonCoroutines.Start(WaitForPlayerToLoad());
+            descriptor = null;
         }
 
         public System.Collections.IEnumerator WaitForPlayerToLoad()
