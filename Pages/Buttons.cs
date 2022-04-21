@@ -62,6 +62,16 @@ namespace KiraiMod.Pages
                 }
             }));
 
+            Shared.menu.CreateButton("p2/bring-pickups", "Bring\nPickups", "Brings all pickups in the scene", 1f, 0f, Shared.menu.pages[2].transform, new System.Action(() =>
+            {
+                foreach (VRC_Pickup pickup in UnityEngine.Object.FindObjectsOfType<VRC_Pickup>())
+                {
+                    Networking.LocalPlayer.TakeOwnership(pickup.gameObject);
+                    pickup.transform.localPosition = new Vector3(0, 0, 0);
+                    pickup.transform.position = VRCPlayer.field_Internal_Static_VRCPlayer_0.transform.position + new Vector3(0, 0.1f, 0);
+                }
+            }));
+
             Shared.menu.CreateButton("p2/save", "Save", "Save configuration to disk", -1f, -1f, Shared.menu.pages[2].transform, new System.Action(() =>
             {
                 Shared.config.Save();

@@ -3,7 +3,7 @@
     public class Aliases : ModuleBase
     {
         public new ModuleInfo[] info = {
-            new ModuleInfo("Name Aliases", "Spoofs name from KiraiMod.alias.json", ButtonType.Toggle, 4, 0, nameof(state))
+            new ModuleInfo("Name Aliases", "Spoofs name from KiraiMod.alias.json", ButtonType.Toggle, 5, 1, nameof(state))
         };
 
         public static void ProcessString(ref string __result)
