@@ -8,6 +8,7 @@ namespace KiraiMod.Modules
     {
         public bool bUseClipboard;
         public bool bAntiMenu;
+        public bool bAnnoyance;
 
         public new ModuleInfo[] info =
         {
@@ -20,6 +21,7 @@ namespace KiraiMod.Modules
             new ModuleInfo("Join World\nvia ID", "Join a world using a full instance id", ButtonType.Button, 6, Menu.PageIndex.buttons2, nameof(JoinWorldByID)),
             new ModuleInfo("Clipboard", "Use the clipboard instead of a popup input", ButtonType.Toggle, 10, Menu.PageIndex.toggles2, nameof(bUseClipboard)),
             new ModuleInfo("Anti Menu", "Make other people unable to click their menus", ButtonType.Toggle, 2, Menu.PageIndex.toggles3, nameof(bAntiMenu)),
+            new ModuleInfo("Annoyance Mode", "Orbit things around the targets head instead of their feet", ButtonType.Toggle, 9, Menu.PageIndex.toggles2, nameof(bAnnoyance)),
         };
 
         public override void OnStateChange(bool state)

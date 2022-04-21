@@ -20,7 +20,6 @@ namespace KiraiMod.Modules
         public ModLog modlog;
         public Headlight headlight;
         public Aliases aliases;
-        public Mute mute;
         public ItemOrbit itemOrbit;
         public GodMode godMode;
         public Tracers tracers;
@@ -46,7 +45,6 @@ namespace KiraiMod.Modules
             modules.Add(modlog = new ModLog());
             modules.Add(headlight = new Headlight());
             modules.Add(aliases = new Aliases());
-            modules.Add(mute = new Mute());
             modules.Add(itemOrbit = new ItemOrbit());
             modules.Add(godMode = new GodMode());
             modules.Add(tracers = new Tracers());

@@ -61,9 +61,10 @@ namespace KiraiMod
             public bool bUseClipboard;
             public bool bPersistantQM;
 
-            public bool bMuteSelfFriends;
-            public bool bMuteSelfTargeted;
-            public bool bMuteSelfFavorited;
+            //public bool bMuteSelfFriends;
+            //public bool bMuteSelfTargeted;
+            //public bool bMuteSelfFavorited;
+            public bool bAnnoyance;
 
             public bool bTracerPlayers;
             public bool bTracerPickups;
@@ -102,9 +103,10 @@ namespace KiraiMod
                 Move(load, ref Shared.modules.aliases.state,      ref bAliases          );
                 Move(load, ref Shared.modules.flight.directional, ref bDirectionalFlight);
                 Move(load, ref Shared.modules.esp.state,          ref bESP              );
-                Move(load, ref Shared.modules.mute.Friends,       ref bMuteSelfFriends  );
-                Move(load, ref Shared.modules.mute.Targeted,      ref bMuteSelfTargeted );
-                Move(load, ref Shared.modules.mute.Favorited,     ref bMuteSelfFavorited);
+                //Move(load, ref Shared.modules.mute.Friends,       ref bMuteSelfFriends  );
+                //Move(load, ref Shared.modules.mute.Targeted,      ref bMuteSelfTargeted );
+                //Move(load, ref Shared.modules.mute.Favorited,     ref bMuteSelfFavorited);
+                Move(load, ref Shared.modules.misc.bAnnoyance,    ref bAnnoyance        );
                 Move(load, ref Shared.modules.tracers.Players,    ref bTracerPlayers    );
                 Move(load, ref Shared.modules.tracers.Pickups,    ref bTracerPickups    );
                 Move(load, ref Shared.modules.tracers.Triggers,   ref bTracerTriggers   );

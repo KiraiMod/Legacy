@@ -31,7 +31,11 @@ namespace KiraiMod.Modules
             if (Shared.TargetPlayer == null) return;
 
             GameObject puppet = new GameObject();
-            puppet.transform.position = Shared.TargetPlayer.transform.position;
+
+            if (Shared.modules.misc.bAnnoyance)
+                puppet.transform.position = Shared.TargetPlayer.field_Private_VRCPlayerApi_0.GetBonePosition(HumanBodyBones.Head);
+            else
+                puppet.transform.position = Shared.TargetPlayer.transform.position;
             puppet.transform.Rotate(new Vector3(0, 1, 0), Time.time * speed * 90);
             VRCPlayer.field_Internal_Static_VRCPlayer_0.transform.position = puppet.transform.position + (puppet.transform.forward * distance);
             Object.Destroy(puppet);
