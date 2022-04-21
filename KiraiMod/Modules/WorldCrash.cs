@@ -41,14 +41,16 @@ namespace KiraiMod.Modules
                     QuickMenu.prop_QuickMenu_0.Method_Public_Void_Player_0(player);
                     QuickMenu.prop_QuickMenu_0.transform.Find("UserInteractMenu/BlockButton").GetComponent<UnityEngine.UI.Button>().Press();
 
-                    yield return null;
+                    yield return new WaitForSecondsRealtime(0.1f);
                 }
                 else count++;
             }
 
             KiraiLib.Logger.Log($"Hitting {count} users.");
 
-            yield return new WaitForSeconds(4.0f);
+            yield return new WaitForSecondsRealtime(4.0f);
+
+            KiraiLib.Logger.Log("Switched into crasher");
 
             (KiraiLib.UI.elements[Utils.CreateID("World\nCrash", (int)Shared.PageIndex.toggles3)] as KiraiLib.UI.Toggle).SetState(true);
         }
@@ -66,7 +68,7 @@ namespace KiraiMod.Modules
         {
             (KiraiLib.UI.elements[Utils.CreateID("World\nCrash", (int)Shared.PageIndex.toggles3)] as KiraiLib.UI.Toggle).SetState(false);
 
-            yield return new WaitForSeconds(4.0f);
+            yield return new WaitForSecondsRealtime(5.0f);
 
             foreach (string name in processed)
             {
@@ -78,7 +80,7 @@ namespace KiraiMod.Modules
                     QuickMenu.prop_QuickMenu_0.Method_Public_Void_Player_0(player);
                     QuickMenu.prop_QuickMenu_0.transform.Find("UserInteractMenu/BlockButton").GetComponent<UnityEngine.UI.Button>().Press();
 
-                    yield return null;
+                    yield return new WaitForSecondsRealtime(0.1f);
                 }
             }
             processed.Clear();
