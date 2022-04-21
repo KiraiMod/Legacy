@@ -215,7 +215,6 @@ namespace KiraiMod
                 Log("Recompressed Modified");
                 File.Move($"./Temp/{id}.LZ4HC", $"./Temp/{id}.vrca");
                 Log("Renamed Modified");
-                await Task.Delay(500);
 
                 var Last = new Action(() =>
                 {
@@ -267,14 +266,20 @@ namespace KiraiMod
                         (ApiFile a, string s1) => {
                             Log($"Failed to KiraiClone {name}");
 
-                            MelonLogger.Log(name);
+                            MelonLogger.Log(s1);
 
-                            Last();
+                            //Last();
                         },
-                        (ApiFile a, string s1, string s2, float p) => { });
+                        (ApiFile a, string s1, string s2, float p) => { Log($"{s1} ({p * 100:0.00}%)", 0.2f); });
                 },
-                (ApiFile a, string s) => { },
-                (ApiFile a, string s, string s2, float f) => { });
+                (ApiFile a, string s) => {
+                    Log($"Failed to KiraiClone {name}");
+
+                    MelonLogger.Log(s);
+
+                    //Last();
+                },
+                (ApiFile a, string s, string s2, float f) => { Log($"{s} ({f * 100:0.00}%)", 0.2f); });
             }
             catch (Exception ex)
             {
@@ -418,9 +423,9 @@ namespace KiraiMod
             return dst;
         }
 
-        private void Log(string str)
+        private void Log(string str, float amt = 5)
         {
-            KiraiLib.Logger.Log(str);
+            KiraiLib.Logger.Log(str, amt);
             MelonLogger.Log(str);
         }
     }

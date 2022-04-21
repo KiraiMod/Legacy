@@ -2,6 +2,7 @@
 using MelonLoader.TinyJSON;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Forms;
 
 namespace KiraiMod
 {
@@ -32,7 +33,7 @@ namespace KiraiMod
             if (!System.IO.File.Exists(config))
             {
                 MelonLogger.Log("Config did not exist, creating new one with current values");
-                //MessageBox.Show("Join discord.gg/jsuHmcK", "KiraiMod first time config setup");
+                MessageBox.Show("KiraiMod is not a public mod and redistribution is prohibited.\nIf you did not recieve the mod from the server then you are running an illegitimate copy.", "Copyright Notice");
                 System.IO.File.WriteAllText(config, JSON.Dump(options));
             }
 

@@ -141,8 +141,8 @@ namespace KiraiMod
                 }
             }
             // validate input file
-            
-            Instance.EnableDeltaCompression = config.GetBool("sdkEnableDeltaCompression");
+
+            Instance.EnableDeltaCompression = true;
             Progress(OnProgress, null, "Checking file...");
 
             if (string.IsNullOrEmpty(path))
