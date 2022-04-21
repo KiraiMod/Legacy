@@ -230,8 +230,8 @@ namespace KiraiMod.Modules
             yield return new WaitForSecondsRealtime(1);
 
             // one of these will work trust me
-            ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Void_0();
             ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Void_1();
+            ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Void_2();
             ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Void_3();
             ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Void_APIUser_0(APIUser.CurrentUser);
             ObjectPublicObLi1ApSiLi1ApBoSiUnique.prop_ObjectPublicObLi1ApSiLi1ApBoSiUnique_0.Method_Public_Void_APIUser_1(APIUser.CurrentUser);

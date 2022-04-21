@@ -6,7 +6,6 @@
         {
             KiraiLib.UI.Button.Create("um/open-p0", "Open\nKiraiMod", "Opens KiraiMod menus", -2f, 1f, KiraiLib.UI.ShortcutMenu.transform, new System.Action(() =>
             {
-                MelonLoader.MelonLogger.Log($"Menu button was clicked! ({KiraiLib.OnUpdateToken is null})");
                 KiraiLib.UI.selected = Shared.PageRemap[(int)Shared.PageIndex.toggles1];
             }));
 

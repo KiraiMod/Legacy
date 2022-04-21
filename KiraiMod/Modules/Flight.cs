@@ -36,7 +36,7 @@ namespace KiraiMod.Modules
             else
             {
                 Physics.gravity = oGravity;
-                motion.Method_Public_Void_1();
+                motion.Method_Public_Void_0();
             }
         }
 

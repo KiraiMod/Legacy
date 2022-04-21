@@ -19,13 +19,26 @@ namespace KiraiMod
     {
         static KiraiMod()
         {
-            Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("KiraiMod.Lib.KiraiLibLoader.dll");
+            Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(
+#if DEBUG
+                "KiraiMod.Lib.KiraiLib.dll"
+#else
+                "KiraiMod.Lib.KiraiLibLoader.dll"
+#endif
+                );
+
             MemoryStream mem = new MemoryStream((int)stream.Length);
             stream.CopyTo(mem);
 
             Assembly.Load(mem.ToArray());
 
-            new Action(() => KiraiLibLoader.Load())();
+            new Action(() =>
+#if DEBUG
+                KiraiLib.NoOp()
+#else
+                KiraiLibLoader.Load()
+#endif
+            )();
         }
 
         public bool bUnload = false;
@@ -45,6 +58,11 @@ namespace KiraiMod
                     {
                         MessageBox.Show("Your MelonLoader is outdated.", "Outdated Loader");
                         Process.Start("https://github.com/HerpDerpinstine/MelonLoader/releases/latest");
+                    } else if (version > buildVer)
+                    {
+                        MelonLogger.LogError("Your MelonLoader is too new.");
+                        MelonLogger.LogError("This mod is written for MelonLoader version " + BuildInfo.Version);
+                        MelonLogger.LogWarning("The mod may work correctly however support will not be provided.");
                     }
                 }
             }
@@ -173,7 +191,7 @@ namespace KiraiMod
                 if (Input.GetKeyDown(KeyCode.KeypadMinus))
 #if DEBUG
                 {
-
+                    MelonLogger.Log(KiraiLib.UI.selected);
                 }
 #else
                     MelonLogger.Log("Alive");
