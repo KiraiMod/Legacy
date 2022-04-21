@@ -7,6 +7,7 @@ using System.Reflection;
 using UnityEngine;
 using UnityEngine.UI;
 using VRC;
+using VRC.Udon;
 using static VRC.SDKBase.VRC_EventHandler;
 
 namespace KiraiMod

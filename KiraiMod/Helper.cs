@@ -73,7 +73,7 @@ namespace KiraiMod
         {
             for (int i = 0; i < 116; i++)
             {
-                if (portal == null) yield break;
+                if (portal == null || Networking.GetOwner(portal.gameObject) != Networking.LocalPlayer) yield break;
                 SetTimer(portal, i / 4 + 2);
                 yield return new WaitForSecondsRealtime(0.25f);
             }
