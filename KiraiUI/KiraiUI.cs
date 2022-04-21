@@ -20,12 +20,14 @@ namespace KiraiMod
             public static Color primary = new Color(0.34f, 0f, 0.65f);
             public static Color primary2 = new Color(0.34f, 0f, 0.65f, 0.8f);
             public static Color highlight = new Color(0.8f, 0.8f, 1f);
+            public static Color background = new Color(0, 0, 0);
             public static bool extended = false;
         }
 
         Transform ui;
         Transform screen;
         Transform hud;
+        Transform am;
         Text earlyAccess;
 
         public override void OnApplicationStart()
@@ -50,6 +52,9 @@ namespace KiraiMod
 
             earlyAccess = ui.Find("QuickMenu/ShortcutMenu/EarlyAccessText")?.GetComponent<Text>();
             if (earlyAccess == null) MelonLogger.Log("Didn't find EarlyAccessText");
+
+            am = ui.Find("ActionMenu");
+            if (am is null) MelonLogger.Log("Didn't find ActionMenu");
 
             if (!MelonHandler.Mods.Any(mod => mod.Assembly.GetName().Name.Contains("KiraiMod")))
             {
@@ -118,6 +123,22 @@ namespace KiraiMod
             // afk
             Image afkIcon = hud.Find("AFK/Icon").GetComponent<Image>();
             if (afkIcon != null) Utils.Move(op, ref afkIcon, ref Memory.afkIcon, Config.primary);
+
+            // action menu main background left
+            PedalGraphic amMBgL = am.Find("MenuL/ActionMenu/Main/Background")?.GetComponent<PedalGraphic>();
+            if (amMBgL != null) Utils.Move(op, ref amMBgL, ref Memory.amMBgL, Config.background);
+
+            // action menu main background right
+            PedalGraphic amMBgR = am.Find("MenuR/ActionMenu/Main/Background")?.GetComponent<PedalGraphic>();
+            if (amMBgR != null) Utils.Move(op, ref amMBgR, ref Memory.amMBgR, Config.background);
+
+            // action menu main background left
+            PedalGraphic amRPMBgL = am.Find("MenuL/ActionMenu/RadialPuppetMenu/Container/Background")?.GetComponent<PedalGraphic>();
+            if (amRPMBgL != null) Utils.Move(op, ref amRPMBgL, ref Memory.amRPMBgL, Config.background);
+
+            // action menu main background right
+            PedalGraphic amRPMBgR = am.Find("MenuR/ActionMenu/RadialPuppetMenu/Container/Background")?.GetComponent<PedalGraphic>();
+            if (amRPMBgR != null) Utils.Move(op, ref amRPMBgR, ref Memory.amRPMBgR, Config.background);
         }
 
         private void SetQuickMenu(int op)
