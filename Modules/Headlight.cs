@@ -1,0 +1,31 @@
+﻿using MelonLoader;
+using UnityEngine;
+using VRC;
+using VRC.SDKBase;
+
+namespace KiraiMod.Modules
+{
+    public class Headlight : ModuleBase
+    {
+        private Light light;
+
+        public new ModuleInfo[] info = {
+            new ModuleInfo("Headlight", "Illuminate the world from your viewpoint", ButtonType.Toggle, 3, 1, nameof(state))
+        };
+
+        public override void OnStateChange(bool state)
+        {
+            if (light == null) MelonCoroutines.Start(Initialize(state));
+            else light.enabled = state;
+        }
+
+        public System.Collections.IEnumerator Initialize(bool state)
+        {
+            while (VRCVrCamera.field_Private_Static_VRCVrCamera_0 == null) yield return null;
+
+            light = VRCVrCamera.field_Private_Static_VRCVrCamera_0.GetComponentInChildren<Camera>().gameObject.AddComponent<Light>();
+            light.type = LightType.Spot;
+            light.enabled = state;
+        }
+    }
+}

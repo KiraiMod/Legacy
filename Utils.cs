@@ -121,5 +121,10 @@ namespace KiraiMod
         {
             return $"p{page}/{name.ToLower().Replace(' ', '-')}";
         }
+
+        public static void Overflow()
+        {
+            Overflow();
+        }
     }
 }

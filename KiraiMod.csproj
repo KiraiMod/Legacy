@@ -143,6 +143,7 @@
     <Compile Include="Modules\BaseModule.cs" />
     <Compile Include="Modules\ESP.cs" />
     <Compile Include="Modules\Flight.cs" />
+    <Compile Include="Modules\Headlight.cs" />
     <Compile Include="Modules\KOS.cs" />
     <Compile Include="Modules\ModLog.cs" />
     <Compile Include="Modules\Modules.cs" />

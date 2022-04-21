@@ -33,6 +33,7 @@ namespace KiraiMod
             public bool bModLog;
             public bool bNameplates;
             public bool bNameplatesRGB;
+            public bool bHeadlight;
 
             public float fRun;
             public float fWalk;
@@ -61,6 +62,7 @@ namespace KiraiMod
                 MoveEx(load, ref Shared.modules.modlog.state,     ref bModLog,         "p1/mod-log"         );
                 MoveEx(load, ref Shared.modules.nameplates.state, ref bNameplates,     "p1/nameplates"      );
                 MoveEx(load, ref Shared.modules.nameplates.rgb,   ref bNameplatesRGB,  "p1/nameplate-rgb"   );
+                MoveEx(load, ref Shared.modules.headlight.state,  ref bHeadlight,      "p1/headlight"       );
 
                 MoveEx(load, ref Shared.modules.speed.speedRun,   ref fRun,            "p3/walk-speed"      );
                 MoveEx(load, ref Shared.modules.speed.speedWalk,  ref fWalk,           "p3/run-speed"       );
