@@ -42,6 +42,25 @@ namespace KiraiMod
             Shared.hooks = new Hooks();
 
             Shared.modules.StartCoroutines();;
+
+            if (MelonHandler.Mods.Any(mod => mod.Assembly.GetName().Name.Contains("KiraiRPC")))
+            {
+                MelonLogger.Log("Found KiraiRPC, using it.");
+
+                new System.Action(() =>
+                {
+                    KiraiRPC.Config.modName = "KiraiMod";
+                    KiraiRPC.callback = new System.Action<string, string[]>((type, data) =>
+                    {
+                        switch (type)
+                        {
+                            case "ModInUse":
+                                Shared.modules.nameplates.users.Add(data[0], data[1]);
+                                break;
+                        }
+                    });
+                }).Invoke();
+            }
         }
 
         public override void OnApplicationQuit()

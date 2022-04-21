@@ -1,4 +1,4 @@
-﻿using Il2CppSystem.Collections.Generic;
+﻿using System.Collections.Generic;
 using MelonLoader;
 using System.Collections;
 using UnityEngine;
@@ -15,6 +15,8 @@ namespace KiraiMod.Modules
             new ModuleInfo("Nameplates", "Custom nameplates. Highlight for friends and red for KOS", ButtonType.Toggle, 1, 1, nameof(state)),
             new ModuleInfo("RGB Nameplates", "Rainbow nameplates for friends", ButtonType.Toggle, 2, 1, nameof(state)),
         };
+
+        public Dictionary<string, string> users = new Dictionary<string, string>();
 
 		public override void OnStateChange(bool state)
 		{
@@ -33,7 +35,14 @@ namespace KiraiMod.Modules
 
         public override void OnPlayerLeft(Player player)
         {
-			if (state && player.field_Private_VRCPlayerApi_0.isMaster) Refresh();
+			if (state) Refresh();
+
+            users.Remove(player.field_Private_APIUser_0.displayName);
+        }
+
+        public override void OnLevelWasLoaded()
+        {
+            users.Clear();
         }
 
         public override void OnAvatarInitialized(GameObject avatar, VRCAvatarManager manager)

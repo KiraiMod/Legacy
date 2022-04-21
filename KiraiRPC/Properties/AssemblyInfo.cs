@@ -1,19 +1,19 @@
-﻿using MelonLoader;
-using System.Reflection;
+﻿using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using MelonLoader;
 
-[assembly: MelonInfo(typeof(KiraiMod.KiraiMod), "KiraiMod", "0.0.0", "Kirai Chan#8315")]
+[assembly: MelonInfo(typeof(KiraiMod.KiraiRPC), "KiraiRPC", "0.0.0", "Kirai Chan#8315", "discord.gg/jsuHmcK")]
 [assembly: MelonGame("VRChat", "VRChat")]
-[assembly: MelonOptionalDependencies("AviFav+", "KiraiUI", "KiraiRPC")]
 
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("KiraiMod")]
+[assembly: AssemblyTitle("KiraiRPC")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("KiraiMod")]
+[assembly: AssemblyProduct("KiraiRPC")]
 [assembly: AssemblyCopyright("Copyright ©  2020")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -24,7 +24,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("74829a58-0156-4c39-b19d-80b4990e1234")]
+[assembly: Guid("200402bc-69c4-4a18-813e-b9e2a75372bc")]
 
 // Version information for an assembly consists of the following four values:
 //
