@@ -4,6 +4,7 @@ using System.Collections;
 using UnityEngine;
 using VRC;
 using VRC.Core;
+using UnityEngine.UI;
 
 namespace KiraiMod.Modules
 {
@@ -50,59 +51,91 @@ namespace KiraiMod.Modules
 			if (state) Enable(manager.field_Private_VRCPlayer_0.field_Private_Player_0);
 		}
 
-		public override void OnUpdate()
-		{
-			if (state && RGB)
-			{
-				if (PlayerManager.field_Private_Static_PlayerManager_0?.field_Private_List_1_Player_0 == null) return;
-
-				foreach (Player player in PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0)
-				{
-					if (player?.field_Private_APIUser_0?.IsLocal() ?? true || player?.field_Private_VRCPlayerApi_0 == null) continue;
-
-					if (player.IsFriend() && !player.IsKOS())
-						player.field_Private_VRCPlayerApi_0.SetNamePlateColor(Utils.GetRainbow());
-				}
-			}
-		}
-
 		private IEnumerator DelayedRefresh()
-        {
+		{
 			yield return new WaitForSeconds(1);
 
 			Refresh();
-        }
+		}
 
 		public void Enable(Player player)
 		{
-			if (player?.field_Private_VRCPlayerApi_0 == null) return;
+			if (player?.field_Private_APIUser_0 is null) return;
 
-			player.field_Private_VRCPlayerApi_0.SetNamePlateColor(player.GetNameplateColor());
+			Transform contents = player.transform.Find("Player Nameplate/Canvas/Nameplate/Contents");
+			Transform main = contents.Find("Main");
+			Transform icon = contents.Find("Icon");
+			Transform stats = contents.Find("Quick Stats");
 
-			Transform nameplate = player.transform.Find("Canvas - Profile (1)/Text/Text - NameTag");
+			main.Find("Background").GetComponent<ImageThreeSlice>().color = player.field_Private_APIUser_0.GetTrustColor();
+			main.Find("Pulse").GetComponent<ImageThreeSlice>().color = new Color(1, 0, 1);
+			main.Find("Glow").GetComponent<ImageThreeSlice>().color = new Color(1, 0, 1);
 
-			UnityEngine.UI.Text text = nameplate.GetComponent<UnityEngine.UI.Text>();
-			text.supportRichText = true;
-			text.text = $"<color={player.GetTextColor().ToHex()}>{player.field_Private_APIUser_0.displayName}</color>";
+			icon.Find("Background").GetComponent<Image>().color = player.field_Private_APIUser_0.GetTrustColor();
+			icon.Find("Pulse").GetComponent<Image>().color = new Color(1, 0, 1);
+			icon.Find("Glow").GetComponent<Image>().color = new Color(1, 0, 1);
 
-			Transform rank = nameplate.Find("KiraiModRank");
-			if (rank == null) MelonCoroutines.Start(CreateText(nameplate, player));
-            else
+			stats.GetComponent<ImageThreeSlice>().color = Utils.Colors.primary;
+
+			int stack = 1;
+
+			Transform rank = contents.Find("KiraiModTag0");
+			if (rank is null)
             {
-                rank.gameObject.SetActive(true);
-				UpdateText(rank, player);
-            }
-        }
+				rank = MakeTag(stats, 0);
+				var text = rank.GetComponent<TMPro.TextMeshProUGUI>();
+				text.text = player.field_Private_APIUser_0.GetTrustLevel();
+				text.color = player.field_Private_APIUser_0.GetTrustColor();
+			}
+			else rank.gameObject.SetActive(true);
+
+			if (player.IsMaster())
+			{
+				Transform master = contents.Find("KiraiModTag1");
+				if (master == null)
+                {
+					master = MakeTag(stats, stack);
+					var text = master.GetComponent<TMPro.TextMeshProUGUI>();
+					text.text = "Master";
+					text.color = Utils.Colors.highlight;
+				}
+
+				else master.gameObject.SetActive(true);
+
+				stack++;
+			}
+
+			stats.localPosition = new Vector3(0, (stack + 1) * 30, 0);
+		}
 
 		public void Disable(Player player)
 		{
-			if (player == null || player.field_Private_VRCPlayerApi_0 == null) return;
+			Transform contents = player.transform.Find("Player Nameplate/Canvas/Nameplate/Contents");
+			Transform main = contents.Find("Main");
+			Transform icon = contents.Find("Icon");
+			Transform stats = contents.Find("Quick Stats");
 
-			player.field_Private_VRCPlayerApi_0.RestoreNamePlateColor();
-			Transform nameplate = player.transform.Find("Canvas - Profile (1)/Text/Text - NameTag");
-			nameplate.GetComponent<UnityEngine.UI.Text>().text = player.field_Private_APIUser_0.displayName;
-			Transform rank = nameplate.Find("KiraiModRank");
-			if (rank != null) rank.gameObject.SetActive(false);
+			main.Find("Background").GetComponent<ImageThreeSlice>().color = Color.white;
+			main.Find("Pulse").GetComponent<ImageThreeSlice>().color = Color.white; 
+			main.Find("Glow").GetComponent<ImageThreeSlice>().color = Color.white;
+			
+			icon.Find("Background").GetComponent<Image>().color = Color.white;
+			icon.Find("Pulse").GetComponent<Image>().color = Color.white; 
+			icon.Find("Glow").GetComponent<Image>().color = Color.white;
+
+			stats.GetComponent<ImageThreeSlice>().color = Color.white;
+
+			Transform rank = contents.Find("KiraiModTag0");
+			rank.gameObject.SetActive(false);
+
+			if (player.IsMaster())
+			{
+				Transform master = contents.Find("KiraiModTag1");
+				if (master != null)
+					master.gameObject.SetActive(false);
+			}
+
+			stats.localPosition = new Vector3(0, 30, 0);
 		}
 
 		public void Refresh()
@@ -111,51 +144,39 @@ namespace KiraiMod.Modules
 
 			foreach (Player player in PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0)
 			{
-				if (player?.field_Private_VRCPlayerApi_0 == null || player?.field_Private_APIUser_0 == null || player.IsLocal()) continue;
+				if (player?.field_Private_VRCPlayerApi_0 == null || player?.field_Private_APIUser_0 == null) continue;
 
 				if (state) Enable(player);
 				else Disable(player);
 			}
 		}
 
-		public IEnumerator CreateText(Transform nameplate, Player player)
+		private Transform MakeTag(Transform stats, int index)
 		{
-			if (nameplate == null || player == null) yield break;
+			Transform rank = Object.Instantiate(stats, stats.parent, false);
+			rank.name = $"KiraiModTag{index}";
+			rank.localPosition = new Vector3(0, 30 * (index + 1), 0);
+			Transform textGO = null;
 
-			while (Shared.menu == null) yield return null;
+			for (int i = rank.childCount; i > 0; i--)
+			{
+				Transform child = rank.GetChild(i - 1);
 
-			GameObject gameObject = new GameObject("KiraiModRank");
-			UnityEngine.UI.Text text = gameObject.AddComponent<UnityEngine.UI.Text>();
+				if (child.name == "Trust Text")
+				{
+					textGO = child;
+					continue;
+				}
 
-			gameObject.transform.SetParent(nameplate, false);
-			gameObject.transform.GetComponent<RectTransform>().sizeDelta = new Vector2(800, 600);
-			gameObject.transform.localPosition = new Vector3(0, 360);
+				Object.Destroy(child.gameObject);
+			}
 
-			text.color = Color.white;
-			text.fontStyle = FontStyle.Bold | FontStyle.Italic;
-			text.horizontalOverflow = HorizontalWrapMode.Overflow;
-			text.verticalOverflow = VerticalWrapMode.Overflow;
-			text.alignment = TextAnchor.LowerCenter;
-			text.fontSize = 72;
-			text.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
-			text.supportRichText = true;
-
-			UpdateText(gameObject.transform, player);
-		}
-
-		public void UpdateText(Transform nameplate, Player player)
-        {
-			if (nameplate == null || player == null) return;
-
-			nameplate.GetComponent<UnityEngine.UI.Text>().text =
-				(player.field_Private_APIUser_0.IsOnMobile ? $"<color={Utils.Colors.quest.ToHex()}>Quest</color>\n" : "") +
-				(player.IsMaster() ? $"<color={Utils.Colors.highlight.ToHex()}>Master</color>\n" : "") + 
-				$"<color={player.field_Private_APIUser_0.GetTrustColor().ToHex()}>{player.field_Private_APIUser_0.GetTrustLevel()}</color>";
+			return textGO;
 		}
 
 		public void OnStateChangeRGB(bool state)
-        {
-            if (!state) Refresh();
-        }
+		{
+			if (!state) Refresh();
+		}
 	}
 }

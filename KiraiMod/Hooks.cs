@@ -48,7 +48,7 @@ namespace KiraiMod
             try
             {
                 Shared.harmony.Patch(typeof(VRC_EventDispatcherRFC)
-                    .GetMethod(nameof(VRC_EventDispatcherRFC.Method_Public_Void_Player_VrcEvent_VrcBroadcastType_Int32_Single_0), BindingFlags.Public | BindingFlags.Instance), 
+                    .GetMethod(nameof(VRC_EventDispatcherRFC.Method_Public_Void_Player_VrcEvent_VrcBroadcastType_Int32_Single_0), BindingFlags.Public | BindingFlags.Instance),
                     new HarmonyMethod(typeof(Hooks).GetMethod(nameof(OnRPC), BindingFlags.NonPublic | BindingFlags.Static)));
 
                 LogWithPadding("RPCs", true);
@@ -80,11 +80,12 @@ namespace KiraiMod
             try
             {
                 Shared.harmony.Patch(typeof(VRCAvatarManager)
-                    .GetMethod(nameof(VRCAvatarManager.Method_Private_Boolean_GameObject_PDM_0), BindingFlags.Instance | BindingFlags.Public), 
+                    .GetMethod(nameof(VRCAvatarManager.Method_Private_Boolean_GameObject_PDM_0), BindingFlags.Instance | BindingFlags.Public),
                     new HarmonyMethod(typeof(Hooks).GetMethod(nameof(OnAvatarInitialized), BindingFlags.NonPublic | BindingFlags.Static)));
 
                 LogWithPadding("OnAvatarInitialized", true);
-            } catch { LogWithPadding("OnAvatarInitialized", false); }
+            }
+            catch { LogWithPadding("OnAvatarInitialized", false); }
 
             if (Shared.modules.aliases.state)
                 try
@@ -96,6 +97,16 @@ namespace KiraiMod
                 }
                 catch { LogWithPadding("UnityEngine.UI.Text Getter", false); }
             else MelonLogger.Log("Not hooking UnityEngine.UI.Text because Aliases is off.");
+
+            try
+            {
+                Shared.harmony.Patch(typeof(QuickMenu)
+                    .GetMethod(nameof(QuickMenu.Method_Public_Void_0), BindingFlags.Public | BindingFlags.Instance),
+                    new HarmonyMethod(typeof(Hooks).GetMethod(nameof(OnMenuClosed), BindingFlags.NonPublic | BindingFlags.Static)));
+
+                LogWithPadding("OnMenuClosed", true);
+            }
+            catch { LogWithPadding("OnMenuClosed", false); }
         }
 
         private void OnPlayerJoined(Player player)
@@ -137,51 +148,51 @@ namespace KiraiMod
 
             if (Shared.Options.bWorldTriggers && __2 == VrcBroadcastType.Local) __2 = VrcBroadcastType.AlwaysUnbuffered;
 
-            switch (__1.EventType)
-            {
-                case VrcEventType.SendRPC:
-                    if (__1.ParameterObject.name == "ModerationManager")
-                    {
-                        string param = "";
-                        foreach (byte b in __1.ParameterBytes)
-                        {
-                            param += (char)b;
-                        }
-                        string[] strs = param.Split('\0');
-                        string uid = Regex.Replace(strs[2], "[^a-zA-Z0-9_.-]+", "", RegexOptions.Compiled);
+            //switch (__1.EventType)
+            //{
+            //    case VrcEventType.SendRPC:
+            //        if (__1.ParameterObject.name == "ModerationManager")
+            //        {
+            //            string param = "";
+            //            foreach (byte b in __1.ParameterBytes)
+            //            {
+            //                param += (char)b;
+            //            }
+            //            string[] strs = param.Split('\0');
+            //            string uid = Regex.Replace(strs[2], "[^a-zA-Z0-9_.-]+", "", RegexOptions.Compiled);
 
-                        if (__0.IsLocal() || Utils.GetPlayer(uid).IsLocal()) MelonCoroutines.Start(Shared.modules.mute.DelayedRefresh());
-                        else Shared.modules.mute.Refresh();
+            //            if (__0.IsLocal() || Utils.GetPlayer(uid).IsLocal()) MelonCoroutines.Start(Shared.modules.mute.DelayedRefresh());
+            //            else Shared.modules.mute.Refresh();
 
-                        switch (__1.ParameterString)
-                        {
-                            case "BlockStateChangeRPC":
-                                Shared.modules.modlog.Notify(__0.field_Private_APIUser_0, Utils.GetPlayer(uid).field_Private_APIUser_0,
-                                    strs.Length == 3 ? ModerationAction.Blocked : ModerationAction.Unblocked);
-                                break;
+            //            switch (__1.ParameterString)
+            //            {
+            //                case "BlockStateChangeRPC":
+            //                    Shared.modules.modlog.Notify(__0.field_Private_APIUser_0, Utils.GetPlayer(uid).field_Private_APIUser_0,
+            //                        strs.Length == 3 ? ModerationAction.Blocked : ModerationAction.Unblocked);
+            //                    break;
 
-                            case "MuteChangeRPC":
-                                Shared.modules.modlog.Notify(__0.field_Private_APIUser_0, Utils.GetPlayer(uid).field_Private_APIUser_0,
-                                    strs.Length == 3 ? ModerationAction.Muted : ModerationAction.Unmuted);
-                                break;
+            //                case "MuteChangeRPC":
+            //                    Shared.modules.modlog.Notify(__0.field_Private_APIUser_0, Utils.GetPlayer(uid).field_Private_APIUser_0,
+            //                        strs.Length == 3 ? ModerationAction.Muted : ModerationAction.Unmuted);
+            //                    break;
 
-                            case "ShowUserAvatarChangedRPC":
-                                Shared.modules.modlog.Notify(__0.field_Private_APIUser_0, Utils.GetPlayer(uid).field_Private_APIUser_0,
-                                    strs.Length == 3 ? ModerationAction.Shown : ModerationAction.Hide);
-                                break;
+            //                case "ShowUserAvatarChangedRPC":
+            //                    Shared.modules.modlog.Notify(__0.field_Private_APIUser_0, Utils.GetPlayer(uid).field_Private_APIUser_0,
+            //                        strs.Length == 3 ? ModerationAction.Shown : ModerationAction.Hide);
+            //                    break;
 
-                            case "ResetShowUserAvatarToDefaultRPC":
-                                Shared.modules.modlog.Notify(__0.field_Private_APIUser_0, Utils.GetPlayer(uid).field_Private_APIUser_0,
-                                    ModerationAction.Reset);
-                                break;
+            //                case "ResetShowUserAvatarToDefaultRPC":
+            //                    Shared.modules.modlog.Notify(__0.field_Private_APIUser_0, Utils.GetPlayer(uid).field_Private_APIUser_0,
+            //                        ModerationAction.Reset);
+            //                    break;
 
-                            default:
-                                MelonLogger.Log("Unknown moderation message " + __1.ParameterString);
-                                break;
-                        }
-                    }
-                    break;
-            }
+            //                default:
+            //                    MelonLogger.Log("Unknown moderation message " + __1.ParameterString);
+            //                    break;
+            //            }
+            //        }
+            //        break;
+            //}
 
             return true;
         }
@@ -193,7 +204,21 @@ namespace KiraiMod
         //private static void OnEvent(ref ExitGames.Client.Photon.EventData __0)
         //{
         //    if (__0 == null) return;
+
+        //    if (__0.Code == 33)
+        //    {
+
+        //    }
         //}
+
+        private static bool OnMenuClosed()
+        {
+            return !Config.General.bPersistantQuickMenu ||
+                VRCUiManager.prop_VRCUiManager_0.prop_Boolean_0 ||
+                Input.GetKey(KeyCode.Escape) || 
+                Input.GetButton("Oculus_CrossPlatform_Button2") ||
+                Input.GetButton("Oculus_CrossPlatform_Button4");
+        }
 
         private static void LogWithPadding(string src, bool passed)
         {

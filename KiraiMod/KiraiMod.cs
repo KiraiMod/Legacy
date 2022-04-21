@@ -153,15 +153,9 @@ namespace KiraiMod
             if (Input.GetKeyDown(KeyCode.KeypadMinus))
 #if DEBUG
             {
-                foreach (var a in VRC.PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0)
-                {
-                    if (a.field_Private_APIUser_0.displayName == (Input.GetKey(KeyCode.LeftAlt) ? "Sugar Loaf" : "Jedilevs"))
-                    {
-                        var c = Object.FindObjectsOfType<VRC.Udon.UdonBehaviour>().FirstOrDefault(b => b.name.ToLower().Contains("pedestal"));
-                        VRC.SDKBase.Networking.SetOwner(a.field_Private_VRCPlayerApi_0, c.gameObject);
-                        c.SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner, "_interact");
-                    }
-                }
+                MelonLogger.Log($"{VRCUiManager.prop_VRCUiManager_0.prop_Boolean_0} 0");
+                MelonLogger.Log($"{VRCUiManager.prop_VRCUiManager_0.prop_Boolean_1} 1");
+                MelonLogger.Log($"{VRCUiManager.prop_VRCUiManager_0.prop_Boolean_2} 2");
             }
 #else
                 MelonLogger.Log("Alive");

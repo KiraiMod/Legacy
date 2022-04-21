@@ -51,7 +51,7 @@ namespace KiraiMod.Modules
 
             if (Input.GetAxis("Oculus_CrossPlatform_PrimaryIndexTrigger") > 0.75f)
             {
-                if (Physics.Raycast(puppet.transform.position, puppet.transform.forward, out hit, 1000.0f, -1))
+                if (Physics.Raycast(puppet.transform.position, puppet.transform.forward, out hit, 1000.0f, -1, QueryTriggerInteraction.Collide))
                 {
                     SetState(false);
                     state2 = true;
@@ -64,7 +64,6 @@ namespace KiraiMod.Modules
         public static void Disable()
         {
             Shared.modules.xutils.hit.collider.enabled = false;
-
         }
 
         public static void Enable()
@@ -92,7 +91,6 @@ namespace KiraiMod.Modules
         public static void Portal()
         {
             Helper.PortalPosition(Shared.modules.xutils.hit.point, Quaternion.Euler(0, 0, 0), Shared.modules.portal.infinite);
-
         }
 
         public static void Teleport()

@@ -239,33 +239,38 @@ namespace KiraiMod
 
                 QuickMenu qm = QuickMenu.prop_QuickMenu_0;
 
-                Transform nameplatesButton = qm.transform.Find("UIElementsMenu/ToggleNameplatesButton");
-                if (nameplatesButton == null) MelonLogger.LogError("Failed to find UIElementMenu/ToggleNamePlatesButton");
-                GameObject button = UnityEngine.Object.Instantiate(nameplatesButton.gameObject, parent);
+                Transform hudButton = qm.transform.Find("UIElementsMenu/ToggleHUDButton");
+                if (hudButton == null) MelonLogger.LogError("Failed to find UIElementMenu/ToggleHUDButton");
+                GameObject button = UnityEngine.Object.Instantiate(hudButton.gameObject, parent);
+
 
                 float size =
                     qm.transform.Find("UserInteractMenu/ForceLogoutButton").localPosition.x -
                     qm.transform.Find("UserInteractMenu/BanButton").localPosition.x;
 
                 button.transform.localPosition = new Vector3(
-                    button.transform.localPosition.x + (size * x),
-                    button.transform.localPosition.y + (size * y),
+                    button.transform.localPosition.x + (size * (x + 1)),
+                    button.transform.localPosition.y + (size * (y + 1)) + 18,
                     button.transform.localPosition.z
                 );
 
-                buttonOn = button.transform.Find("Toggle_States_NameplatesEnabled/ON").gameObject;
+                buttonOn = button.transform.Find("Toggle_States_HUDEnabled/ON").gameObject;
                 buttonOn.GetComponentInChildren<Image>().color = Utils.Colors.highlight;
 
-                buttonOff = button.transform.Find("Toggle_States_NameplatesEnabled/OFF").gameObject;
+                buttonOff = button.transform.Find("Toggle_States_HUDEnabled/OFF").gameObject;
                 buttonOff.GetComponentInChildren<Image>().color = Utils.Colors.primary;
 
                 Text[] buttonTextOn = buttonOn.GetComponentsInChildren<Text>();
                 buttonTextOn[0].text = label + " On";
                 buttonTextOn[1].text = label + " Off";
+                buttonTextOn[0].resizeTextForBestFit = true;
+                buttonTextOn[1].resizeTextForBestFit = true;
 
                 Text[] buttonTextOff = buttonOff.GetComponentsInChildren<Text>();
                 buttonTextOff[0].text = label + " On";
                 buttonTextOff[1].text = label + " Off";
+                buttonTextOff[0].resizeTextForBestFit = true;
+                buttonTextOff[1].resizeTextForBestFit = true;
 
                 buttonOn.SetActive(state);
                 buttonOff.SetActive(!state);

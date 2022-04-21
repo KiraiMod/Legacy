@@ -15,9 +15,9 @@ namespace KiraiMod.Modules
 
         public new ModuleInfo[] info = {
             new ModuleInfo("Tracers", "Draw lines from your hand to selected types", ButtonType.Toggle, 10, Menu.PageIndex.options1, nameof(state)),
-            new ModuleInfo("Player Tracers", "Draw lines from your hands to players", ButtonType.Toggle, 1, Menu.PageIndex.options3, nameof(Players)),
-            new ModuleInfo("Pickup Tracers", "Draw lines from your hands to pickups", ButtonType.Toggle, 5, Menu.PageIndex.options3, nameof(Pickups)),
-            new ModuleInfo("Trigger Tracers", "Draw lines from your hands to triggers", ButtonType.Toggle, 9, Menu.PageIndex.options3, nameof(Triggers))
+            new ModuleInfo("Player Tracers", "Draw lines from your hands to players", ButtonType.Toggle, 0, Menu.PageIndex.options3, nameof(Players)),
+            new ModuleInfo("Pickup Tracers", "Draw lines from your hands to pickups", ButtonType.Toggle, 4, Menu.PageIndex.options3, nameof(Pickups)),
+            new ModuleInfo("Trigger Tracers", "Draw lines from your hands to triggers", ButtonType.Toggle, 8, Menu.PageIndex.options3, nameof(Triggers))
         };
 
         private Transform[] cache1;

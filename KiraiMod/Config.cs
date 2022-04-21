@@ -11,6 +11,7 @@ namespace KiraiMod
         public class General
         {
             public static bool bUseClipboard = true;
+            public static bool bPersistantQuickMenu = false;
             public static float fRGBSpeed = 1f;
         }
 
@@ -59,6 +60,7 @@ namespace KiraiMod
             public bool bDirectionalFlight;
             public bool bPlayerList;
             public bool bUseClipboard;
+            public bool bPersistantQM;
 
             public bool bMuteSelfFriends;
             public bool bMuteSelfTargeted;
@@ -119,6 +121,7 @@ namespace KiraiMod
                 Move(load, ref Shared.modules.itemOrbit.size,     ref fItemOrbitSpeed   );
 
                 Move(load, ref General.bUseClipboard,             ref bUseClipboard     );
+                Move(load, ref General.bPersistantQuickMenu,      ref bPersistantQM     );
                 Move(load, ref General.fRGBSpeed,                 ref fRGBSpeed         );
 
                 if (load) Shared.modules.OnConfigLoaded();

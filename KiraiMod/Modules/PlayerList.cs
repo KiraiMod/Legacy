@@ -108,7 +108,10 @@ namespace KiraiMod.Modules
                 for (int i = 0; i < PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0.Count; i++)
                 {
                     Player user = PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0[i];
-                    text.text += $"<color={user.GetTextColorLegacy().ToHex()}>{i + 1} </color>" +
+                    text.text += 
+                        (user.IsMaster() ? "<b>" : "") +
+                        $"<color={user.GetTextColor().ToHex()}>{i + 1} </color>" +
+                        (user.IsMaster() ? "</b>" : "") +
                         (user.IsFriend() ? "<b>" : "") +
                         $"<color={user.field_Private_APIUser_0.GetTrustColor().ToHex()}>{user.field_Private_APIUser_0.displayName}</color>" +
                         (user.IsFriend() ? "</b>" : "") +

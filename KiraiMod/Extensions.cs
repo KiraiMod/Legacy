@@ -88,14 +88,6 @@ namespace KiraiMod
                 Utils.Colors.white;
         }
 
-        public static Color GetTextColorLegacy(this Player player)
-        {
-            return player.IsMod() ? Utils.Colors.aqua :
-                player.IsMaster() ? Utils.Colors.orange :
-                player.IsKModder() ? Utils.Colors.highlight :
-                Utils.Colors.white;
-        }
-
         public static string GetTrustLevel(this APIUser user)
         {
             if (user.hasLegendTrustLevel)
