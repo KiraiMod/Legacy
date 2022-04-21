@@ -9,6 +9,7 @@ using VRC;
 
 [assembly: MelonInfo(typeof(KiraiMod.KiraiComms), "KiraiComms", "0.2.0", "Kirai Chan#8315 & Brass")]
 [assembly: MelonGame("VRChat", "VRChat")]
+[assembly: MelonOptionalDependencies("KiraiRPC")]
 
 namespace KiraiMod
 {

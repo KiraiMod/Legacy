@@ -8,13 +8,11 @@ namespace KiraiMod
 {
     public static class Config
     {
-        static Config() => Load();
-
         public static Options options = new Options();
 
-        public static readonly string config = "kiraimod.config.json";
-        public static readonly string alias = "kiraimod.alias.json";
-        public static readonly string menu = "kiraimod.buttons.json";
+        public const string config = "kiraimod.config.json";
+        public const string alias = "kiraimod.alias.json";
+        public const string menu = "kiraimod.buttons.json";
         public static List<string[]> aliases = new List<string[]>();
 
         public static void Save()

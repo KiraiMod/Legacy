@@ -67,6 +67,7 @@ namespace KiraiMod
             Shared.http = new HttpClient();
 
             Shared.modules = new Modules.Modules();
+            Config.Load();
             Shared.ipc = new IPC();
             Shared.hooks = new Hooks();
 
@@ -134,7 +135,7 @@ namespace KiraiMod
                 if (Input.GetKeyDown(KeyCode.KeypadMinus))
 #if DEBUG
                 {
-
+                
                 }
 #else
                     MelonLogger.Msg("Alive");
