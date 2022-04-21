@@ -22,6 +22,7 @@ namespace KiraiMod.Modules
         public Aliases aliases;
         public Mute mute;
         public ItemOrbit itemOrbit;
+        public GodMode godMode;
 
         public List<ModuleBase> modules = new List<ModuleBase>();
 
@@ -41,6 +42,7 @@ namespace KiraiMod.Modules
             modules.Add(aliases = new Aliases());
             modules.Add(mute = new Mute());
             modules.Add(itemOrbit = new ItemOrbit());
+            modules.Add(godMode = new GodMode());
         }
 
         public void StartCoroutines()

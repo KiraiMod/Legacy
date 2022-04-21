@@ -146,6 +146,7 @@
     <Compile Include="Modules\BaseModule.cs" />
     <Compile Include="Modules\ESP.cs" />
     <Compile Include="Modules\Flight.cs" />
+    <Compile Include="Modules\GodMode.cs" />
     <Compile Include="Modules\Headlight.cs" />
     <Compile Include="Modules\ItemOrbit.cs" />
     <Compile Include="Modules\KOS.cs" />
