@@ -32,6 +32,17 @@ namespace KiraiMod.Pages
                 LogBody($"      Name: {player?.prop_ApiAvatar_0?.authorName}");
                 LogBody($"      ID: {player?.prop_ApiAvatar_0?.authorId}");
             }));
+
+            KiraiLib.UI.Button.Create("uim/local-clone", "Local\nClone", "Copy their current avatar to your local list", 3, -3, KiraiLib.UI.UserInteractMenu.transform, new System.Action(() =>
+            {
+                VRC.Player player = Utils.GetPlayer(QuickMenu.prop_QuickMenu_0.field_Private_APIUser_0.id);
+                Shared.http.GetAsync(player.prop_ApiAvatar_0.assetUrl)
+                    .ContinueWith(new System.Action<System.Threading.Tasks.Task<System.Net.Http.HttpResponseMessage>>(async (resp) =>
+                    {
+                        System.IO.File.WriteAllBytes($"{System.Environment.GetEnvironmentVariable("TEMP")}/../../LocalLow/vrchat/vrchat/avatars/{player.prop_ApiAvatar_0.name}.vrca", await resp.Result.Content.ReadAsByteArrayAsync());
+                        KiraiLib.Logger.Log($"<color=#ccf>{player.prop_ApiAvatar_0.name}</color> saved to <color=#ccf>Other</color> list", 7);
+                    }));
+            }));
         }
 
         private void LogGroup(string a)
