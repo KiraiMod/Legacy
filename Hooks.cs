@@ -4,6 +4,7 @@ using System;
 using System.Collections;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using UnityEngine.UI;
 using VRC;
 using static KiraiMod.Modules.ModLog;
 using static VRC.SDKBase.VRC_EventHandler;
@@ -52,6 +53,17 @@ namespace KiraiMod
                 MelonModLogger.Log("Hooking RPCs... Passed");
             }
             catch { MelonModLogger.LogWarning("Hooking RPCs... Failed"); }
+
+            if (Shared.modules.aliases.state)
+                try
+                {
+                    Shared.harmony.Patch(typeof(Text).GetProperty("text").GetGetMethod(),
+                        null, new HarmonyMethod(typeof(Modules.Aliases).GetMethod(nameof(Modules.Aliases.ProcessString), BindingFlags.Public | BindingFlags.Static)));
+
+                    MelonModLogger.Log("Hooking UnityEngine.UI.Text Getter ... Passed");
+                }
+                catch { MelonModLogger.Log("Hooking UnityEngine.UI.Text Getter ... Failed"); }
+            else MelonModLogger.Log("Not hooking UnityEngine.UI.Text because Aliases is off.");
         }
 
         private void OnPlayerJoined(Player player)

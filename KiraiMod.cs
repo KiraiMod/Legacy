@@ -160,11 +160,6 @@ namespace KiraiMod
                 }
             }
 
-            Shared.menu.CreateToggle("p0/spoof-name", false, "Spoof Name", "Spoofs name in quick menu", -1f, 0f, Shared.menu.pages[0].transform, new System.Action<bool>((state) =>
-            {
-                ToggleSpoof(state);
-            }));
-
             Shared.menu.CreateButton("p2/unload", "Unload", "Reverses most KiraiMod changes", 1f, -1f, Shared.menu.pages[2].transform, new System.Action(() =>
             {
                 Utils.HUDMessage("Press INSERT to reload");

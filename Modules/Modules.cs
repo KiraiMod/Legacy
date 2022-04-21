@@ -16,6 +16,7 @@ namespace KiraiMod.Modules
         public Nameplates nameplates;
         public ModLog modlog;
         public Headlight headlight;
+        public Aliases aliases;
 
         public List<ModuleBase> modules = new List<ModuleBase>();
 
@@ -32,6 +33,7 @@ namespace KiraiMod.Modules
             modules.Add(nameplates = new Nameplates());
             modules.Add(modlog = new ModLog());
             modules.Add(headlight = new Headlight());
+            modules.Add(aliases = new Aliases());
         }
 
         public void OnPlayerJoined(Player player)

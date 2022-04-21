@@ -1,29 +1,34 @@
 ﻿using MelonLoader;
+using System.Collections.Generic;
 
 namespace KiraiMod
 {
     public class Config
     {
-        public static readonly string path = "kiraimod.config.json";
+        public static readonly string config = "kiraimod.config.json";
+        public static readonly string alias = "kiraimod.alias.json";
+        public List<string[]> aliases = new List<string[]>();
         Options options = new Options();
 
         public void Save()
         {
             MelonModLogger.Log("Saving to config");
-            System.IO.File.WriteAllText(path, MelonLoader.TinyJSON.JSON.Dump(options));
+            System.IO.File.WriteAllText(config, MelonLoader.TinyJSON.JSON.Dump(options));
         }
 
         public void Load()
         {
             MelonModLogger.Log("Loading from config");
 
-            if (!System.IO.File.Exists(path))
+            if (!System.IO.File.Exists(config))
             {
                 MelonModLogger.Log("Config did not exist, creating new one with current values");
-                System.IO.File.WriteAllText(path, MelonLoader.TinyJSON.JSON.Dump(options));
+                System.IO.File.WriteAllText(config, MelonLoader.TinyJSON.JSON.Dump(options));
             }
 
-            options = MelonLoader.TinyJSON.JSON.Load(System.IO.File.ReadAllText(path)).Make<Options>();
+            options = MelonLoader.TinyJSON.JSON.Load(System.IO.File.ReadAllText(config)).Make<Options>();
+
+            if (System.IO.File.Exists(alias)) aliases = MelonLoader.TinyJSON.JSON.Load(System.IO.File.ReadAllText(alias)).Make<List<string[]>>();
         }
 
         sealed internal class Options
@@ -34,6 +39,7 @@ namespace KiraiMod
             public bool bNameplates;
             public bool bNameplatesRGB;
             public bool bHeadlight;
+            public bool bAliases;
 
             public float fRun;
             public float fWalk;
@@ -63,6 +69,7 @@ namespace KiraiMod
                 Move(load, ref Shared.modules.nameplates.state, ref bNameplates    );
                 Move(load, ref Shared.modules.nameplates.rgb,   ref bNameplatesRGB );
                 Move(load, ref Shared.modules.headlight.state,  ref bHeadlight     );
+                Move(load, ref Shared.modules.aliases.state,    ref bAliases       );
 
                 Move(load, ref Shared.modules.speed.speedRun,   ref fRun           );
                 Move(load, ref Shared.modules.speed.speedWalk,  ref fWalk          );
