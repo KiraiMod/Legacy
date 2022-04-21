@@ -325,6 +325,7 @@ namespace KiraiMod
                 if (menuObject.button != null) Object.Destroy(menuObject.button.self);
                 else if (menuObject.toggle != null) Object.Destroy(menuObject.toggle.self);
                 else if (menuObject.slider != null) Object.Destroy(menuObject.slider.self);
+                else if (menuObject.label != null) Object.Destroy(menuObject.label.self);
             }
 
             for (int i = 0; i < Shared.menu.pages.Count; i++) Object.Destroy(Shared.menu.pages[i]);

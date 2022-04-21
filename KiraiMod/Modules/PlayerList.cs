@@ -11,10 +11,9 @@ namespace KiraiMod.Modules
     public class PlayerList : ModuleBase
     {
         public GameObject parent;
-        private System.Collections.Generic.List<Text> players = new System.Collections.Generic.List<Text>();
+        private System.Collections.Generic.List<Menu.Label> players = new System.Collections.Generic.List<Menu.Label>();
         private Vector3 oCenter;
         private Vector3 oExtent;
-        private GameObject baseObject;
 
         public new ModuleInfo[] info = {
             new ModuleInfo("Player List", "Show the players in your instance", ButtonType.Toggle, 8, Menu.PageIndex.toggles2, nameof(state))
@@ -117,8 +116,6 @@ namespace KiraiMod.Modules
                 parent.transform.localRotation = Quaternion.identity;
 
                 parent.active = false;
-
-                baseObject = Shared.menu.sm.transform.Find("WorldsButton/Text").gameObject;
             }
         }
 
@@ -128,8 +125,8 @@ namespace KiraiMod.Modules
 
             if (state)
             {
-                foreach (Text player in players)
-                    UnityEngine.Object.Destroy(player.gameObject);
+                foreach (Menu.Label player in players)
+                    UnityEngine.Object.Destroy(player.self.gameObject);
                 players.Clear();
 
                 if (PlayerManager.field_Private_Static_PlayerManager_0?.field_Private_List_1_Player_0 == null) return;
@@ -138,45 +135,17 @@ namespace KiraiMod.Modules
                 {
                     Player user = PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0[i];
 
-                    Text text = MakeText(i, new Action(() => { Utils.SelectPlayer(user); }));
-                    players.Add(text);
-
-                    text.text = " " +
+                    Menu.Label text = Shared.menu.CreateLabel($"sm/player_{i}", " " +
                         (user.IsMaster() ? "<b>" : "") +
                         $"<color={user.GetTextColor().ToHex()}>{i + 1} </color>" +
                         (user.IsMaster() ? "</b>" : "") +
                         (user.IsFriend() ? "<b>" : "") +
                         $"<color={user.field_Private_APIUser_0.GetTrustColor().ToHex()}>{user.field_Private_APIUser_0.displayName}</color>" +
                         (user.IsFriend() ? "</b>" : "") +
-                        "\n";
+                        "\n", i, parent.transform, new Action(() => { Utils.SelectPlayer(user); }), false);
+                    players.Add(text);
                 }
             }
-        }
-
-        private Text MakeText(int index, Action onClick)
-        {
-            GameObject go = UnityEngine.Object.Instantiate(baseObject, parent.transform);
-            go.name = $"player_{index}";
-
-            go.transform.SetParent(parent.transform, false);
-            go.transform.localPosition = new Vector3(0, index * -70, 0);
-            go.transform.localScale = Vector3.one;
-            go.transform.localRotation = Quaternion.identity;
-
-            Text text = go.GetComponent<Text>();
-            text.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
-            text.fontSize = 64;
-            text.alignment = TextAnchor.UpperLeft;
-            text.color = Color.white;
-            text.supportRichText = true;
-            text.horizontalOverflow = HorizontalWrapMode.Overflow;
-
-            Button button = go.AddComponent<Button>();
-            button.onClick.AddListener(onClick);
-
-            go.transform.GetComponent<RectTransform>().sizeDelta = new Vector3(735, 0);
-
-            return text;
         }
     }
 }

@@ -19,12 +19,14 @@ namespace KiraiMod
             sliders1,
             xutils,
             udon1,
-            udon2
+            udon2,
+            userinfo
         }
 
         public QuickMenu qm;
         public GameObject sm;
         public GameObject um;
+        public GameObject bb;
         public float size = 420f;
 
         public System.Collections.Generic.Dictionary<string, MenuObject> objects = new System.Collections.Generic.Dictionary<string, MenuObject>();
@@ -39,6 +41,7 @@ namespace KiraiMod
             qm = QuickMenu.prop_QuickMenu_0;
             sm = qm.transform.Find("ShortcutMenu").gameObject;
             um = qm.transform.Find("UserInteractMenu").gameObject;
+            bb = sm.transform.Find("WorldsButton/Text").gameObject;
         }
 
         public bool? GetBool(string id)
@@ -153,6 +156,18 @@ namespace KiraiMod
             return slider;
         }
 
+        public Label CreateLabel(string id, string label, int index, Transform parent, Action OnClick, bool managed = true)
+        {
+            if (Shared.config?.buttons != null && Shared.config.buttons.TryGetValue(id, out var value))
+            {
+                index = (int)value[0];
+            }
+
+            Label _label = new Label(this, label, index, parent, OnClick);
+            if (managed) objects.Add(id, _label);
+            return _label;
+        }
+
         public void HandlePages()
         {
             if (qm == null) return;
@@ -206,20 +221,26 @@ namespace KiraiMod
             public Toggle toggle;
             public Button button;
             public Slider slider;
+            public Label label;
 
             public static implicit operator MenuObject(Toggle _toggle)
             {
-                return new MenuObject() { toggle = _toggle, button = null, slider = null };
+                return new MenuObject() { toggle = _toggle };
             }
 
             public static implicit operator MenuObject(Button _button)
             {
-                return new MenuObject() { toggle = null, button = _button, slider = null };
+                return new MenuObject() { button = _button };
             }
 
             public static implicit operator MenuObject(Slider _slider)
             {
-                return new MenuObject() { toggle = null, button = null, slider = _slider };
+                return new MenuObject() { slider = _slider };
+            }
+
+            public static implicit operator MenuObject(Label _label)
+            {
+                return new MenuObject() { label = _label };
             }
         }
 
@@ -420,6 +441,36 @@ namespace KiraiMod
             {
                 valueText.text = $"<b>{value:0.00}</b>";
                 OnChange.Invoke(value);
+            }
+        }
+
+        public class Label
+        {
+            public GameObject self;
+            public Text text;
+
+            public Label(Menu menu, string label, int index, Transform parent, Action OnClick)
+            {
+                self = UnityEngine.Object.Instantiate(menu.bb, parent.transform);
+
+                self.transform.SetParent(parent.transform, false);
+                self.transform.localPosition = new Vector3(0, index * -70, 0);
+                self.transform.localScale = Vector3.one;
+                self.transform.localRotation = Quaternion.identity;
+
+                text = self.GetComponent<Text>();
+                text.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+                text.fontSize = 64;
+                text.alignment = TextAnchor.UpperLeft;
+                text.color = Color.white;
+                text.supportRichText = true;
+                text.horizontalOverflow = HorizontalWrapMode.Overflow;
+                text.text = label;
+
+                UnityEngine.UI.Button button = self.AddComponent<UnityEngine.UI.Button>();
+                button.onClick.AddListener(OnClick);
+
+                self.transform.GetComponent<RectTransform>().sizeDelta = new Vector3(735, 0);
             }
         }
     }

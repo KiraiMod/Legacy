@@ -76,6 +76,23 @@ namespace KiraiMod
             }
         }
 
+        public static void LogKeywords(System.Reflection.MethodBase method)
+        {
+            int i = 0, j = 0;
+
+            foreach (UnhollowerRuntimeLib.XrefScans.XrefInstance instance in UnhollowerRuntimeLib.XrefScans.XrefScanner.XrefScan(method))
+            {
+                i++;
+                if (instance.Type == UnhollowerRuntimeLib.XrefScans.XrefType.Global)
+                {
+                    j++;
+                    MelonLogger.Log(instance.ReadAsObject()?.ToString());
+                }
+            }
+
+            MelonLogger.Log($"Found {i} objects and {j} keywords");
+        }
+
         public static Player GetPlayer(string id)
         {
             List<Player> players = PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0;
