@@ -18,8 +18,6 @@ namespace KiraiMod
         public bool hasLoaded = false;
         public bool isApplied = false;
 
-        public string version = "";
-
         public static class Config
         {
             public static Color PrimaryColor = new Color(0.34f, 0f, 0.65f);
@@ -27,41 +25,56 @@ namespace KiraiMod
             public static Color ActionMenuBackgroundColor = new Color(0, 0, 0);
             public static Color QuickMenuBackgroundColor = new Color(0, 0, 0, 0.9f);
             public static bool extended = false;
+            public static int PulseSkipCooldown = 3;
+            public static int PulseLow = -100;
+            public static int PulseHigh = 50;
         }
 
         public static class CompatibilityModule
         {
             public static bool NoColor;
             public static bool NoTheme;
+            public static bool NoPulse = true;
             public static bool NoMovement;
             public static bool NoCompatibility;
         }
 
         Transform UIRoot;
-        Transform SelectionMenu;
         Transform Screens;
         Transform HUD;
         Transform ActionMenu;
         Transform QuickMenuNewElements;
         Transform Fireball;
         Text EarlyAccessText;
+        CanvasScaler Canvas;
 
         public override void OnApplicationStart()
         {
             instance = this;
+        }
 
-            MelonMod mod = MelonHandler.Mods.FirstOrDefault(m => m.Assembly.GetName().Name == "KiraiMod");
+        private int SkipCount = 0;
+        private bool PulseFlip = false;
 
-            string location;
-
-            if (mod is null) location = Location;
-            else location = mod.Location;
-
-            Utils.CRC32 crc = new Utils.CRC32();
-            
-            foreach(byte b in crc.ComputeHash(System.IO.File.ReadAllBytes(location)))
+        public override void OnUpdate()
+        {
+            if (CompatibilityModule.NoCompatibility || !CompatibilityModule.NoPulse)
             {
-                version += b.ToString("X");
+                if (!isApplied || Canvas is null) return;
+
+                SkipCount++;
+
+                if (SkipCount == Config.PulseSkipCooldown)
+                {
+                    SkipCount = 0;
+
+                    if (Canvas.referencePixelsPerUnit >= Config.PulseHigh || 
+                        Canvas.referencePixelsPerUnit <= Config.PulseLow)
+                        PulseFlip ^= true;
+
+                    if (PulseFlip) Canvas.referencePixelsPerUnit++;
+                    else Canvas.referencePixelsPerUnit--;
+                }
             }
         }
 
@@ -74,11 +87,11 @@ namespace KiraiMod
             #region Fetch
             Screens = UIRoot?.Find("MenuContent");
             HUD = UIRoot?.Find("UnscaledUI/HudContent/Hud");
-            SelectionMenu = QuickMenu.prop_QuickMenu_0.transform.Find("ShortcutMenu");
             ActionMenu = UIRoot?.Find("ActionMenu");
             QuickMenuNewElements = QuickMenu.prop_QuickMenu_0.transform.Find("QuickMenu_NewElements");
             Fireball = GameObject.Find("_Application/CursorManager/BlueFireballMouse").transform;
             EarlyAccessText = QuickMenu.prop_QuickMenu_0.transform.Find("QuickMenu_NewElements/_InfoBar/EarlyAccessText")?.GetComponent<Text>();
+            Canvas = QuickMenu.prop_QuickMenu_0.GetComponent<CanvasScaler>();
             #endregion
 
             #region Compatibility
@@ -254,8 +267,7 @@ namespace KiraiMod
 
             if (CompatibilityModule.NoCompatibility || !CompatibilityModule.NoTheme)
             {
-                CanvasScaler scalar = QuickMenu.prop_QuickMenu_0.GetComponent<CanvasScaler>();
-                if (scalar != null) Utils.MoveCanvasScalarRefPixPerUnit(op, ref scalar, ref Memory.qmRPPU, 0);
+                if (Canvas != null) Utils.MoveCanvasScalarRefPixPerUnit(op, ref Canvas, ref Memory.qmRPPU, 0);
 
                 tmp3 = Screens.Find("Backdrop/Header/Tabs/ViewPort/Content");
 
