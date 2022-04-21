@@ -52,7 +52,6 @@ namespace KiraiMod
             public bool bESP;
             public bool bNameplates;
             public bool bNameplatesRGB;
-            public bool bHeadlight;
             public bool bAliases;
             public bool bDirectionalFlight;
             public bool bPlayerList;
@@ -100,7 +99,6 @@ namespace KiraiMod
                 Move(load, ref Shared.modules.kos.state,                 ref bAutoKOS          );
                 Move(load, ref Shared.modules.nameplates.state,          ref bNameplates       );
                 Move(load, ref Shared.modules.nameplates.RGB,            ref bNameplatesRGB    );
-                Move(load, ref Shared.modules.headlight.state,           ref bHeadlight        );
                 Move(load, ref Shared.modules.aliases.state,             ref bAliases          );
                 Move(load, ref Shared.modules.flight.directional,        ref bDirectionalFlight);
                 Move(load, ref Shared.modules.esp.state,                 ref bESP              );
