@@ -49,11 +49,7 @@ namespace KiraiMod
 
         public static bool IsKModder(this Player player)
         {
-            bool modder = Shared.modules.nameplates.users.TryGetValue(player.field_Private_APIUser_0.displayName, out string mod);
-
-            if (modder)
-            MelonLoader.MelonLogger.Log(mod);
-            return modder && mod == "KiraiMod";
+            return Shared.modules.nameplates.users.TryGetValue(player.field_Private_APIUser_0.displayName, out string mod) && mod == "KiraiMod";
         }
 
         public static string ToHex(this Color color)

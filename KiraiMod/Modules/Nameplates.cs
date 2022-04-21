@@ -35,9 +35,9 @@ namespace KiraiMod.Modules
 
 		public override void OnPlayerLeft(Player player)
 		{
-			if (state) Refresh();
-
 			users.Remove(player.field_Private_APIUser_0.displayName);
+
+			if (state) MelonCoroutines.Start(DelayedRefresh());
 		}
 
 		public override void OnLevelWasLoaded()
@@ -66,9 +66,16 @@ namespace KiraiMod.Modules
 			}
 		}
 
+		private IEnumerator DelayedRefresh()
+        {
+			yield return new WaitForSeconds(1);
+
+			Refresh();
+        }
+
 		public void Enable(Player player)
 		{
-			if (player == null || player.field_Private_VRCPlayerApi_0 == null) return;
+			if (player?.field_Private_VRCPlayerApi_0 == null) return;
 
 			player.field_Private_VRCPlayerApi_0.SetNamePlateColor(player.GetNameplateColor());
 
@@ -83,7 +90,7 @@ namespace KiraiMod.Modules
             else
             {
                 rank.gameObject.SetActive(true);
-				UpdateText(rank.Find("KiraiModRank"), player);
+				UpdateText(rank, player);
             }
         }
 

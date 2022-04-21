@@ -12,6 +12,10 @@ namespace KiraiMod
         private HttpListener listener;
         private Thread thread;
 
+        private static MethodInfo method = null;
+        private static bool execute = false;
+        private static bool unloadForwarder = false;
+
         public IPC()
         {
             MelonLogger.Log("[IPC] Starting");
@@ -27,6 +31,7 @@ namespace KiraiMod
             {
                 listener.Start();
                 thread.Start();
+                MelonCoroutines.Start(Forwarder());
             }
             catch (Exception e) { 
                 MelonLogger.Log("[IPC] Failed to start"); 
@@ -47,6 +52,24 @@ namespace KiraiMod
             {
                 MelonLogger.Log("[IPC] Failed to stop");
                 MelonLogger.LogError(e.ToString());
+            }
+        }
+
+        public System.Collections.IEnumerator Forwarder()
+        {
+            for (;;)
+            {
+                if (unloadForwarder) yield break;
+
+                if (execute)
+                {
+                    try { method.Invoke(null, null); }
+                    catch { MelonLogger.Log("[IPC] Forwarder failed to execute method."); }
+
+                    execute = false;
+                }
+
+                yield return new UnityEngine.WaitForSeconds(1);
             }
         }
 
@@ -142,12 +165,17 @@ namespace KiraiMod
             resp = new byte[0];
             if (args.Length != 1) return 400;
 
-            MethodInfo method = typeof(Registry).GetMethod(args[0], BindingFlags.Public | BindingFlags.Static);
+            method = typeof(Registry).GetMethod(args[0], BindingFlags.Public | BindingFlags.Static);
             if (method == null)
             {
                 MelonLogger.Log("[IPC] Unknown method");
                 return 404;
             }
+
+            if (!execute)
+            {
+                execute = true;
+            } else MelonLogger.LogWarning("[IPC] Forwarder is busy!");
 
             try
             {

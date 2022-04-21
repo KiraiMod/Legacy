@@ -56,6 +56,7 @@ namespace KiraiMod
                         {
                             case "PlayerUsingMod":
                                 Shared.modules.nameplates.users.Add(data[0], data[1]);
+                                Shared.modules.nameplates.Refresh();
                                 break;
                         }
                     });
