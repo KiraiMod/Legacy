@@ -56,6 +56,10 @@ namespace KiraiMod
             public bool bMuteSelfTargeted;
             public bool bMuteSelfFavorited;
 
+            public bool bTracerPlayers;
+            public bool bTracerPickups;
+            public bool bTracerTriggers;
+
             public float fRun;
             public float fWalk;
             public float fFly;
@@ -90,6 +94,9 @@ namespace KiraiMod
                 Move(load, ref Shared.modules.mute.Friends,       ref bMuteSelfFriends  );
                 Move(load, ref Shared.modules.mute.Targeted,      ref bMuteSelfTargeted );
                 Move(load, ref Shared.modules.mute.Favorited,     ref bMuteSelfFavorited);
+                Move(load, ref Shared.modules.tracers.Players,    ref bTracerPlayers    );
+                Move(load, ref Shared.modules.tracers.Pickups,    ref bTracerPickups    );
+                Move(load, ref Shared.modules.tracers.Triggers,   ref bTracerTriggers   );
 
                 Move(load, ref Shared.modules.speed.speedRun,     ref fRun              );
                 Move(load, ref Shared.modules.speed.speedWalk,    ref fWalk             );
