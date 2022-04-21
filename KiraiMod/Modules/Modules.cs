@@ -26,6 +26,7 @@ namespace KiraiMod.Modules
         public Tracers tracers;
         public FreeCam freecam;
         public PlayerList playerlist;
+        public HideSelf hideself;
 
         public List<ModuleBase> modules = new List<ModuleBase>();
 
@@ -49,6 +50,7 @@ namespace KiraiMod.Modules
             modules.Add(tracers = new Tracers());
             modules.Add(freecam = new FreeCam());
             modules.Add(playerlist = new PlayerList());
+            modules.Add(hideself = new HideSelf());
         }
 
         public void StartCoroutines()

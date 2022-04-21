@@ -176,6 +176,7 @@
     <Compile Include="Modules\FreeCam.cs" />
     <Compile Include="Modules\GodMode.cs" />
     <Compile Include="Modules\Headlight.cs" />
+    <Compile Include="Modules\HideSelf.cs" />
     <Compile Include="Modules\PlayerList.cs" />
     <Compile Include="Modules\Tracers.cs" />
     <Compile Include="Modules\ItemOrbit.cs" />
