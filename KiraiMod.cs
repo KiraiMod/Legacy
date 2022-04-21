@@ -1,19 +1,13 @@
 ﻿using MelonLoader;
 using System.Reflection;
-using UnhollowerRuntimeLib;
 using UnityEngine;
 using UnityEngine.UI;
-using VRC;
 
 namespace KiraiMod
 {
     public class KiraiMod : MelonMod
     {
-        private string oName = "Kirai Chan";
-
         public bool bUnload = false;
-        public bool bSpoof = false;
-        public bool bMute = false;
 
         public override void OnApplicationStart()
         {
@@ -181,7 +175,6 @@ namespace KiraiMod
             for (int i = 0; i < Shared.modules.modules.Count; i++) {
                 Shared.modules.modules[i].SetState(false);
             }
-            ToggleSpoof(false);
 
             Helper.DeletePortals();
 
@@ -205,19 +198,6 @@ namespace KiraiMod
             MelonModLogger.Log("Reloading");
             Shared.config.Load();
             VRChat_OnUiManagerInit();
-        }
-
-        public void ToggleSpoof(bool? state = null)
-        {
-            if ((state ?? !bSpoof) == bSpoof) return;
-
-            bSpoof = state ?? !bSpoof;
-
-            Text nametext = Shared.menu.sm.transform.Find("NameText").GetComponent<Text>();
-
-            if (bSpoof) oName = nametext.text.Substring(4);
-
-            nametext.text = bSpoof ? nametext.text.Replace(oName, "Kirai Chan") : nametext.text.Replace("Kirai Chan", oName);
         }
     }
 }
