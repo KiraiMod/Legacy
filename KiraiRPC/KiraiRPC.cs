@@ -123,14 +123,13 @@ namespace KiraiMod
 
         private static void OnGet(string id, string payload, Player player)
         {
-
             switch (id)
             {
                 case "00":
                     if (payload == Player.prop_Player_0.field_Private_APIUser_0.displayName)
                         SendRPC(SendType.Post, "00",
-                            Player.prop_Player_0.field_Private_APIUser_0.displayName.Length.ToString().PadLeft(2, '0') +
-                            Player.prop_Player_0.field_Private_APIUser_0.displayName + Config.modName);
+                            player.field_Private_APIUser_0.displayName.Length.ToString().PadLeft(2, '0') +
+                            player.field_Private_APIUser_0.displayName + Config.modName);
                         break;
             }
         }
@@ -147,7 +146,9 @@ namespace KiraiMod
                 case "00":
                     if (!int.TryParse(payload.Substring(0, 2), out int length)) return;
 
-                    callback.Invoke("PlayerUsingMod", new string[] { payload.Substring(2, length), payload.Substring(2 + length)});
+                    if (payload.Substring(2, length) == Player.prop_Player_0.field_Private_APIUser_0.displayName) 
+                        // we are the intended recipient
+                        callback.Invoke("PlayerUsingMod", new string[] { player.field_Private_APIUser_0.displayName, payload.Substring(2 + length)});
                     break;
             }
         }

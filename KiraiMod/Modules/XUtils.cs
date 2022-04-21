@@ -39,8 +39,6 @@ namespace KiraiMod.Modules
             puppet.transform.position = tt.position;
             puppet.transform.rotation = tt.rotation;
 
-
-
             if (Input.GetAxis("Oculus_CrossPlatform_PrimaryIndexTrigger") > 0.75f)
             {
                 if (Physics.Raycast(puppet.transform.position, puppet.transform.forward, out hit, 1000.0f, -1))
