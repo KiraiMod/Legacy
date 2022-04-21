@@ -23,7 +23,7 @@ namespace KiraiMod.Modules
         public Mute mute;
         public ItemOrbit itemOrbit;
         public GodMode godMode;
-        public Tracers itemesp;
+        public Tracers tracers;
         public FreeCam freecam;
 
         public List<ModuleBase> modules = new List<ModuleBase>();
@@ -45,7 +45,7 @@ namespace KiraiMod.Modules
             modules.Add(mute = new Mute());
             modules.Add(itemOrbit = new ItemOrbit());
             modules.Add(godMode = new GodMode());
-            modules.Add(itemesp = new Tracers());
+            modules.Add(tracers = new Tracers());
             modules.Add(freecam = new FreeCam());
         }
 
