@@ -159,7 +159,7 @@ namespace KiraiMod
                     else connected = false;
                 }));
 
-                yield return new WaitForSeconds(25);
+                yield return new WaitForSeconds(5);
             }
         }
 
@@ -201,6 +201,9 @@ namespace KiraiMod
 
                         foreach (var user in a.Except(b))
                             HUDMessage($"{user} logged out");
+
+                        if (active && !online.Any(u => u[0] == name))
+                            SetLocation();
                     }));
                 }
                 else connected = false;
@@ -214,7 +217,7 @@ namespace KiraiMod
             VRCUiManager.prop_VRCUiManager_0.Method_Public_Void_String_0(message);
         }
 
-        public static void HUDInput(string title, string text, string placeholder, string initial, System.Action<string> OnAccept)
+        public static void HUDInput(string title, string text, string placeholder, string initial, Action<string> OnAccept)
         {
             VRCUiPopupManager
                 .field_Private_Static_VRCUiPopupManager_0
