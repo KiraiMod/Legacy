@@ -30,7 +30,7 @@ namespace KiraiMod.Modules
                 return;
             }
 
-            cached.gameObject.SetActive(state);
+            cached.gameObject.SetActive(!state);
         }
 
         public override void OnLevelWasLoaded()
