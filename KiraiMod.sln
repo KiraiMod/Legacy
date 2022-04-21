@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KiraiUI", "KiraiUI\KiraiUI.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KiraiRPC", "KiraiRPC\KiraiRPC.csproj", "{200402BC-69C4-4A18-813E-B9E2A75372BC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApisMod", "ApisMod\ApisMod.csproj", "{119853B7-3467-47BA-8F4B-C9BB44756177}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{200402BC-69C4-4A18-813E-B9E2A75372BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{200402BC-69C4-4A18-813E-B9E2A75372BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{200402BC-69C4-4A18-813E-B9E2A75372BC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{119853B7-3467-47BA-8F4B-C9BB44756177}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{119853B7-3467-47BA-8F4B-C9BB44756177}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{119853B7-3467-47BA-8F4B-C9BB44756177}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{119853B7-3467-47BA-8F4B-C9BB44756177}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

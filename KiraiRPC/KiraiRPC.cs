@@ -118,20 +118,21 @@ namespace KiraiMod
 
                     SendType protocol = (SendType)_protocol;
 
-                    string sid = __1.ParameterString.Substring(2, 2);
-                    if (!uint.TryParse(sid, System.Globalization.NumberStyles.HexNumber, null, out uint id)) {
+                    string sid = __1.ParameterString.Substring(1, 2);
+                    if (!int.TryParse(sid, System.Globalization.NumberStyles.HexNumber, null, out int id)) {
                         MelonLogger.Log($"{__0.field_Private_APIUser_0.displayName} sent a malformed kRPC (invalid id).");
                         return;
                     }
 
-                    string slen = __1.ParameterString.Substring(4, 1);
-                    if (!uint.TryParse(slen, System.Globalization.NumberStyles.HexNumber, null, out uint len))
+                    string slen = __1.ParameterString.Substring(3, 1);
+                    if (!int.TryParse(slen, System.Globalization.NumberStyles.HexNumber, null, out int len))
                     {
                         MelonLogger.Log($"{__0.field_Private_APIUser_0.displayName} sent a malformed kRPC (invalid length).");
                         return;
                     }
 
-                    string payload = __1.ParameterString.Substring(5);
+                    string target = __1.ParameterString.Substring(4, len);
+                    string payload = __1.ParameterString.Substring(4 + len);
 
                     if (len == 0) // intended for us
                     {
@@ -158,15 +159,13 @@ namespace KiraiMod
                                 break;
                         }
                     }
-                    else
-                    {
 
-                    }
+                    if (callbackChain != null) callbackChain.Invoke(len == 0 ? "KiraiRPC" : target, sid + sprotocol, new string[] { __0.field_Private_APIUser_0.displayName, payload });
                 }
             }
         }
 
-        private static void OnGet(uint id, string payload, Player player)
+        private static void OnGet(int id, string payload, Player player)
         {
             switch (id)
             {
@@ -186,12 +185,12 @@ namespace KiraiMod
             }
         }
 
-        private static void OnSet(uint id, string payload, Player player)
+        private static void OnSet(int id, string payload, Player player)
         {
 
         }
 
-        private static void OnPost(uint id, string payload, Player player)
+        private static void OnPost(int id, string payload, Player player)
         {
             switch (id)
             {
@@ -206,7 +205,7 @@ namespace KiraiMod
             }
         }
 
-        private static void OnBroadcast(uint id, string payload, Player player)
+        private static void OnBroadcast(int id, string payload, Player player)
         {
             switch (id)
             {
@@ -216,7 +215,7 @@ namespace KiraiMod
             }
         }
 
-        private static void OnUpgrade(uint id, string payload, Player player)
+        private static void OnUpgrade(int id, string payload, Player player)
         {
 
         }
@@ -281,6 +280,13 @@ namespace KiraiMod
             VrcBroadcastType.AlwaysUnbuffered, VRCPlayer.field_Internal_Static_VRCPlayer_0.gameObject, 0f);
         }
 
+        /// <summary>
+        /// Get       = A,
+        /// Set       = B,
+        /// Post      = C,
+        /// Broadcast = D,
+        /// Upgrade   = E
+        /// </summary>
         public enum SendType
         {
             Get,

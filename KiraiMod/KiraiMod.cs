@@ -41,7 +41,7 @@ namespace KiraiMod
             Shared.ipc = new IPC();
             Shared.hooks = new Hooks();
 
-            Shared.modules.StartCoroutines();;
+            Shared.modules.StartCoroutines();
 
             if (MelonHandler.Mods.Any(mod => mod.Assembly.GetName().Name.Contains("KiraiRPC")))
             {

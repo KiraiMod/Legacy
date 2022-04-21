@@ -64,5 +64,15 @@ namespace KiraiMod
         {
             Shared.targetPlayer = null;
         }
+
+        public static System.Collections.IEnumerator CrashPlayer(VRC_Pickup pickup, Player player)
+        {
+            Networking.SetOwner(Networking.LocalPlayer, pickup.gameObject);
+            pickup.transform.SetParent(player.transform, true);
+            pickup.transform.localPosition = new Vector3(0, 0, 0);
+            yield return new WaitForSeconds(1);
+            pickup.gameObject.transform.position = new Vector3(pickup.transform.position.x, Vector3.positiveInfinity.y, pickup.transform.rotation.z);
+            pickup.transform.parent = null;
+        }
     }
 }
