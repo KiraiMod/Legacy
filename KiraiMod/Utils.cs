@@ -23,6 +23,7 @@ namespace KiraiMod
             public readonly static Color user = new Color(0.17f, 0.81f, 0.36f);
             public readonly static Color newuser = new Color(0.09f, 0.47f, 1f);
             public readonly static Color visitor = new Color(0.8f, 0.8f, 0.8f);
+            public readonly static Color quest = new Color(0f, 0.87f, 0.25f);
 
             public readonly static Color black = new Color(0.0f, 0.0f, 0.0f);
             public readonly static Color red = new Color(1.0f, 0.0f, 0.0f);

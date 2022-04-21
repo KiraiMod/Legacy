@@ -148,6 +148,7 @@ namespace KiraiMod.Modules
 			if (nameplate == null || player == null) return;
 
 			nameplate.GetComponent<UnityEngine.UI.Text>().text =
+				(player.field_Private_APIUser_0.IsOnMobile ? $"<color={Utils.Colors.quest.ToHex()}>Quest</color>\n" : "") +
 				(player.IsMaster() ? $"<color={Utils.Colors.highlight.ToHex()}>Master</color>\n" : "") + 
 				$"<color={player.field_Private_APIUser_0.GetTrustColor().ToHex()}>{player.field_Private_APIUser_0.GetTrustLevel()}</color>";
 		}
