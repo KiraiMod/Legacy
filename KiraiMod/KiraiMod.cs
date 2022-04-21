@@ -1,4 +1,5 @@
 ﻿using MelonLoader;
+using System.Linq;
 using System.Reflection;
 using UnhollowerRuntimeLib;
 using UnityEngine;
@@ -102,14 +103,16 @@ namespace KiraiMod
 
             // make quick menu background flush
             Shared.menu.qm.transform.Find("QuickMenu_NewElements/_Background/Panel").GetComponent<Image>().color = Color.white;
-
-            // make hud purple
-            GameObject \u0069\u006d = GameObject.Find("UserInterface/UnscaledUI/HudContent/Hud/");
-            \u0069\u006d.transform.Find("VoiceDotParent/VoiceDotDisabled").GetComponent<Image>().color = Utils.Colors.primary;
-            //\u0069\u006d.transform.Find("VoiceDotParent/VoiceDot").GetComponent<Image>().color = Utils.Colors.primary;
-            \u0069\u006d.transform.Find("AFK/Icon").GetComponent<Image>().color = Utils.Colors.primary;
-
             //.material = Shared.resources.LoadAsset_Internal("assets/uiglass.mat", Il2CppType.Of<Material>()).Cast<Material>();
+
+            if (MelonHandler.Mods.Any(mod => mod.Assembly.GetName().Name.Contains("KiraiUI")))
+            {
+                new System.Action(() =>
+                {
+                    if (!KiraiUI.instance.hasStored) KiraiUI.instance.Store();
+                    KiraiUI.instance.Apply();
+                }).Invoke();
+            }
 
             Shared.menu.CreatePage("kiraimod_options");
             Shared.menu.CreatePage("kiraimod_options2");
@@ -201,10 +204,8 @@ namespace KiraiMod
 
             Helper.DeletePortals();
 
-            GameObject \u0061\u006c\u006f\u006e\u0065 = GameObject.Find("UserInterface/UnscaledUI/HudContent/Hud/");
-            \u0061\u006c\u006f\u006e\u0065.transform.Find("VoiceDotParent/VoiceDotDisabled").GetComponent<Image>().color = new Color(0.846f, 0.0f, 0.0f, 0.697f);
-            //\u0061\u006c\u006f\u006e\u0065.transform.Find("VoiceDotParent/VoiceDot").GetComponent<Image>().color = new Color(1.0f, 0.0f, 0.145f, 0.641f);
-            \u0061\u006c\u006f\u006e\u0065.transform.Find("AFK/Icon").GetComponent<Image>().color = new Color(0.847f, 0.0f, 0.0f, 0.722f);
+            if (MelonHandler.Mods.Any(mod => mod.Assembly.GetName().Name.Contains("KiraiUI")))
+                new System.Action(() => KiraiUI.instance.Restore()).Invoke();
 
             foreach (Menu.MenuObject menuObject in Shared.menu.objects.Values)
             {
