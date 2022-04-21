@@ -41,7 +41,7 @@ namespace KiraiMod.Modules
                     QuickMenu.prop_QuickMenu_0.Method_Public_Void_Player_0(player);
                     QuickMenu.prop_QuickMenu_0.transform.Find("UserInteractMenu/BlockButton").GetComponent<UnityEngine.UI.Button>().Press();
 
-                    yield return new WaitForSecondsRealtime(0.1f);
+                    yield return new WaitForSecondsRealtime(0.15f);
                 }
                 else count++;
             }
