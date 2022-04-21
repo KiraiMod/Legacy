@@ -32,13 +32,11 @@ namespace KiraiMod
 
             Assembly.Load(mem.ToArray());
 
+#if !DEBUG
             new Action(() =>
-#if DEBUG
-                KiraiLib.NoOp()
-#else
                 KiraiLibLoader.Load()
-#endif
             )();
+#endif
         }
 
         public bool bUnload = false;
@@ -203,12 +201,11 @@ namespace KiraiMod
                 if (Input.GetKeyDown(KeyCode.KeypadMinus))
 #if DEBUG
                 {
-
+                    //KiraiLib.Libraries.LoadLibrary("KiraiRPC").Wait();
                 }
 #else
                     MelonLogger.Msg("Alive");
 #endif
-                if (Input.GetKeyDown(KeyCode.KeypadMultiply)) Helper.Teleport(new Vector3(0, 0, 0));
             }
             else if (Shared.modules.misc.BindsTab)
             {
@@ -233,6 +230,7 @@ namespace KiraiMod
                                     m_value = 3
                                 }.BoxIl2CppObject()
                             });
+                    if (Input.GetKeyDown(KeyCode.KeypadMultiply)) Helper.Teleport(new Vector3(0, 0, 0));
                 }
             }
             else if (Shared.modules.misc.BindsAlt)
