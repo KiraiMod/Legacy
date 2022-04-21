@@ -93,7 +93,6 @@ namespace KiraiMod
             try
             {
                 string extension = Path.GetExtension(filename);
-                MelonLogger.Log("Uploading " + extension + "..");
             }
             catch (System.Exception ex)
             {
@@ -175,16 +174,13 @@ namespace KiraiMod
                 Error(onError, null, "Upload filename must have an extension: " + filename);
                 yield break;
             }
-            
-
 
             string whyNot;
             if (!VRC.Tools.FileCanRead(filename, out whyNot))
             {
                 Error(onError, null, "Could not read file to upload!", filename + "\n" + whyNot);
                 yield break;
-            }
-            
+            }            
 
             // get or create ApiFile
             Progress(onProgress, null, string.IsNullOrEmpty(existingFileId) ? "Creating file record..." : "Getting file record...");
@@ -193,12 +189,10 @@ namespace KiraiMod
             bool wasError = false;
             bool worthRetry = false;
             string errorStr = "";
-            
 
             if (string.IsNullOrEmpty(friendlyName))
                 friendlyName = filename;
             
-
             string extension = System.IO.Path.GetExtension(filename);
             string mimeType = GetMimeTypeFromExtension(extension);
 
@@ -209,7 +203,6 @@ namespace KiraiMod
                 apiFile = c.Model.Cast<ApiFile>();
                 wait = false;
             };
-            
 
             System.Action<ApiContainer> fileFailure = (ApiContainer c) =>
             {
@@ -220,7 +213,6 @@ namespace KiraiMod
                     worthRetry = true;
             };
             
-
             while (true)
             {
                 apiFile = null;
@@ -262,11 +254,9 @@ namespace KiraiMod
                     yield return new WaitForSecondsRealtime(kPostWriteDelay);
             }
             
-
             if (apiFile == null)
                 yield break;
             
-
             while (apiFile.HasQueuedOperation(EnableDeltaCompression))
             {
                 wait = true;
@@ -287,11 +277,8 @@ namespace KiraiMod
                 }
             }
             
-
             // delay to let write get through servers
             yield return new WaitForSecondsRealtime(kPostWriteDelay);
-
-            
 
             // check for server side errors from last upload
             if (apiFile.IsInErrorState())
@@ -336,7 +323,6 @@ namespace KiraiMod
                 }
             }
             
-
             // delay to let write get through servers
             yield return new WaitForSecondsRealtime(kPostWriteDelay);
 
@@ -347,11 +333,9 @@ namespace KiraiMod
                 yield break;
             }
             
-
             // prepare file for upload
             Progress(onProgress, apiFile, "Preparing file for upload...", "Optimizing file");
             
-
             string uploadFilename = VRC.Tools.GetTempFileName(Path.GetExtension(filename), out errorStr, apiFile.id);
             if (string.IsNullOrEmpty(uploadFilename))
             {
@@ -359,7 +343,6 @@ namespace KiraiMod
                 yield break;
             }
             
-
             wasError = false;
             yield return MelonCoroutines.Start(CreateOptimizedFileInternal(filename, uploadFilename,
                 delegate (FileOpResult res)
@@ -375,7 +358,6 @@ namespace KiraiMod
                 })
             );
             
-
             if (wasError)
                 yield break;
 
@@ -398,7 +380,6 @@ namespace KiraiMod
                 yield return null;
             }
             
-
             if (!string.IsNullOrEmpty(errorStr))
             {
                 Error(onError, apiFile, "Failed to generate MD5 hash for upload file.", errorStr);
@@ -409,7 +390,6 @@ namespace KiraiMod
             // check if file has been changed
             Progress(onProgress, apiFile, "Preparing file for upload...", "Checking for changes");
             
-
             bool isPreviousUploadRetry = false;
             if (apiFile.HasExistingOrPendingVersion())
             {
@@ -474,15 +454,12 @@ namespace KiraiMod
                 }
             }
             
-
-
             // generate signature for new file
 
             Progress(onProgress, apiFile, "Preparing file for upload...", "Generating signature");
 
             string signatureFilename = VRC.Tools.GetTempFileName(".sig", out errorStr, apiFile.id);
             
-
             if (string.IsNullOrEmpty(signatureFilename))
             {
                 Error(onError, apiFile, "Failed to generate file signature!", "Failed to create temp file: \n" + errorStr);
@@ -504,15 +481,12 @@ namespace KiraiMod
                 })
             );
             
-
             if (wasError)
                 yield break;
-
 
             // generate signature md5 and file size
             Progress(onProgress, apiFile, "Preparing file for upload...", "Generating signature hash");
             
-
             string sigMD5Base64 = "";
             wait = true;
             errorStr = "";
@@ -535,7 +509,6 @@ namespace KiraiMod
                 yield break;
             }
             
-
             long sigFileSize = 0;
             if (!VRC.Tools.GetFileSize(signatureFilename, out sigFileSize, out errorStr))
             {
@@ -544,8 +517,6 @@ namespace KiraiMod
                 yield break;
             }
             
-
-
             // download previous version signature (if exists)
             string existingFileSignaturePath = null;
             if (EnableDeltaCompression && apiFile.HasExistingVersion())
@@ -603,7 +574,6 @@ namespace KiraiMod
                 }
             }
             
-
             // create delta if needed
             string deltaFilename = null;
 

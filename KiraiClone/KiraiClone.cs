@@ -105,6 +105,27 @@ namespace KiraiMod
             {
                 VRChat_OnUiManagerInit();
             };
+
+            if (MelonHandler.Mods.Any(m => m.Assembly.GetName().Name == "UIExpansionKit"))
+                new Action(() =>
+                {
+                    UIExpansionKit.API.ExpansionKitApi.GetExpandedMenu(UIExpansionKit.API.ExpandedMenu.QuickMenu).AddSimpleButton("KiraiClone By ID", () => {
+                        KiraiLib.HUDInput("Avatar ID", "KiraiClone", "avtr_6a97bb09-c73b-4db0-a091-d56d0dbac935", (val) => {
+                            val = val.Trim();
+
+                            if (!val.StartsWith("avtr") || val.Length != 41)
+                                KiraiLib.Logger.Log("Invalid avatar id");
+                            else
+                            {
+                                API.Fetch<ApiAvatar>(val,
+                                    UnhollowerRuntimeLib.DelegateSupport.ConvertDelegate<Il2CppSystem.Action<ApiContainer>>(new Action<ApiContainer>((container) =>
+                                    {
+                                        Reupload(container.Model.Cast<ApiAvatar>());
+                                    })));
+                            }
+                        });
+                    });
+                }).Invoke();
         }
 
         private static bool NoOp()
@@ -127,18 +148,18 @@ namespace KiraiMod
                     Player player = GetPlayer(QuickMenu.prop_QuickMenu_0.field_Private_APIUser_0.id);
                     if (player is null)
                     {
-                        KiraiLib.Logger.Log("Failed to find the selected player in the instance");
+                        Log("Failed to find the selected player in the instance");
                         return;
                     }
 
                     if (!player.prop_ApiAvatar_0.id.StartsWith("avtr_")) {
-                        KiraiLib.Logger.Log("Avatar has a malformed id");
+                        Log("Avatar has a malformed id");
                         return;
                     }
 
                     if (inProgress.Contains(player.prop_ApiAvatar_0.id))
                     {
-                        KiraiLib.Logger.Log("Avatar is already being reuploaded");
+                        Log("Avatar is already being reuploaded");
                         return;
                     }
 
@@ -167,93 +188,100 @@ namespace KiraiMod
 
         public async void Reupload(ApiAvatar avatar)
         {
-            if (avatar is null)
+            try
             {
-                KiraiLib.Logger.Log("Avatar is null");
-                return;
+                if (avatar is null)
+                {
+                    Log("Avatar is null");
+                    return;
+                }
+
+                inProgress.Add(avatar.id);
+
+                var imageUrl = avatar.imageUrl;
+                var assetUrl = avatar.assetUrl;
+                var id = avatar.id;
+                var name = avatar.name;
+                var description = avatar.description;
+
+                Log($"KiraiCloning {name}");
+                await Download(assetUrl, id);
+                Log("Downloaded VRCA");
+                string newID = await CreateID();
+                Log($"Created ID");
+                await Uncompress(id);
+                Log("Decompressed Original");
+                File.Delete($"./Temp/{id}");
+                Log("Deleted Original");
+                Replace(id, newID);
+                Log("Replaced ID");
+                await Task.Delay(500);
+                Recompress(id);
+                Log("Recompressed Modified");
+                File.Move($"./Temp/{id}.LZ4HC", $"./Temp/{id}.vrca");
+                Log("Renamed Modified");
+                await Task.Delay(500);
+
+                ApiFileUtils.UploadFileAsync($"./Temp/{id}.vrca", null, name, (ApiFile vrca, string _) =>
+                {
+                    Log("Uploaded VRCA");
+                    string imagePath = DownloadImage(imageUrl, id).Result;
+                    Log("Downloaded Image");
+
+                    ApiFileUtils.UploadFileAsync(imagePath, null, vrca.GetFileURL(), (ApiFile image, string __) =>
+                        {
+                            Log("Uploaded Image");
+
+                            var avtr = new ApiAvatar
+                            {
+                                authorName = APIUser.CurrentUser.username,
+                                authorId = APIUser.CurrentUser.id,
+                                imageUrl = image.GetFileURL(),
+                                assetUrl = vrca.GetFileURL(),
+                                description = description,
+                                releaseStatus = "private",
+                                name = name,
+                                id = newID,
+                            };
+
+                            var Last = new Action(() =>
+                            {
+                                Directory.Delete($"./Temp/{id}_dump", true);
+                                File.Delete($"./Temp/{id}.vrca");
+                                File.Delete($"./Temp/{id}.xml");
+                                File.Delete(imagePath);
+
+                                KiraiLib.Logger.Log($"Cleaned up");
+
+                                inProgress.Remove(id);
+                            });
+
+                            avtr.Post(
+                                UnhollowerRuntimeLib.DelegateSupport.ConvertDelegate<Il2CppSystem.Action<ApiContainer>>(new Action<ApiContainer>((___) =>
+                                {
+                                    Log($"Successfully KiraiCloned {name}");
+
+                                    Last();
+                                })),
+                                UnhollowerRuntimeLib.DelegateSupport.ConvertDelegate<Il2CppSystem.Action<ApiContainer>>(new Action<ApiContainer>((___) =>
+                                {
+                                    Log($"Failed to KiraiClone {name}");
+
+                                    Last();
+                                })));
+                        },
+                        (ApiFile a, string s1) => { },
+                        (ApiFile a, string s1, string s2, float p) => { },
+                        (VRC.Core.ApiFile Assets) => false);
+                },
+                (ApiFile a, string s) => { },
+                (ApiFile a, string s, string s2, float f) => { },
+                (ApiFile a) => { return false; });
             }
-
-            inProgress.Add(avatar.id);
-
-            var imageUrl = avatar.imageUrl;
-            var assetUrl = avatar.assetUrl;
-            var id = avatar.id;
-            var name = avatar.name;
-            var description = avatar.description;
-
-            KiraiLib.Logger.Log($"KiraiCloning {name}");
-            await Download(imageUrl, id);
-            KiraiLib.Logger.Log("Downloaded VRCA");
-            string newID = await CreateID();
-            KiraiLib.Logger.Log($"Created ID");
-            await Uncompress(id);
-            KiraiLib.Logger.Log("Decompressed Original");
-            File.Delete($"./Temp/{id}");
-            KiraiLib.Logger.Log("Deleted Original");
-            Replace(id, newID);
-            KiraiLib.Logger.Log("Replaced ID");
-            await Task.Delay(500);
-            Recompress(id);
-            KiraiLib.Logger.Log("Recompressed Modified");
-            File.Move($"./Temp/{id}.LZ4HC", $"./Temp/{id}.vrca");
-            KiraiLib.Logger.Log("Renamed Modified");
-            await Task.Delay(500);
-
-            ApiFileUtils.UploadFileAsync($"./Temp/{id}.vrca", null, name, (ApiFile vrca, string _) =>
+            catch (Exception ex)
             {
-                KiraiLib.Logger.Log("Uploaded VRCA");
-                string imagePath = DownloadImage(imageUrl, id).Result;
-                KiraiLib.Logger.Log("Downloaded Image");
-
-                ApiFileUtils.UploadFileAsync(imagePath, null, vrca.GetFileURL(), (ApiFile image, string __) =>
-                    {
-                        KiraiLib.Logger.Log("Uploaded Image");
-
-                        var avtr = new ApiAvatar
-                        {
-                            id = id,
-                            authorName = APIUser.CurrentUser.username,
-                            authorId = APIUser.CurrentUser.id,
-                            name = name,
-                            imageUrl = image.GetFileURL(),
-                            assetUrl = vrca.GetFileURL(),
-                            description = description,
-                            releaseStatus = "private"
-                        };
-
-                        var Last = new Action(() =>
-                        {
-                            Directory.Delete($"./Temp/{id}_dump", true);
-                            File.Delete($"./Temp/{id}.vrca");
-                            File.Delete($"./Temp/{id}.xml");
-                            File.Delete(imagePath);
-
-                            KiraiLib.Logger.Log($"Cleaned up");
-
-                            inProgress.Remove(id);
-                        });
-
-                        avtr.Post(
-                            UnhollowerRuntimeLib.DelegateSupport.ConvertDelegate<Il2CppSystem.Action<ApiContainer>>(new Action<ApiContainer>((___) =>
-                            {
-                                KiraiLib.Logger.Log($"Successfully KiraiCloned {name}");
-
-                                Last();
-                            })),
-                            UnhollowerRuntimeLib.DelegateSupport.ConvertDelegate<Il2CppSystem.Action<ApiContainer>>(new Action<ApiContainer>((___) =>
-                            {
-                                KiraiLib.Logger.Log($"Failed to KiraiClone {name}");
-
-                                Last();
-                            })));
-                    },
-                    (ApiFile a, string s1) => { },
-                    (ApiFile a, string s1, string s2, float p) => { },
-                    (VRC.Core.ApiFile Assets) => false);
-            },
-            (ApiFile a, string s) => { },
-            (ApiFile a, string s, string s2, float f) => { },
-            (ApiFile a) => { return false; });
+                MelonLogger.LogError(ex.ToString());
+            }
         }
 
         private async Task<string> DownloadImage(string imageUrl, string id)
@@ -277,7 +305,7 @@ namespace KiraiMod
 
                 bool waiting = true;
 
-                KiraiLib.Logger.Log($"Creating ID");
+                Log($"Creating ID");
                 API.Fetch<ApiAvatar>(temp, new Action<ApiContainer>(_ =>
                 {
                     waiting = false;
@@ -390,6 +418,12 @@ namespace KiraiMod
                 index = FindBytes(dst, search);
             }
             return dst;
+        }
+
+        private void Log(string str)
+        {
+            KiraiLib.Logger.Log(str);
+            MelonLogger.Log(str);
         }
     }
 }
