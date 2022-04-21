@@ -233,7 +233,7 @@ namespace KiraiMod
 
         private static void OnAvatarInitialized(GameObject __0, ref VRCAvatarManager __instance)
         {
-            if (__instance?.field_Private_VRCPlayer_0?.field_Private_Player_0?.field_Private_APIUser_0 == null || __0 == null) return;
+            if (__instance?.field_Private_VRCPlayer_0?._player?.field_Private_APIUser_0 == null || __0 == null) return;
 
             Shared.modules.OnAvatarInitialized(__0, __instance);
         }

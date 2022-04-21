@@ -150,16 +150,16 @@ namespace KiraiMod
                 }
 
                 // modern players (win10)
-                foreach (SyncVideoStream svs in Object.FindObjectsOfType<SyncVideoStream>())
-                {
-                    if (svs == null) continue;
-                    Networking.LocalPlayer.TakeOwnership(svs.gameObject);
-                    svs.field_Private_VRC_SyncVideoStream_0.Stop();
-                    svs.field_Private_VRC_SyncVideoStream_0.Clear();
-                    svs.field_Private_VRC_SyncVideoStream_0.AddURL(url);
-                    svs.field_Private_VRC_SyncVideoStream_0.Next();
-                    svs.field_Private_VRC_SyncVideoStream_0.Play();
-                }
+                //foreach (SyncVideoStream svs in Object.FindObjectsOfType<SyncVideoStream>())
+                //{
+                //    if (svs == null) continue;
+                //    Networking.LocalPlayer.TakeOwnership(svs.gameObject);
+                //    svs.field_Private_VRC_SyncVideoStream_0.Stop();
+                //    svs.field_Private_VRC_SyncVideoStream_0.Clear();
+                //    svs.field_Private_VRC_SyncVideoStream_0.AddURL(url);
+                //    svs.field_Private_VRC_SyncVideoStream_0.Next();
+                //    svs.field_Private_VRC_SyncVideoStream_0.Play();
+                //}
             } else
             {
                 KiraiLib.Logger.Log("Invalid video URL");

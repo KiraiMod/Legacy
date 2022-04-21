@@ -32,8 +32,11 @@ namespace KiraiMod.Modules
         private System.Collections.IEnumerator ActivateEx()
         {
             int count = 0;
-            foreach (Player player in PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0)
+                
+            for (int i = 0; i < PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0.Count; i++)
             {
+                Player player = PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0[i];
+
                 if (!selected.Contains(player.field_Private_APIUser_0.displayName))
                 {
                     processed.Add(player.field_Private_APIUser_0.displayName);
@@ -42,13 +45,19 @@ namespace KiraiMod.Modules
                     QuickMenu.prop_QuickMenu_0.transform.Find("UserInteractMenu/BlockButton").GetComponent<UnityEngine.UI.Button>().Press();
 
                     yield return new WaitForSecondsRealtime(0.15f);
+
+                    if (i % 5 == 4)
+                    {
+                        KiraiLib.Logger.Log("Waiting");
+                        new WaitForSecondsRealtime(2.5f);
+                    }
                 }
                 else count++;
             }
 
             KiraiLib.Logger.Log($"Hitting {count} users.");
 
-            yield return new WaitForSecondsRealtime(4.0f);
+            yield return new WaitForSecondsRealtime(3.5f);
 
             KiraiLib.Logger.Log("Switched into crasher");
 
@@ -77,8 +86,12 @@ namespace KiraiMod.Modules
                 if (player is null) KiraiLib.Logger.Log($"<color=red>{name} left before restoration</color>");
                 else
                 {
-                    QuickMenu.prop_QuickMenu_0.Method_Public_Void_Player_0(player);
-                    QuickMenu.prop_QuickMenu_0.transform.Find("UserInteractMenu/BlockButton").GetComponent<UnityEngine.UI.Button>().Press();
+                    try
+                    {
+                        QuickMenu.prop_QuickMenu_0.Method_Public_Void_Player_0(player);
+                        QuickMenu.prop_QuickMenu_0.transform.Find("UserInteractMenu/BlockButton").GetComponent<UnityEngine.UI.Button>().Press();
+                    }
+                    catch { }
 
                     yield return new WaitForSecondsRealtime(0.1f);
                 }

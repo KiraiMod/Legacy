@@ -134,6 +134,7 @@ namespace KiraiMod
                 if (Input.GetKeyDown(KeyCode.Keypad7)) Shared.modules.hideself.SetState();
                 if (Input.GetKeyDown(KeyCode.Keypad8)) 
                     (KiraiLib.UI.elements[Utils.CreateID("World\nCrash", (int)Shared.PageIndex.toggles3)] as KiraiLib.UI.Toggle).SetState();
+                if (Input.GetKeyDown(KeyCode.Keypad9)) Shared.modules.misc.SpawnDynamicPrefab();
                 if (Input.GetKeyDown(KeyCode.KeypadMinus))
 #if DEBUG
                 {
