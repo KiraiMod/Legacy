@@ -8,12 +8,32 @@ namespace KiraiMod.Modules
         public float speed = 2;
 
         private readonly Vector3 hideSelfOffset = new Vector3(0, 4, 0);
+        private bool oNoclip;
 
         public new ModuleInfo[] info = {
             new ModuleInfo("Orbit", "Orbits the selected player", ButtonType.Toggle, 7, Shared.PageIndex.toggles1, nameof(state)),
             new ModuleInfo("Orbit Speed", ButtonType.Slider, 3, Shared.PageIndex.sliders1, nameof(speed), 0, 8),
             new ModuleInfo("Orbit Distance", ButtonType.Slider, 4, Shared.PageIndex.sliders1, nameof(distance), 0, 4)
         };
+
+        public override void OnStateChange(bool state)
+        {
+            if (KiraiLib.UI.elements.TryGetValue(Utils.CreateID("noclip", (int)Shared.modules.noclip.info[0].page), out KiraiLib.UI.UIElement element))
+            {
+                KiraiLib.UI.Toggle toggle = element as KiraiLib.UI.Toggle;
+
+                if (state)
+                {
+                    oNoclip = toggle.state;
+                    toggle.SetState(true);
+                }
+                else
+                {
+                    toggle.SetState(oNoclip);
+                    oNoclip = false;
+                }
+            }
+        }
 
         public override void OnUpdate()
         {
