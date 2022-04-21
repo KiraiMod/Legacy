@@ -152,7 +152,7 @@ namespace KiraiMod.Modules
 
         public void CopyWorldID()
         {
-            string id = $"{RoomManager.field_Internal_Static_ApiWorldInstance_0.idOnly}:{RoomManager.field_Internal_Static_ApiWorldInstance_0.idWithTags}";
+            string id = $"{RoomManager.field_Internal_Static_ApiWorld_0.id}:{RoomManager.field_Internal_Static_ApiWorldInstance_0.idWithTags}";
             System.Windows.Forms.Clipboard.SetText(id);
             MelonLoader.MelonLogger.Msg(id);
             KiraiLib.Logger.Display("World ID copied to clipboard and saved to console", 2);
