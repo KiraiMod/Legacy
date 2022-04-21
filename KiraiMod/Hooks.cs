@@ -2,12 +2,10 @@
 using MelonLoader;
 using System;
 using System.Collections;
-using System.Linq;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.UI;
 using VRC;
-using VRC.Udon;
 using static VRC.SDKBase.VRC_EventHandler;
 
 namespace KiraiMod
@@ -19,31 +17,25 @@ namespace KiraiMod
             MelonCoroutines.Start(Initialize());
         }
 
-        private IEnumerator Initialize()
+        private static IEnumerator Initialize()
         {
-            while (NetworkManager.field_Internal_Static_NetworkManager_0 is null) yield return null;
+            try
+            {
+                Shared.harmony.Patch(typeof(Cursor).GetProperty(nameof(Cursor.lockState)).GetSetMethod(),
+                    new HarmonyMethod(typeof(Hooks).GetMethod(nameof(FuckOffPayToCheatThisIsMyFeatureNotYours), BindingFlags.NonPublic | BindingFlags.Static)));
+
+                LogWithPadding("Cursor.LockState Setter", true);
+            }
+            catch { LogWithPadding("Cursor.LockState Setter", false); }
 
             try
             {
-                NetworkManager
-                    .field_Internal_Static_NetworkManager_0
-                    .field_Internal_ObjectPublicHa1UnT1Unique_1_Player_0
-                    .field_Private_HashSet_1_UnityAction_1_T_0
-                    .Add(new Action<Player>(player => OnPlayerJoined(player)));
-                LogWithPadding("OnPlayerJoined", true);
-            }
-            catch { LogWithPadding("OnPlayerJoined", false); }
+                Shared.harmony.Patch(typeof(Cursor).GetProperty(nameof(Cursor.visible)).GetSetMethod(),
+                    new HarmonyMethod(typeof(Hooks).GetMethod(nameof(FocusVisible), BindingFlags.NonPublic | BindingFlags.Static)));
 
-            try
-            {
-                NetworkManager
-                    .field_Internal_Static_NetworkManager_0
-                    .field_Internal_ObjectPublicHa1UnT1Unique_1_Player_1
-                    .field_Private_HashSet_1_UnityAction_1_T_0
-                    .Add(new Action<Player>(player => OnPlayerLeft(player)));
-                LogWithPadding("OnPlayerLeft", true);
+                LogWithPadding("Cursor.Visible Setter", true);
             }
-            catch { LogWithPadding("OnPlayerLeft", false); }
+            catch { LogWithPadding("Cursor.Visible Setter", false); }
 
             try
             {
@@ -152,6 +144,40 @@ namespace KiraiMod
                 LogWithPadding("HighlightRenderer", true);
             }
             catch { LogWithPadding("HighlightRenderer", false); }
+
+            while (NetworkManager.field_Internal_Static_NetworkManager_0 is null) yield return null;
+
+            try
+            {
+                NetworkManager
+                    .field_Internal_Static_NetworkManager_0
+                    .field_Internal_ObjectPublicHa1UnT1Unique_1_Player_0
+                    .field_Private_HashSet_1_UnityAction_1_T_0
+                    .Add(new Action<Player>(player => OnPlayerJoined(player)));
+                LogWithPadding("OnPlayerJoined", true);
+            }
+            catch { LogWithPadding("OnPlayerJoined", false); }
+
+            try
+            {
+                NetworkManager
+                    .field_Internal_Static_NetworkManager_0
+                    .field_Internal_ObjectPublicHa1UnT1Unique_1_Player_1
+                    .field_Private_HashSet_1_UnityAction_1_T_0
+                    .Add(new Action<Player>(player => OnPlayerLeft(player)));
+                LogWithPadding("OnPlayerLeft", true);
+            }
+            catch { LogWithPadding("OnPlayerLeft", false); }
+        }
+
+        private static bool FuckOffPayToCheatThisIsMyFeatureNotYours(bool __0) 
+        {
+            return !__0 || Application.isFocused;
+        }
+
+        private static bool FocusVisible(bool __0)
+        {
+            return __0 || Application.isFocused;
         }
 
 #if DEBUG
@@ -181,7 +207,7 @@ namespace KiraiMod
         }
 #endif
 
-        private void OnPlayerJoined(Player player)
+        private static void OnPlayerJoined(Player player)
         {
             MelonLogger.Log(player.field_Private_VRCPlayerApi_0.displayName + " joined");
             Shared.modules.OnPlayerJoined(player);
@@ -189,7 +215,7 @@ namespace KiraiMod
             if (player.IsMod()) KiraiLib.Logger.Log("A moderator is in your lobby.");
         }
 
-        private void OnPlayerLeft(Player player)
+        private static void OnPlayerLeft(Player player)
         {
             MelonLogger.Log(player.field_Private_VRCPlayerApi_0.displayName + " left");
 
@@ -279,7 +305,7 @@ namespace KiraiMod
             }
         }
 
-        private bool HighlightRenderer(Renderer __0, bool __1)
+        private static bool HighlightRenderer(Renderer __0, bool __1)
         {
             return !Shared.modules.esp.state || __1 || __0.name != "SelectRegion";
         }
