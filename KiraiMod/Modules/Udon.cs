@@ -301,7 +301,7 @@ namespace KiraiMod.Modules
             else if (last == storedGamma) KiraiLib.Logger.Log("Value Already in Gamma");
             else
             {
-                KiraiLib.Logger.Log($"Setting Alpha to [{last.Item1}]::{last.Item2}");
+                KiraiLib.Logger.Log($"Setting Alpha to [{last.Item1 + 1}]::{last.Item2}");
                 storedAlpha = last;
             }
         }
@@ -315,7 +315,7 @@ namespace KiraiMod.Modules
             else
             {
                 storedBeta = last;
-                KiraiLib.Logger.Log($"Setting Beta to [{last.Item1}]::{last.Item2}");
+                KiraiLib.Logger.Log($"Setting Beta to [{last.Item1 + 1}]::{last.Item2}");
             }
         }
 
@@ -328,7 +328,7 @@ namespace KiraiMod.Modules
             else
             {
                 storedGamma = last;
-                KiraiLib.Logger.Log($"Setting Gamma to [{last.Item1}]::{last.Item2}");
+                KiraiLib.Logger.Log($"Setting Gamma to [{last.Item1 + 1}]::{last.Item2}");
             }
         }
 
