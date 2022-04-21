@@ -2,9 +2,7 @@
 using MelonLoader.TinyJSON;
 using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Net.Http;
-using System.Web;
 using UnityEngine;
 using VRC.SDKBase;
 
@@ -19,9 +17,13 @@ namespace KiraiMod
         private bool connected = false;
         private List<string[]> online = new List<string[]>();
 
+        private readonly string config = "kiraimod.name.txt";
+
         public override void OnApplicationStart()
         {
-            username = Environment.UserName;
+            if (System.IO.File.Exists(config))
+                username = System.IO.File.ReadAllText(config);
+            else username = Environment.UserName;
 
             client = new HttpClient();
             client.BaseAddress = new Uri("http://5306aadf57b2262f40c.ddns.net:53066/friends/");
