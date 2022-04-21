@@ -181,7 +181,7 @@ namespace KiraiMod
             MelonLogger.Log(player.field_Private_VRCPlayerApi_0.displayName + " joined");
             Shared.modules.OnPlayerJoined(player);
 
-            if (player.IsMod()) Utils.HUDMessage("A moderator is in your lobby.");
+            if (player.IsMod()) KiraiLib.Logger.Log("A moderator is in your lobby.");
         }
 
         private void OnPlayerLeft(Player player)

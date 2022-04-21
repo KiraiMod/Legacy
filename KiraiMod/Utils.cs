@@ -49,33 +49,6 @@ namespace KiraiMod
             UnityEngine.Object.Destroy(obj);
         }
 
-        public static void LogGO(GameObject go, int max = -1, int? n_depth = null)
-        {
-            int depth = n_depth ?? 0;
-            if (max != -1 && depth > max) return;
-
-            MelonLogger.Log(ConsoleColor.Green, "".PadLeft(depth * 4, ' ') + go.name);
-
-            Component[] components = go.GetComponents<Component>();
-            for (int i = 0; i < components.Length; i++)
-            {
-                MelonLogger.Log(
-                    ConsoleColor.Cyan,
-                    "".PadLeft((depth + 1) * 4, ' ') + 
-                    ((go.name.Length + 2 < components[i].ToString().Length) ?
-                    components[i].ToString().Substring(
-                        go.name.Length + 2, 
-                        components[i].ToString().Length - go.name.Length - 3
-                    ) : components[i].ToString())
-                );
-            }
-
-            for (int i = 0; i < go.transform.childCount; i++)
-            {
-                LogGO(go.transform.GetChild(i).gameObject, max, depth + 1);
-            }
-        }
-
         public static void LogKeywords(System.Reflection.MethodBase method)
         {
             int i = 0, j = 0;
@@ -120,53 +93,9 @@ namespace KiraiMod
             return hash.ToString();
         }
 
-        public static void HUDMessage(string message)
-        {
-            if (VRCUiManager.prop_VRCUiManager_0 == null) return;
-
-            VRCUiManager.prop_VRCUiManager_0.Method_Public_Void_String_0(message);
-        }
-
-        public static void HUDInput(string title, string text, string placeholder, string initial, System.Action<string> OnAccept)
-        {
-            VRCUiPopupManager
-                .field_Private_Static_VRCUiPopupManager_0
-                .Method_Public_Void_String_String_InputType_Boolean_String_Action_3_String_List_1_KeyCode_Text_Action_String_Boolean_Action_1_VRCUiPopup_PDM_1
-                (
-                    title, 
-                    initial, 
-                    InputField.InputType.Standard,
-                    false, 
-                    text, 
-                    UnhollowerRuntimeLib
-                        .DelegateSupport
-                        .ConvertDelegate<
-                            Il2CppSystem.Action<string, List<KeyCode>, Text>
-                        >(
-                            new System.Action<string, List<KeyCode>, Text>(
-                                (a, b, c) => 
-                                {
-                                    OnAccept(a); 
-                                }
-                            )
-                        ), 
-                    null, 
-                    placeholder, 
-                    true, 
-                    null
-                );
-        }
-
         public static void SelectPlayer(Player user)
         {
             Shared.menu.qm.Method_Public_Void_Player_0(user);
-        }
-
-        public static Color GetRainbow()
-        {
-            return new Color((float)Math.Sin(Config.General.fRGBSpeed * Time.time) * 0.5f + 0.5f,
-                (float)Math.Sin(Config.General.fRGBSpeed * Time.time + (2 * 3.14 / 3)) * 0.5f + 0.5f,
-                (float)Math.Sin(Config.General.fRGBSpeed * Time.time + (4 * 3.14 / 3)) * 0.5f + 0.5f);
         }
 
         public static void GetGenericLayout(int i, out int x, out int y)

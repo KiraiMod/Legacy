@@ -84,8 +84,7 @@ namespace KiraiMod.Modules
 
         public static void Log()
         {
-            Utils.LogGO(Shared.modules.xutils.hit.collider.gameObject);
-
+            KiraiLib.LogGameObject(Shared.modules.xutils.hit.collider.gameObject);
         }
 
         public static void Portal()

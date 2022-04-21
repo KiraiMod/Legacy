@@ -63,7 +63,7 @@ namespace KiraiMod.Modules
 				if (player.IsFriend())
 				{
 					player.transform.Find("Player Nameplate/Canvas/Nameplate/Contents/Main/Text Container/Name")
-						.GetComponent<TMPro.TextMeshProUGUI>().color = Utils.GetRainbow();
+						.GetComponent<TMPro.TextMeshProUGUI>().color = KiraiLib.GetRainbow(Config.General.fRGBSpeed);
 				}
 			}
         }

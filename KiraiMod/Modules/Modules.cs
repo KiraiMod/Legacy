@@ -17,7 +17,6 @@ namespace KiraiMod.Modules
         public Orbit orbit;
         public XUtils xutils;
         public Nameplates nameplates;
-        public ModLog modlog;
         public Headlight headlight;
         public Aliases aliases;
         public ItemOrbit itemOrbit;
@@ -42,7 +41,6 @@ namespace KiraiMod.Modules
             modules.Add(orbit = new Orbit());
             modules.Add(xutils = new XUtils());
             modules.Add(nameplates = new Nameplates());
-            modules.Add(modlog = new ModLog());
             modules.Add(headlight = new Headlight());
             modules.Add(aliases = new Aliases());
             modules.Add(itemOrbit = new ItemOrbit());

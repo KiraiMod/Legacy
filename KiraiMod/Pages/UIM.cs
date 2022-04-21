@@ -13,7 +13,7 @@ namespace KiraiMod.Pages
 
             Shared.menu.CreateButton("uim/info", "View\nInfo", "View info about this player", 2, -1, Shared.menu.um.transform, new System.Action(() =>
             {
-                Utils.HUDMessage("View the console for information");
+                KiraiLib.Logger.Log("View the console for information");
 
                 VRC.Player player = Utils.GetPlayer(QuickMenu.prop_QuickMenu_0.field_Private_APIUser_0.id);
 

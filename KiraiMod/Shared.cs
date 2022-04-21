@@ -22,6 +22,7 @@ namespace KiraiMod
         //public static AssetBundle resources;
         public static HarmonyInstance harmony;
         public static IPC ipc;
+        public static KiraiLib lib;
 
         public static class Options
         {

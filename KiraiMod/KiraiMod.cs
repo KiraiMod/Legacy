@@ -5,10 +5,23 @@ using UnhollowerRuntimeLib;
 using UnityEngine;
 using UnityEngine.UI;
 
+[assembly: MelonInfo(typeof(KiraiMod.KiraiMod), "KiraiMod", null, "Kirai Chan#8315")]
+[assembly: MelonGame("VRChat", "VRChat")]
+[assembly: MelonOptionalDependencies("KiraiUI", "KiraiRPC", "KiraiLib")]
+
 namespace KiraiMod
 {
     public class KiraiMod : MelonMod
     {
+        public KiraiMod()
+        {
+            System.IO.Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("KiraiMod.Lib.KiraiLib.dll");
+            System.IO.MemoryStream mem = new System.IO.MemoryStream((int)stream.Length);
+            stream.CopyTo(mem);
+
+            Assembly.Load(mem.ToArray());
+        }
+
         public bool bUnload = false;
 
         public override void OnApplicationStart()
@@ -30,12 +43,14 @@ namespace KiraiMod
                 }
             }
 
-            //System.IO.Stream stream = Assembly.GetManifestResourceStream("KiraiMod.resources.assetbundle");
-            //System.IO.MemoryStream mem = new System.IO.MemoryStream((int)stream.Length);
-            //stream.CopyTo(mem);
-
-            //Shared.resources = AssetBundle.LoadFromMemory(mem.ToArray(), 0);
-            //Shared.resources.hideFlags |= HideFlags.DontUnloadUnusedAsset;
+            if (!MelonHandler.Mods.Any(m => m.Assembly.GetName().Name == "AdvancedSafety"))
+            {
+                if (MelonHandler.Mods.Any(m => m.Info.Name == ""))
+                {
+                    System.Windows.Forms.MessageBox.Show("AdvancedSafety by knah is required to prevent crashes with Notorious", "Potential Incompatbility");
+                    System.Diagnostics.Process.Start("https://github.com/knah/VRCMods");
+                }
+            }
 
             Shared.harmony = Harmony.HarmonyInstance.Create("KiraiMod");
 
@@ -146,7 +161,7 @@ namespace KiraiMod
                 if (Input.GetKeyDown(KeyCode.KeypadMinus))
 #if DEBUG
                 {
-
+                    KiraiLib.Logger.Log("Hello!");
                 }
 #else
                     MelonLogger.Log("Alive");
@@ -314,7 +329,7 @@ namespace KiraiMod
 
             Shared.menu.CreateButton("p2/unload", "Unload", "Reverses most KiraiMod changes", 1f, -1f, Shared.menu.pages[(int)Menu.PageIndex.buttons1].transform, new System.Action(() =>
             {
-                Utils.HUDMessage("Press INSERT to reload");
+                KiraiLib.Logger.Log("Press INSERT to reload");
                 Unload();
             }));
         }

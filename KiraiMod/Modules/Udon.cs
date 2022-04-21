@@ -167,11 +167,11 @@ namespace KiraiMod.Modules
         {
             if (Networked)
             {
-                if (name.StartsWith("_")) Utils.HUDMessage("Events starting with _ are non-networkable.");
+                if (name.StartsWith("_")) KiraiLib.Logger.Log("Events starting with _ are non-networkable.");
                 selected.SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, name);
             } else if (Targeted)
             {
-                if (name.StartsWith("_")) Utils.HUDMessage("Events starting with _ are non-targetable.");
+                if (name.StartsWith("_")) KiraiLib.Logger.Log("Events starting with _ are non-targetable.");
                 VRC.SDKBase.Networking.SetOwner(Shared.TargetPlayer.field_Private_VRCPlayerApi_0, selected.gameObject);
                 selected.SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner, name);
             }
@@ -202,7 +202,7 @@ namespace KiraiMod.Modules
             if (Shared.modules.misc.bUseClipboard)
                 Helper.BroadcastCustomEvent(System.Windows.Forms.Clipboard.GetText().Trim());
             else
-                Utils.HUDInput("Custom event name", "Execute", "_interact", "", new System.Action<string>((resp) =>
+                KiraiLib.HUDInput("Custom event name", "Execute", "_interact", new System.Action<string>((resp) =>
                 {
                     Helper.BroadcastCustomEvent(resp.Trim());
                 }));

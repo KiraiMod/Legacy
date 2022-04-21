@@ -50,7 +50,6 @@ namespace KiraiMod
             public bool bAutoKOS;
 
             public bool bESP;
-            public bool bModLog;
             public bool bNameplates;
             public bool bNameplatesRGB;
             public bool bHeadlight;
@@ -95,7 +94,6 @@ namespace KiraiMod
             {
                 Move(load, ref Shared.modules.portal.infinite,    ref bInfinitePortals  );
                 Move(load, ref Shared.modules.kos.state,          ref bAutoKOS          );
-                Move(load, ref Shared.modules.modlog.state,       ref bModLog           );
                 Move(load, ref Shared.modules.nameplates.state,   ref bNameplates       );
                 Move(load, ref Shared.modules.nameplates.RGB,     ref bNameplatesRGB    );
                 Move(load, ref Shared.modules.headlight.state,    ref bHeadlight        );

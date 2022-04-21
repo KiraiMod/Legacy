@@ -14,6 +14,7 @@ namespace KiraiMod.Modules
         public bool BindsNumpad;
         public bool BindsTab;
         public bool BindsAlt;
+        public bool HighStep;
 
         public new ModuleInfo[] info =
         {
@@ -31,6 +32,7 @@ namespace KiraiMod.Modules
             new ModuleInfo("Numpad Binds", "Use Numlock + Keypad to activate binds", ButtonType.Toggle, 1, Menu.PageIndex.toggles3, nameof(BindsNumpad)),
             new ModuleInfo("Tab Binds", "Use Tab + Alphabetical to activate binds", ButtonType.Toggle, 5, Menu.PageIndex.toggles3, nameof(BindsTab)),
             new ModuleInfo("Alt Binds", "Use Alt + Numerical to activate binds", ButtonType.Toggle, 9, Menu.PageIndex.toggles3, nameof(BindsAlt)),
+            new ModuleInfo("High Step", "Step up objects larger than you normally can", ButtonType.Toggle, 0, Menu.PageIndex.toggles2, nameof(HighStep))
         };
 
         public override void OnStateChange(bool state)
@@ -42,6 +44,11 @@ namespace KiraiMod.Modules
         {
             state = true;
             MelonLoader.MelonCoroutines.Start(WaitForMenu());
+        }
+
+        public override void OnLevelWasLoaded()
+        {
+            if (HighStep) VRC.Player.prop_Player_0.GetComponent<CharacterController>().stepOffset = 1.6f;
         }
 
         public System.Collections.IEnumerator WaitForMenu()
@@ -74,7 +81,7 @@ namespace KiraiMod.Modules
             if (bUseClipboard)
                 Helper.OverrideVideoPlayers(Utils.GetClipboard().Trim());
             else
-                Utils.HUDInput("Video URL", "Override", "https://www.youtube.com/watch?v=LhCYW9dKC5s", "", new Action<string>((value) =>
+                KiraiLib.HUDInput("Video URL", "Override", "https://www.youtube.com/watch?v=LhCYW9dKC5s", new Action<string>((value) =>
                 {
                     Helper.OverrideVideoPlayers(value.Trim());
                 }));
@@ -95,7 +102,7 @@ namespace KiraiMod.Modules
             if (bUseClipboard)
                 Helper.SetPedestals(System.Windows.Forms.Clipboard.GetText().Trim());
             else
-                Utils.HUDInput("Avatar ID", "Set Pedestals", "avtr_????????-????-????-????-????????????", "", new System.Action<string>((resp) =>
+                KiraiLib.HUDInput("Avatar ID", "Set Pedestals", "avtr_8-4-4-4-12", new Action<string>((resp) =>
                 {
                     Helper.SetPedestals(resp.Trim());
                 }));
@@ -106,7 +113,7 @@ namespace KiraiMod.Modules
             if (bUseClipboard)
                 Helper.JoinWorldById(System.Windows.Forms.Clipboard.GetText().Trim());
             else
-                Utils.HUDInput("World ID", "Join", "wrld_*:?????~*()~nonce()", "", new System.Action<string>((resp) =>
+                KiraiLib.HUDInput("World ID", "Join", "wrld_*:?????~*()~nonce()", new Action<string>((resp) =>
                 {
                     Helper.JoinWorldById(resp.Trim());
                 }));
@@ -159,5 +166,9 @@ namespace KiraiMod.Modules
             Shared.menu.Set(Utils.CreateID("Numpad Binds", (int)Menu.PageIndex.toggles3), true);
         }
 
+        public void OnStateChangeHighStep(bool state)
+        {
+            VRC.Player.prop_Player_0.GetComponent<CharacterController>().stepOffset = state ? 1.6f : 0.5f;
+        }
     }
 }

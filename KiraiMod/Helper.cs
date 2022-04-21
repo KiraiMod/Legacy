@@ -104,7 +104,7 @@ namespace KiraiMod
         {
             if (Shared.TargetPlayer is null)
             {
-                Utils.HUDMessage("No player is targeted");
+                KiraiLib.Logger.Log("No player is targeted");
                 return;
             }
 
@@ -113,14 +113,14 @@ namespace KiraiMod
                 VRC_ObjectSync sync = Resources.FindObjectsOfTypeAll<VRC_ObjectSync>().FirstOrDefault(o =>
                     o.GetComponents<Collider>().Concat(o.GetComponentsInChildren<Collider>()).Any(c => !c.isTrigger && ((1016111 >> c.gameObject.layer) & 1) == 1));
                 if (sync != null) MelonCoroutines.Start(OutOfRangeCrash(sync.transform, Shared.TargetPlayer));
-                else Utils.HUDMessage("World is invalid.");
+                else KiraiLib.Logger.Log("World is invalid.");
             }
             else
             {
                 UdonBehaviour sync = Resources.FindObjectsOfTypeAll<UdonBehaviour>().FirstOrDefault(o => 
                     o.SynchronizePosition && o.GetComponents<Collider>().Concat(o.GetComponentsInChildren<Collider>()).Any(c => !c.isTrigger && ((1016111 >> c.gameObject.layer) & 1) == 1));
                 if (sync != null) MelonCoroutines.Start(OutOfRangeCrash(sync.transform, Shared.TargetPlayer));
-                else Utils.HUDMessage("World is invalid.");
+                else KiraiLib.Logger.Log("World is invalid.");
             }
         }
 
@@ -140,7 +140,7 @@ namespace KiraiMod
         public static void SetPedestals(string id)
         {
             if (!id.StartsWith("avtr_"))
-                Utils.HUDMessage("Invalid avatar ID");
+                KiraiLib.Logger.Log("Invalid avatar ID");
             else
                 foreach (var pedestal in Object.FindObjectsOfType<VRC_AvatarPedestal>())
                 {
@@ -185,7 +185,7 @@ namespace KiraiMod
                 }
             } else
             {
-                Utils.HUDMessage("Invalid video URL");
+                KiraiLib.Logger.Log("Invalid video URL");
             }
         }
 
