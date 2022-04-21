@@ -32,6 +32,7 @@ namespace KiraiMod
         public static class CompatibilityModule
         {
             public static bool NoColor;
+            public static bool NoTheme;
             public static bool NoMovement;
             public static bool NoCompatibility;
         }
@@ -49,6 +50,19 @@ namespace KiraiMod
         {
             instance = this;
 
+            if (!MelonHandler.Mods.Any(m => m.Assembly.GetName().Name == "SmallUserVolume"))
+            {
+                System.IO.Stream stream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("KiraiMod.Lib.SmallUserVolume.dll");
+                System.IO.MemoryStream mem = new System.IO.MemoryStream((int)stream.Length);
+                stream.CopyTo(mem);
+
+                System.Reflection.Assembly.Load(mem.ToArray());
+
+                new Action(() => { 
+                    MelonHandler.Mods.Add(new SmallUserVolume.Class());
+                })();
+            }
+
             MelonMod mod = MelonHandler.Mods.FirstOrDefault(m => m.Assembly.GetName().Name == "KiraiMod");
 
             string location;
@@ -56,7 +70,7 @@ namespace KiraiMod
             if (mod is null) location = Location;
             else location = mod.Location;
 
-            CRC32 crc = new CRC32();
+            Utils.CRC32 crc = new Utils.CRC32();
             
             foreach(byte b in crc.ComputeHash(System.IO.File.ReadAllBytes(location)))
             {
@@ -69,8 +83,6 @@ namespace KiraiMod
             hasLoaded = true;
 
             UIRoot = QuickMenu.prop_QuickMenu_0.transform.parent;
-
-            System.Collections.Generic.List<Transform> check = new System.Collections.Generic.List<Transform>();
 
             #region Fetch
             Screens = UIRoot?.Find("MenuContent");
@@ -247,6 +259,12 @@ namespace KiraiMod
                 RectTransform infobar = QuickMenuNewElements?.Find("_InfoBar")?.GetComponent<RectTransform>();
                 if (infobar != null) Utils.MoveRectTransformSizeDelta(op, ref infobar, ref Memory.infobarSize, new Vector2(1680 + size * 2, 285.7f));
                 #endregion
+            }
+
+            if (CompatibilityModule.NoCompatibility || !CompatibilityModule.NoTheme)
+            {
+                CanvasScaler scalar = QuickMenu.prop_QuickMenu_0.GetComponent<CanvasScaler>();
+                if (scalar != null) Utils.MoveCanvasScalarRefPixPerUnit(op, ref scalar, ref Memory.qmRPPU, 0);
 
                 tmp3 = Screens.Find("Backdrop/Header/Tabs/ViewPort/Content");
 
@@ -260,8 +278,6 @@ namespace KiraiMod
                     }
             }
 
-            CanvasScaler scalar = QuickMenu.prop_QuickMenu_0.GetComponent<CanvasScaler>();
-            if (scalar != null) Utils.MoveCanvasScalarRefPixPerUnit(op, ref scalar, ref Memory.qmRPPU, 0);
 
             tmp3 = SelectionMenu?.Find("BuildNumText");
             tmp4 = tmp3?.GetComponent<Text>();
@@ -278,44 +294,6 @@ namespace KiraiMod
 
             if (op == 1) Memory.EarlyAccessText = EarlyAccessText.text;
             else if (op == 2) EarlyAccessText.text = Memory.EarlyAccessText;
-        }
-
-        public class CRC32
-        {
-            private readonly uint[] ChecksumTable;
-            private readonly uint Polynomial = 0xEDB88320;
-
-            public CRC32()
-            {
-                ChecksumTable = new uint[0x100];
-
-                for (uint index = 0; index < 0x100; ++index)
-                {
-                    uint item = index;
-                    for (int bit = 0; bit < 8; ++bit)
-                        item = ((item & 1) != 0) ? (Polynomial ^ (item >> 1)) : (item >> 1);
-                    ChecksumTable[index] = item;
-                }
-            }
-
-            public byte[] ComputeHash(System.IO.Stream stream)
-            {
-                uint result = 0xFFFFFFFF;
-
-                int current;
-                while ((current = stream.ReadByte()) != -1)
-                    result = ChecksumTable[(result & 0xFF) ^ (byte)current] ^ (result >> 8);
-
-                byte[] hash = BitConverter.GetBytes(~result);
-                Array.Reverse(hash);
-                return hash;
-            }
-
-            public byte[] ComputeHash(byte[] data)
-            {
-                using (System.IO.MemoryStream stream = new System.IO.MemoryStream(data))
-                    return ComputeHash(stream);
-            }
         }
     }
 }

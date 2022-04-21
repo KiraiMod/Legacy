@@ -7,7 +7,7 @@
     <ProjectGuid>{C711486D-922D-401F-B400-B96A674F1E71}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>KiraiUI</RootNamespace>
+    <RootNamespace>KiraiMod</RootNamespace>
     <AssemblyName>KiraiUI</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -67,6 +67,9 @@
     <Reference Include="MelonLoader.ModHandler">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\VRChat\MelonLoader\MelonLoader.ModHandler.dll</HintPath>
     </Reference>
+    <Reference Include="SmallUserVolume">
+      <HintPath>Lib\SmallUserVolume.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -110,6 +113,9 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Lib\SmallUserVolume.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
