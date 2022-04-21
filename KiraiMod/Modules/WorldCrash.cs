@@ -48,7 +48,7 @@ namespace KiraiMod.Modules
 
             KiraiLib.Logger.Log($"Hitting {count} users.");
 
-            yield return new WaitForSeconds(2.0f);
+            yield return new WaitForSeconds(4.0f);
 
             (KiraiLib.UI.elements[Utils.CreateID("World\nCrash", (int)Shared.PageIndex.toggles3)] as KiraiLib.UI.Toggle).SetState(true);
         }
@@ -64,6 +64,10 @@ namespace KiraiMod.Modules
         
         private System.Collections.IEnumerator DeactivateEx()
         {
+            (KiraiLib.UI.elements[Utils.CreateID("World\nCrash", (int)Shared.PageIndex.toggles3)] as KiraiLib.UI.Toggle).SetState(false);
+
+            yield return new WaitForSeconds(4.0f);
+
             foreach (string name in processed)
             {
                 Player player = Utils.GetPlayer(name);
@@ -78,10 +82,6 @@ namespace KiraiMod.Modules
                 }
             }
             processed.Clear();
-
-            yield return new WaitForSeconds(2.0f);
-
-            (KiraiLib.UI.elements[Utils.CreateID("World\nCrash", (int)Shared.PageIndex.toggles3)] as KiraiLib.UI.Toggle).SetState(false);
         }
 
         public void Show()
