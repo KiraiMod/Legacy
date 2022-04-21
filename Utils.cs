@@ -105,7 +105,7 @@ namespace KiraiMod
         {
             if (VRCUiManager.field_Protected_Static_VRCUiManager_0 == null) return;
 
-            VRCUiManager.field_Protected_Static_VRCUiManager_0.Method_Public_Void_String_1(message);
+            VRCUiManager.field_Protected_Static_VRCUiManager_0.Method_Public_Void_String_2(message);
         }
 
         public static Color GetRainbow()

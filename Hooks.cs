@@ -48,7 +48,7 @@ namespace KiraiMod
             try
             {
                 Shared.harmony.Patch(typeof(VRC_EventDispatcherRFC)
-                    .GetMethod(nameof(VRC_EventDispatcherRFC.Method_Public_Void_Player_VrcEvent_VrcBroadcastType_Int32_Single_1), BindingFlags.Public | BindingFlags.Instance), 
+                    .GetMethod(nameof(VRC_EventDispatcherRFC.Method_Public_Void_Player_VrcEvent_VrcBroadcastType_Int32_Single_0), BindingFlags.Public | BindingFlags.Instance), 
                     new HarmonyMethod(typeof(Hooks).GetMethod(nameof(OnRPC), BindingFlags.NonPublic | BindingFlags.Static)));
 
                 MelonLogger.Log("Hooking RPCs... Passed");

@@ -53,11 +53,11 @@ namespace KiraiMod
                 if (!Shared.menu.qm.prop_Boolean_0)
                 {
                     Shared.modules.xutils.state = false;
-                    if (Shared.modules.xutils.hit != null)
+                    if (Shared.modules.xutils.col != null)
                     {
                         HighlightsFX.prop_HighlightsFX_0
-                            .Method_Public_Void_Renderer_Boolean_0(Shared.modules.xutils.hit.gameObject.GetComponent<Renderer>(), false);
-                        Shared.modules.xutils.hit = null;
+                            .Method_Public_Void_Renderer_Boolean_0(Shared.modules.xutils.col.gameObject.GetComponent<Renderer>(), false);
+                        Shared.modules.xutils.col = null;
                     }
                 }
 

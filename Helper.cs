@@ -24,7 +24,12 @@ namespace KiraiMod
         {
             if (player == null) return;
 
-            GameObject portal = Networking.Instantiate(VRC_EventHandler.VrcBroadcastType.Always, "Portals/PortalInternalDynamic", player.transform.position + player.transform.forward * distance, player.transform.rotation);
+            PortalPosition(player.transform.position + player.transform.forward * distance, player.transform.rotation, blank);
+        }
+
+        public static void PortalPosition(Vector3 position, Quaternion rotation, bool blank = false)
+        {
+            GameObject portal = Networking.Instantiate(VRC_EventHandler.VrcBroadcastType.Always, "Portals/PortalInternalDynamic", position, rotation);
 
             if (portal == null) return;
 

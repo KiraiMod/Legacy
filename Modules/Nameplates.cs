@@ -47,11 +47,9 @@ namespace KiraiMod.Modules
             {
                 if (PlayerManager.field_Private_Static_PlayerManager_0?.field_Private_List_1_Player_0 == null) return;
 
-                List<Player> players = PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0;
-
-                foreach (Player player in players)
+                foreach (Player player in PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0)
                 {
-                    if (player?.field_Private_APIUser_0 == null || player.field_Private_APIUser_0.IsLocal()) continue;
+                    if (player?.field_Private_APIUser_0 == null || player?.field_Private_VRCPlayerApi_0 == null || player.field_Private_APIUser_0.IsLocal()) continue;
 
                     if (player.IsFriend() && !player.IsKOS())
                     {
@@ -63,10 +61,9 @@ namespace KiraiMod.Modules
 
         public void Enable(Player player)
         {
-			if (player == null || player.field_Internal_VRCPlayer_0 == null) return;
+			if (player == null || player.field_Private_VRCPlayerApi_0 == null) return;
 
 			player.field_Private_VRCPlayerApi_0.SetNamePlateColor(player.GetNameplateColor());
-
 
             Transform nameplate = player.transform.Find("Canvas - Profile (1)/Text/Text - NameTag");
 
@@ -84,7 +81,9 @@ namespace KiraiMod.Modules
 
         public void Disable(Player player)
         {
-			player.field_Private_VRCPlayerApi_0.RestoreNamePlateColor();
+            if (player == null || player.field_Private_VRCPlayerApi_0 == null) return;
+
+            player.field_Private_VRCPlayerApi_0.RestoreNamePlateColor();
 			Transform nameplate = player.transform.Find("Canvas - Profile (1)/Text/Text - NameTag");
 			nameplate.GetComponent<UnityEngine.UI.Text>().text = player.field_Private_APIUser_0.displayName;
 			Transform rank = nameplate.Find("KiraiModRank");
@@ -93,15 +92,11 @@ namespace KiraiMod.Modules
 
 		public void Refresh()
         {
-			if (!PlayerManager.field_Private_Static_PlayerManager_0) return;
+			if (PlayerManager.field_Private_Static_PlayerManager_0?.field_Private_List_1_Player_0 == null) return;
 
-			List<Player> players = PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0;
-
-			if (players == null) return;
-
-			foreach (Player player in players)
+			foreach (Player player in PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0)
 			{
-				if (player == null || player.field_Private_APIUser_0 == null || player.IsLocal()) continue;
+				if (player?.field_Private_VRCPlayerApi_0 == null || player?.field_Private_APIUser_0 == null || player.IsLocal()) continue;
 
 				if (state) Enable(player);
                 else Disable(player);
