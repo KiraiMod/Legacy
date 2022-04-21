@@ -25,6 +25,7 @@ namespace KiraiMod.Modules
         public GodMode godMode;
         public Tracers tracers;
         public FreeCam freecam;
+        public PlayerList playerlist;
 
         public List<ModuleBase> modules = new List<ModuleBase>();
 
@@ -47,6 +48,7 @@ namespace KiraiMod.Modules
             modules.Add(godMode = new GodMode());
             modules.Add(tracers = new Tracers());
             modules.Add(freecam = new FreeCam());
+            modules.Add(playerlist = new PlayerList());
         }
 
         public void StartCoroutines()

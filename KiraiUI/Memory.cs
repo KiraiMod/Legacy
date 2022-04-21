@@ -10,5 +10,7 @@ namespace KiraiMod
 
         public static Vector2 backgroundSize;
         public static Vector2 infobarSize;
+
+        public static Vector3 backgroundPos;
     }
 }

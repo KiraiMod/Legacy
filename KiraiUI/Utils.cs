@@ -39,5 +39,12 @@ namespace KiraiMod
             else if (op == 1) s = t.sizeDelta;
             else t.sizeDelta = s;
         }
+
+        public static void Move(int op, ref RectTransform t, ref Vector3 s, Vector3 i)
+        {
+            if (op == 0) t.localPosition = i;
+            else if (op == 1) s = t.localPosition;
+            else t.localPosition = s;
+        }
     }
 }

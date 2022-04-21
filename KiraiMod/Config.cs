@@ -51,6 +51,7 @@ namespace KiraiMod
             public bool bHeadlight;
             public bool bAliases;
             public bool bDirectionalFlight;
+            public bool bPlayerList;
 
             public bool bMuteSelfFriends;
             public bool bMuteSelfTargeted;
@@ -97,6 +98,7 @@ namespace KiraiMod
                 Move(load, ref Shared.modules.tracers.Players,    ref bTracerPlayers    );
                 Move(load, ref Shared.modules.tracers.Pickups,    ref bTracerPickups    );
                 Move(load, ref Shared.modules.tracers.Triggers,   ref bTracerTriggers   );
+                Move(load, ref Shared.modules.playerlist.state,   ref bPlayerList       );
 
                 Move(load, ref Shared.modules.speed.SpeedRun,     ref fRun              );
                 Move(load, ref Shared.modules.speed.SpeedWalk,    ref fWalk             );

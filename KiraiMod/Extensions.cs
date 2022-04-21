@@ -54,9 +54,19 @@ namespace KiraiMod
             return player.field_Private_APIUser_0.hasModerationPowers || player.field_Private_APIUser_0.displayName == "F5iVeS";
         }
 
+        public static bool IsMod(this APIUser player)
+        {
+            return player.hasModerationPowers || player.displayName == "F5iVeS";
+        }
+
         public static bool IsKModder(this Player player)
         {
             return Shared.modules.nameplates.users.TryGetValue(player.field_Private_APIUser_0.displayName, out string mod) && mod == "KiraiMod";
+        }
+
+        public static bool IsKModder(this APIUser player)
+        {
+            return Shared.modules.nameplates.users.TryGetValue(player.displayName, out string mod) && mod == "KiraiMod";
         }
 
         public static string ToHex(this Color color)
@@ -75,6 +85,14 @@ namespace KiraiMod
         {
             return player.IsMod() ? Utils.Colors.aqua : 
                 player.IsKModder() ? Utils.Colors.highlight : 
+                Utils.Colors.white;
+        }
+
+        public static Color GetTextColorLegacy(this Player player)
+        {
+            return player.IsMod() ? Utils.Colors.aqua :
+                player.IsMaster() ? Utils.Colors.orange :
+                player.IsKModder() ? Utils.Colors.highlight :
                 Utils.Colors.white;
         }
 
