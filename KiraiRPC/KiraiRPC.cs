@@ -1,5 +1,4 @@
-﻿//#define TESTING
-using Harmony;
+﻿using Harmony;
 using MelonLoader;
 using System.Linq;
 using System.Reflection;
@@ -28,6 +27,12 @@ namespace KiraiMod
         {
             harmony = HarmonyInstance.Create("KiraiRPC");
             MelonCoroutines.Start(Initialize());
+#if DEBUG
+            MelonLogger.Log(System.ConsoleColor.Cyan, $"{new string('v', 26)}\n");
+            MelonLogger.Log(System.ConsoleColor.Cyan, "Running a debug build");
+            MelonLogger.Log(System.ConsoleColor.Cyan, "Upload logs to #crash-logs\n");
+            MelonLogger.Log(System.ConsoleColor.Cyan, $"{new string('^', 26)}\n");
+#endif
         }
 
         public override void OnUpdate()
@@ -62,7 +67,9 @@ namespace KiraiMod
                 MelonLogger.Log("Abandoning RPC system, world is probably SDK3.");
                 yield break;
             }
-
+#if DEBUG
+            MelonLogger.Log($"Found Event listener after {sleep} seconds");
+#endif
             SendRPC(SendType.Broadcast, "00");
         }
 
@@ -98,7 +105,7 @@ namespace KiraiMod
                 if (__1.ParameterString.Length < 1) return;
                 if (__1.ParameterString[0] == 'k')
                 {
-#if TESTING
+#if DEBUG
                     MelonLogger.Log($"Recieved {__1.ParameterString}");
 #endif
 
@@ -255,7 +262,7 @@ namespace KiraiMod
 
         public static void SendRPC(string raw)
         {
-#if TESTING
+#if DEBUG
             MelonLogger.Log($"Sending {raw}");
 #endif
 

@@ -120,12 +120,7 @@ namespace KiraiMod.Pages
 
             Shared.menu.CreateButton("p3/crash-selected", "Crash Selected", "Crash the selected player using pickups", 1f, 1f, Shared.menu.pages[3].transform, new Action(() =>
             {
-                VRC_Pickup pickup = Resources.FindObjectsOfTypeAll<VRC_Pickup>().FirstOrDefault(p =>
-                    p.GetComponent<VRCSDK2.VRC_ObjectSync>() != null && // totally not overengineered
-                    p.GetComponents<Collider>().Concat(p.GetComponentsInChildren<Collider>()).Any(c => !c.isTrigger && ((1016111 >> c.gameObject.layer) & 1) == 1)
-                );
-                if (pickup != null) MelonCoroutines.Start(Helper.CrashPlayer(pickup, Shared.targetPlayer));
-                else Utils.HUDMessage("World has no valid pickups");
+                Helper.CrashSelected();
             }));
 
             Shared.menu.CreateButton("p3/open-p4", "Next", "Opens KiraiMod's next page", -2f, 1f, Shared.menu.pages[3].transform, new System.Action(() =>

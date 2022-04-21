@@ -1,4 +1,5 @@
 ﻿using MelonLoader;
+using System.Linq;
 using UnityEngine;
 using VRC;
 using VRC.Core;
@@ -67,12 +68,24 @@ namespace KiraiMod
 
         public static System.Collections.IEnumerator CrashPlayer(VRC_Pickup pickup, Player player)
         {
-            Networking.SetOwner(Networking.LocalPlayer, pickup.gameObject);
-            pickup.transform.SetParent(player.transform, true);
-            pickup.transform.localPosition = new Vector3(0, 0, 0);
-            yield return new WaitForSeconds(1);
+            for (int i = 0; i < 90; i++)
+            {
+                pickup.transform.position = player.transform.position;
+                pickup.transform.rotation = Quaternion.Euler(0, 0, 0);
+                yield return null;
+            }
+
             pickup.gameObject.transform.position = new Vector3(pickup.transform.position.x, Vector3.positiveInfinity.y, pickup.transform.rotation.z);
-            pickup.transform.parent = null;
+        }
+
+        public static void CrashSelected()
+        {
+            VRC_Pickup pickup = Resources.FindObjectsOfTypeAll<VRC_Pickup>().FirstOrDefault(p =>
+                p.GetComponent<VRCSDK2.VRC_ObjectSync>() != null && // totally not overengineered
+                p.GetComponents<Collider>().Concat(p.GetComponentsInChildren<Collider>()).Any(c => !c.isTrigger && ((1016111 >> c.gameObject.layer) & 1) == 1)
+            );
+            if (pickup != null) MelonCoroutines.Start(CrashPlayer(pickup, Shared.targetPlayer));
+            else Utils.HUDMessage("World has no valid pickups");
         }
     }
 }

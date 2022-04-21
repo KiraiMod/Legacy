@@ -36,6 +36,7 @@ namespace KiraiMod.Modules
             GameObject puppet = new GameObject();
             puppet.transform.position = (Shared.targetPlayer?.transform.position ?? VRCPlayer.field_Internal_Static_VRCPlayer_0.transform.position) + new Vector3(0, 0.2f, 0);
 
+
             puppet.transform.Rotate(new Vector3(0, 360f * Time.time, 0));
 
             foreach (VRC_Pickup pickup in cached)

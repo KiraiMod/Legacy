@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{200402BC-69C4-4A18-813E-B9E2A75372BC}</ProjectGuid>
+    <ProjectGuid>{9CD70B24-F235-493E-A409-DCC9187CD3AA}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>KiraiRPC</RootNamespace>
-    <AssemblyName>KiraiRPC</AssemblyName>
+    <RootNamespace>KiraiTools</RootNamespace>
+    <AssemblyName>KiraiTools</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -30,23 +30,8 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Testing|AnyCPU'">
-    <OutputPath>bin\Testing\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <LangVersion>7.3</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Assembly-CSharp">
-      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\VRChat\MelonLoader\Managed\Assembly-CSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="Il2Cppmscorlib">
-      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\VRChat\MelonLoader\Managed\Il2Cppmscorlib.dll</HintPath>
-    </Reference>
+    <Reference Include="Il2Cppmscorlib, Version=3.7.1.6, Culture=neutral, PublicKeyToken=null" />
     <Reference Include="MelonLoader.ModHandler">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\VRChat\MelonLoader\MelonLoader.ModHandler.dll</HintPath>
     </Reference>
@@ -58,31 +43,32 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Reference Include="UnhollowerBaseLib">
-      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\VRChat\MelonLoader\Managed\UnhollowerBaseLib.dll</HintPath>
-    </Reference>
+    <Reference Include="UnhollowerBaseLib, Version=0.4.9.0, Culture=neutral, PublicKeyToken=null" />
     <Reference Include="UnityEngine">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\VRChat\MelonLoader\Managed\UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.AnimationModule, Version=3.7.1.6, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Build\UnityEngine.AnimationModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.AssetBundleModule, Version=3.7.1.6, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\VRChat\MelonLoader\Managed\UnityEngine.AssetBundleModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\VRChat\MelonLoader\Managed\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
-    <Reference Include="VRC.Udon">
-      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\VRChat\MelonLoader\Managed\VRC.Udon.dll</HintPath>
-    </Reference>
-    <Reference Include="VRC.Udon.Common">
-      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\VRChat\MelonLoader\Managed\VRC.Udon.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="VRCCore-Standalone">
-      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\VRChat\MelonLoader\Managed\VRCCore-Standalone.dll</HintPath>
-    </Reference>
-    <Reference Include="VRCSDKBase">
+    <Reference Include="VRCSDKBase, Version=3.7.1.6, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\VRChat\MelonLoader\Managed\VRCSDKBase.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="KiraiRPC.cs" />
+    <Compile Include="KiraiTools.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="kiraitools.assetbundle" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

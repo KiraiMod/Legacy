@@ -60,7 +60,8 @@ namespace KiraiMod
         public static Color GetNameplateColor(this Player player)
         {
             return player.IsKOS() ? Utils.Colors.red :
-                player.IsFriend() ? Utils.Colors.highlight : Utils.Colors.primary;
+                player.IsFriend() ? Utils.Colors.highlight :
+                Utils.Colors.primary;
         }
 
         public static Color GetTextColor(this Player player)

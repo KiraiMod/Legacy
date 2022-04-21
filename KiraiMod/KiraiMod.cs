@@ -1,5 +1,4 @@
-﻿//#define TESTING
-using MelonLoader;
+﻿using MelonLoader;
 using System.Linq;
 using System.Reflection;
 using UnhollowerRuntimeLib;
@@ -106,6 +105,7 @@ namespace KiraiMod
             if (Input.GetKeyDown(KeyCode.Keypad4)) Shared.modules.esp.SetState();
             if (Input.GetKeyDown(KeyCode.Keypad5)) Shared.modules.orbit.SetState();
             if (Input.GetKeyDown(KeyCode.Keypad6)) Shared.Options.bWorldTriggers ^= true;
+            if (Input.GetKeyDown(KeyCode.Keypad7)) Helper.CrashSelected();
             if (Input.GetKeyDown(KeyCode.KeypadMinus)) MelonLogger.Log("Alive");
             if (Input.GetKeyDown(KeyCode.KeypadMultiply)) Helper.Teleport(new Vector3(0, 0, 0));
             if (Input.GetKeyDown(KeyCode.Delete)) Unload();
@@ -187,11 +187,15 @@ namespace KiraiMod
                                     cval = !cval;
 
                                     MelonLogger.Log($"{module.GetType().Name}.{info.reference} {(cval ? "On" : "Off")}");
+#if DEBUG
+                                    MelonLogger.Log($"cval: {cval}, state: {state}");
+#endif
+                                    reference.SetValue(module, state);
 
                                     onStateChange.Invoke(module, new object[] { cval });
                                 }));
 
-#if TESTING
+#if DEBUG
                             MelonLogger.Log($"{module.GetType().Name}.{info.reference}: {(onStateChange == null ? "Acchi" : "Kocchi")}");
 #endif
                         }

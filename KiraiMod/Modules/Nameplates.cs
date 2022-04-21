@@ -154,7 +154,7 @@ namespace KiraiMod.Modules
 
 		public void OnStateChangeRGB(bool state)
         {
-			if (!state) Refresh();
+            if (!state) Refresh();
         }
 	}
 }
