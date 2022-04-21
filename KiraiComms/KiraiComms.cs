@@ -67,9 +67,11 @@ namespace KiraiMod
                                                 if (int.TryParse(data.payload.Substring(2 + len, 1), System.Globalization.NumberStyles.HexNumber, null, out int len2))
                                                 {
                                                     // we recieved their rsa public
-                                                    RSAParameters rsadata = new RSAParameters();
-                                                    rsadata.Exponent = Convert.FromBase64String(data.payload.Substring(3 + len, len2));
-                                                    rsadata.Modulus = Convert.FromBase64String(data.payload.Substring(3 + len + len2));
+                                                    RSAParameters rsadata = new RSAParameters
+                                                    {
+                                                        Exponent = Convert.FromBase64String(data.payload.Substring(3 + len, len2)),
+                                                        Modulus = Convert.FromBase64String(data.payload.Substring(3 + len + len2))
+                                                    };
 
                                                     RSA rsa = RSA.Create();
                                                     rsa.ImportParameters(rsadata);
@@ -97,7 +99,7 @@ namespace KiraiMod
                                             {
                                                 string str = System.Text.Encoding.UTF8.GetString(ourRSA.DecryptValue(Convert.FromBase64String(data.payload.Substring(2 + len)))).Replace("\0", "");
 
-                                                KiraiLib.Logger.Log($"{data.sender}: {str}");
+                                                KiraiLib.Logger.Log($"<color={NameToPlayer(data.sender).field_Private_APIUser_0.GetTrustColor().ToHex()}>{data.sender}</color>: {str}", 10);
                                             }
                                         }
                                         break;
@@ -147,17 +149,19 @@ namespace KiraiMod
             {
                 string name = QuickMenu.prop_QuickMenu_0.field_Private_APIUser_0.displayName;
                 if (encryptors.TryGetValue(name, out RSA rsa)) {
-                    HUDInput("Message", "Send", "Enter your message...", "", new Action<string>((val) =>
+                    KiraiLib.HUDInput(
+                        $"Message <color={NameToPlayer(name).field_Private_APIUser_0.GetTrustColor().ToHex()}>{name}</color>",
+                        "Send",
+                        "Enter your message...",
+                        new Action<string>(
+                            (val) =>
                     {
                         if (val.Length <= 128)
                             SendRPC(0x002, name.Length.ToString("X").PadLeft(2, '0') + name + Convert.ToBase64String(rsa.EncryptValue(System.Text.Encoding.UTF8.GetBytes(val))));
                         else KiraiLib.Logger.Log("Messages can only be 128 characters long.");
                     }));
-                } 
-                else
-                {
-                    KiraiLib.Logger.Log($"{QuickMenu.prop_QuickMenu_0.field_Private_APIUser_0.displayName} is not using KiraiComms");
                 }
+                else KiraiLib.Logger.Log($"{QuickMenu.prop_QuickMenu_0.field_Private_APIUser_0.displayName} is not using KiraiComms");
             }));
         }
 
@@ -171,35 +175,15 @@ namespace KiraiMod
             MelonLogger.Log($"Hooking {src}...".PadRight(71, ' ') + (passed ? "Passed" : "Failed"));
         }
 
-        public static void HUDInput(string title, string text, string placeholder, string initial, System.Action<string> OnAccept)
+        private static Player NameToPlayer(string name)
         {
-            typeof(VRCUiPopupManager)
-                .GetMethods()
-                .Where(m => m.Name.Contains("Method_Public_Void_String_String_InputType_Boolean_String_Action_3_String_List_1_KeyCode_Text_Action_String_Boolean_Action_1_VRCUiPopup_PDM_"))
-                .First(m => UnhollowerRuntimeLib.XrefScans.XrefScanner.XrefScan(m).Where(x => x.Type == UnhollowerRuntimeLib.XrefScans.XrefType.Global).Count() == 0)
-                .Invoke(VRCUiPopupManager.field_Private_Static_VRCUiPopupManager_0, new object[] {
-                    title,
-                    initial,
-                    InputField.InputType.Standard,
-                    false,
-                    text,
-                    UnhollowerRuntimeLib
-                        .DelegateSupport
-                        .ConvertDelegate<
-                            Il2CppSystem.Action<string, Il2CppSystem.Collections.Generic.List<KeyCode>, Text>
-                        >(
-                            new System.Action<string, Il2CppSystem.Collections.Generic.List<KeyCode>, Text>(
-                                (a, b, c) =>
-                                {
-                                    OnAccept(a);
-                                }
-                            )
-                        ),
-                    null,
-                    placeholder,
-                    true,
-                    null
-                });
+            foreach (Player player in PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0)
+            {
+                if (player.field_Private_APIUser_0.displayName == name)
+                    return player;
+            }
+
+            return null;
         }
     }
 }
