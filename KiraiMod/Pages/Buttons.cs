@@ -44,7 +44,7 @@ namespace KiraiMod.Pages
                 System.Diagnostics.Process.GetCurrentProcess().Kill();
             }));
 
-            Shared.menu.CreateButton("p3/monkey", "Crash Self", "Manually initiate a crash to GTFO", 2f, 0f, Shared.menu.pages[(int)Menu.PageIndex.buttons2].transform, new System.Action(() =>
+            Shared.menu.CreateButton("p3/monkey", "Monkey button", "A button for monkeys that you probably shouldn't click", 2f, 0f, Shared.menu.pages[(int)Menu.PageIndex.buttons2].transform, new System.Action(() =>
             {
                 MelonLogger.Log("vvvvvvvvvvvvvvvvvvvvvvvvvvv");
                 MelonLogger.Log("Tried to use monkey button.");
