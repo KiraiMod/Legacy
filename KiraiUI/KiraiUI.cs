@@ -1,4 +1,5 @@
 ﻿using MelonLoader;
+using System;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
@@ -12,6 +13,7 @@ namespace KiraiMod
         public bool hasStored = false;
         public bool disableQM = false;
         public bool hasLoaded = false;
+        public bool isApplied = false;
 
         public static class Config
         {
@@ -24,6 +26,7 @@ namespace KiraiMod
         Transform ui;
         Transform screen;
         Transform hud;
+        Text earlyAccess;
 
         public override void OnApplicationStart()
         {
@@ -45,6 +48,9 @@ namespace KiraiMod
             hud = ui.Find("UnscaledUI/HudContent/Hud");
             if (hud == null) MelonLogger.LogWarning("Didn't find Hud");
 
+            earlyAccess = ui.Find("QuickMenu/ShortcutMenu/EarlyAccessText")?.GetComponent<Text>();
+            if (earlyAccess == null) MelonLogger.Log("Didn't find EarlyAccessText");
+
             if (!MelonHandler.Mods.Any(mod => mod.Assembly.GetName().Name.Contains("KiraiMod")))
             {
                 // we have no dom so we will do it ourselves -\_(._.)_/-
@@ -57,17 +63,28 @@ namespace KiraiMod
                 MelonLogger.Log("KiraiMod found! Forfeiting all control.");
             }
 
-
             if (MelonHandler.Mods.Any(mod => mod.Assembly.GetName().Name.Contains("FClient")))
             {
                 MelonLogger.Log("FClient detected, not moving QuickMenu around.");
                 disableQM = true;
+            }
+
+            if (!disableQM && earlyAccess != null) MelonCoroutines.Start(UpdateClock());
+        }
+
+        private System.Collections.IEnumerator UpdateClock()
+        {
+            for (;;)
+            {
+                earlyAccess.text = DateTime.Now.ToLongTimeString();
+                yield return new WaitForSeconds(1);
             }
         }
 
         public void Apply()
         {
             if (!hasLoaded) return;
+            isApplied = true;
             SetColors(0);
             if (!disableQM) SetQuickMenu(0);
         }
@@ -83,6 +100,7 @@ namespace KiraiMod
         public void Restore()
         {
             if (!hasLoaded) return;
+            isApplied = false;
             SetColors(2);
             if (!disableQM) SetQuickMenu(2);
         }
