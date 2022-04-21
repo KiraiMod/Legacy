@@ -1,5 +1,6 @@
 ﻿using MelonLoader;
 using MelonLoader.TinyJSON;
+using System;
 using System.Collections.Generic;
 
 namespace KiraiMod
@@ -10,7 +11,9 @@ namespace KiraiMod
 
         public static readonly string config = "kiraimod.config.json";
         public static readonly string alias = "kiraimod.alias.json";
+        public static readonly string menu = "kiraimod.buttons.json";
         public List<string[]> aliases = new List<string[]>();
+        public Dictionary<string, List<float>> buttons = new Dictionary<string, List<float>>();
 
         public void Save()
         {
@@ -31,6 +34,7 @@ namespace KiraiMod
             options = JSON.Load(System.IO.File.ReadAllText(config)).Make<Options>();
 
             if (System.IO.File.Exists(alias)) aliases = JSON.Load(System.IO.File.ReadAllText(alias)).Make<List<string[]>>();
+            if (System.IO.File.Exists(menu)) buttons = JSON.Load(System.IO.File.ReadAllText(menu)).Make<Dictionary<string, List<float>>>();
         }
 
         internal sealed class Options

@@ -81,6 +81,12 @@ namespace KiraiMod
 
         public Toggle CreateToggle(string id, string label, string tooltip, float x, float y, bool state, Transform parent, Action OnEnable, Action OnDisable)
         {
+            if (Shared.config?.buttons != null && Shared.config.buttons.TryGetValue(id, out var value))
+            {
+                x = value[0];
+                y = value[1];
+            }
+
             Toggle toggle = new Toggle(label, tooltip, x, y, state, parent, OnEnable, OnDisable);
             objects.Add(id, toggle);
             return toggle;
@@ -88,6 +94,12 @@ namespace KiraiMod
 
         public Toggle CreateToggle(string id, bool state, string text, string tooltip, float x, float y, Transform parent, Action<bool> OnChange)
         {
+            if (Shared.config?.buttons != null && Shared.config.buttons.TryGetValue(id, out var value))
+            {
+                x = value[0];
+                y = value[1];
+            }
+
             Toggle toggle = new Toggle(text, tooltip, x, y, state, parent,
                 new Action(() => OnChange.Invoke(true)),
                 new Action(() => OnChange.Invoke(false))
@@ -103,6 +115,12 @@ namespace KiraiMod
 
         public Button CreateButton(string id, string label, string tooltip, float x, float y, Transform parent, Action OnClick)
         {
+            if (Shared.config?.buttons != null && Shared.config.buttons.TryGetValue(id, out var value))
+            {
+                x = value[0];
+                y = value[1];
+            }
+
             Button button = new Button(label, tooltip, x, y, parent, OnClick);
             objects.Add(id, button);
             return button;
@@ -110,6 +128,12 @@ namespace KiraiMod
 
         public Slider CreateSlider(string id, string label, float x, float y, float min, float max, float initial, Transform parent, Action<float> OnChange)
         {
+            if (Shared.config?.buttons != null && Shared.config.buttons.TryGetValue(id, out var value))
+            {
+                x = value[0];
+                y = value[1];
+            }
+
             Slider slider = new Slider(label, x, y, min, max, initial, parent, OnChange);
             objects.Add(id, slider);
             return slider;
