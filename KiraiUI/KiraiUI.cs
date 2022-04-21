@@ -22,11 +22,10 @@ namespace KiraiMod
 
         public static class Config
         {
-            public static Color primary = new Color(0.34f, 0f, 0.65f);
-            public static Color primary2 = new Color(0.34f, 0f, 0.65f, 0.8f);
-            public static Color highlight = new Color(0.8f, 0.8f, 1f);
-            public static Color background = new Color(0, 0, 0);
-            public static Color background2 = new Color(0, 0, 0, 0.9f);
+            public static Color PrimaryColor = new Color(0.34f, 0f, 0.65f);
+            public static Color FullMenuBackgroundColor = new Color(0.34f, 0f, 0.65f, 0.8f);
+            public static Color ActionMenuBackgroundColor = new Color(0, 0, 0);
+            public static Color QuickMenuBackgroundColor = new Color(0, 0, 0, 0.9f);
             public static bool extended = false;
         }
 
@@ -50,19 +49,6 @@ namespace KiraiMod
         public override void OnApplicationStart()
         {
             instance = this;
-
-            //if (!MelonHandler.Mods.Any(m => m.Assembly.GetName().Name == "SmallUserVolume"))
-            //{
-            //    System.IO.Stream stream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("KiraiMod.Lib.SmallUserVolume.dll");
-            //    System.IO.MemoryStream mem = new System.IO.MemoryStream((int)stream.Length);
-            //    stream.CopyTo(mem);
-
-            //    System.Reflection.Assembly.Load(mem.ToArray());
-
-            //    new Action(() => { 
-            //        MelonHandler.Mods.Add(new SmallUserVolume.Class());
-            //    })();
-            //}
 
             MelonMod mod = MelonHandler.Mods.FirstOrDefault(m => m.Assembly.GetName().Name == "KiraiMod");
 
@@ -92,7 +78,7 @@ namespace KiraiMod
             ActionMenu = UIRoot?.Find("ActionMenu");
             QuickMenuNewElements = QuickMenu.prop_QuickMenu_0.transform.Find("QuickMenu_NewElements");
             Fireball = GameObject.Find("_Application/CursorManager/BlueFireballMouse").transform;
-            //EarlyAccessText = SelectionMenu?.Find("EarlyAccessText")?.GetComponent<Text>();
+            EarlyAccessText = QuickMenu.prop_QuickMenu_0.transform.Find("QuickMenu_NewElements/_InfoBar/EarlyAccessText")?.GetComponent<Text>();
             #endregion
 
             #region Compatibility
@@ -160,43 +146,47 @@ namespace KiraiMod
                 #region Screen Colors
                 // screen background
                 tmp1 = Screens.Find("Backdrop/Backdrop/Background").GetComponent<Image>();
-                if (tmp1 != null) Utils.MoveImageColor(op, ref tmp1, ref Memory.screenBackground, Config.primary2);
+                if (tmp1 != null) Utils.MoveImageColor(op, ref tmp1, ref Memory.screenBackground, Config.FullMenuBackgroundColor);
                 #endregion
                 #region HUD Colors
                 // mic off
                 tmp1 = HUD.Find("VoiceDotParent/VoiceDotDisabled").GetComponent<Image>();
-                if (tmp1 != null) Utils.MoveImageColor(op, ref tmp1, ref Memory.micOff, Config.primary);
+                if (tmp1 != null) Utils.MoveImageColor(op, ref tmp1, ref Memory.micOff, Config.PrimaryColor);
 
                 // afk
                 tmp1 = HUD.Find("AFK/Icon").GetComponent<Image>();
-                if (tmp1 != null) Utils.MoveImageColor(op, ref tmp1, ref Memory.afkIcon, Config.primary);
+                if (tmp1 != null) Utils.MoveImageColor(op, ref tmp1, ref Memory.afkIcon, Config.PrimaryColor);
                 #endregion
                 #region Cursor Colors
                 tmp5 = Fireball.Find("Ball").GetComponent<ParticleSystem>();
-                if (tmp5 != null) Utils.MoveParticleSystemColor(op, ref tmp5, ref Memory.fireballBall, Config.primary);
+                if (tmp5 != null) Utils.MoveParticleSystemColor(op, ref tmp5, ref Memory.fireballBall, Config.PrimaryColor);
+                if (tmp5 != null) Utils.MoveParticleSystemGravity(op, ref tmp5, ref Memory.ballGravity, -0.01f);
+                if (tmp5 != null) Utils.MoveParticleSystemLifetime(op, ref tmp5, ref Memory.ballLifetime, 0.5f);
+                if (tmp5 != null) Utils.MoveParticleSystemEmission(op, ref tmp5, ref Memory.ballEmission, 100);
+                if (tmp5 != null) Utils.MoveParticleSystemSimulationSpace(op, ref tmp5, ref Memory.ballSimSpace, ParticleSystemSimulationSpace.World);
 
                 tmp5 = Fireball.Find("Glow").GetComponent<ParticleSystem>();
-                if (tmp5 != null) Utils.MoveParticleSystemColor(op, ref tmp5, ref Memory.fireballGlow, Config.primary);
+                if (tmp5 != null) Utils.MoveParticleSystemColor(op, ref tmp5, ref Memory.fireballGlow, Config.PrimaryColor);
 
                 tmp5 = Fireball.Find("Trail").GetComponent<ParticleSystem>();
-                if (tmp5 != null) Utils.MoveParticleSystemColor(op, ref tmp5, ref Memory.fireballTrail, Config.primary);
+                if (tmp5 != null) Utils.MoveParticleSystemColor(op, ref tmp5, ref Memory.fireballTrail, Config.PrimaryColor);
                 #endregion
                 #region Action Menu Colors
                 // action menu main background left
                 tmp2 = ActionMenu.Find("MenuL/ActionMenu/Main/Background")?.GetComponent<PedalGraphic>();
-                if (tmp2 != null) Utils.MovePedalGraphicColor(op, ref tmp2, ref Memory.amMBgL, Config.background);
+                if (tmp2 != null) Utils.MovePedalGraphicColor(op, ref tmp2, ref Memory.amMBgL, Config.ActionMenuBackgroundColor);
 
                 // action menu main background right
                 tmp2 = ActionMenu.Find("MenuR/ActionMenu/Main/Background")?.GetComponent<PedalGraphic>();
-                if (tmp2 != null) Utils.MovePedalGraphicColor(op, ref tmp2, ref Memory.amMBgR, Config.background);
+                if (tmp2 != null) Utils.MovePedalGraphicColor(op, ref tmp2, ref Memory.amMBgR, Config.ActionMenuBackgroundColor);
 
                 // action menu main background left
                 tmp2 = ActionMenu.Find("MenuL/ActionMenu/RadialPuppetMenu/Container/Background")?.GetComponent<PedalGraphic>();
-                if (tmp2 != null) Utils.MovePedalGraphicColor(op, ref tmp2, ref Memory.amRPMBgL, Config.background);
+                if (tmp2 != null) Utils.MovePedalGraphicColor(op, ref tmp2, ref Memory.amRPMBgL, Config.ActionMenuBackgroundColor);
 
                 // action menu main background right
                 tmp2 = ActionMenu.Find("MenuR/ActionMenu/RadialPuppetMenu/Container/Background")?.GetComponent<PedalGraphic>();
-                if (tmp2 != null) Utils.MovePedalGraphicColor(op, ref tmp2, ref Memory.amRPMBgR, Config.background);
+                if (tmp2 != null) Utils.MovePedalGraphicColor(op, ref tmp2, ref Memory.amRPMBgR, Config.ActionMenuBackgroundColor);
                 #endregion
                 #region QuickMenu Colors
 
@@ -204,14 +194,14 @@ namespace KiraiMod
                 if (tmp1 != null)
                 {
                     Utils.MoveImageSprite(op, ref tmp1, ref Memory.panel, null);
-                    Utils.MoveImageColor(op, ref tmp1, ref Memory.qmneBackground, Config.background2);
+                    Utils.MoveImageColor(op, ref tmp1, ref Memory.qmneBackground, Config.QuickMenuBackgroundColor);
                 }
 
                 tmp1 = QuickMenuNewElements.Find("_InfoBar/Panel")?.GetComponent<Image>();
                 if (tmp1 != null)
                 {
                     Utils.MoveImageSprite(op, ref tmp1, ref Memory.panel, null);
-                    Utils.MoveImageColor(op, ref tmp1, ref Memory.qmneInfoBar, Config.background2);
+                    Utils.MoveImageColor(op, ref tmp1, ref Memory.qmneInfoBar, Config.QuickMenuBackgroundColor);
                 }
 
                 tmp3 = QuickMenuNewElements.Find("_CONTEXT");
@@ -221,28 +211,28 @@ namespace KiraiMod
                     if (tmp1 != null)
                     {
                         Utils.MoveImageSprite(op, ref tmp1, ref Memory.panel, null);
-                        Utils.MoveImageColor(op, ref tmp1, ref Memory.qmneToolTip, Config.background2);
+                        Utils.MoveImageColor(op, ref tmp1, ref Memory.qmneToolTip, Config.QuickMenuBackgroundColor);
                     }
 
                     tmp1 = tmp3.Find("QM_Context_User_Hover/Panel")?.GetComponent<Image>();
                     if (tmp1 != null)
                     {
                         Utils.MoveImageSprite(op, ref tmp1, ref Memory.panel, null);
-                        Utils.MoveImageColor(op, ref tmp1, ref Memory.qmneUserHover, Config.background2);
+                        Utils.MoveImageColor(op, ref tmp1, ref Memory.qmneUserHover, Config.QuickMenuBackgroundColor);
                     }
 
                     tmp1 = tmp3.Find("QM_Context_User_Selected/Panel")?.GetComponent<Image>();
                     if (tmp1 != null)
                     {
                         Utils.MoveImageSprite(op, ref tmp1, ref Memory.panel, null);
-                        Utils.MoveImageColor(op, ref tmp1, ref Memory.qmneUserSelected, Config.background2);
+                        Utils.MoveImageColor(op, ref tmp1, ref Memory.qmneUserSelected, Config.QuickMenuBackgroundColor);
                     }
 
                     tmp1 = tmp3.Find("QM_Context_Invite/Panel")?.GetComponent<Image>();
                     if (tmp2 != null)
                     {
                         Utils.MoveImageSprite(op, ref tmp1, ref Memory.panel, null);
-                        Utils.MoveImageColor(op, ref tmp1, ref Memory.qmneInvite, Config.background2);
+                        Utils.MoveImageColor(op, ref tmp1, ref Memory.qmneInvite, Config.QuickMenuBackgroundColor);
                     }
                 }
                 #endregion
@@ -280,7 +270,7 @@ namespace KiraiMod
             }
 
 
-            tmp3 = SelectionMenu?.Find("BuildNumText");
+            tmp3 = QuickMenu.prop_QuickMenu_0.transform.Find("QuickMenu_NewElements/_InfoBar/BuildNumText");
             tmp4 = tmp3?.GetComponent<Text>();
             var ddt = tmp3?.GetComponent<VRC.UI.DebugDisplayText>();
             if (tmp4 != null && ddt != null)
@@ -288,13 +278,13 @@ namespace KiraiMod
                 if (op == 0)
                 {
                     ddt.enabled = false;
-                    //tmp4.text = $"Version {VRCApplicationSetup.prop_VRCApplicationSetup_0.buildNumber}                                          {version}";
+                    tmp4.text = $"Version {VRCApplicationSetup.prop_VRCApplicationSetup_0.field_Public_Int32_0}";
                 }
                 else if (op == 2) ddt.enabled = true;
             }
 
-            //if (op == 1) Memory.EarlyAccessText = EarlyAccessText.text;
-            //else if (op == 2) EarlyAccessText.text = Memory.EarlyAccessText;
+            if (op == 1) Memory.EarlyAccessText = EarlyAccessText.text;
+            else if (op == 2) EarlyAccessText.text = Memory.EarlyAccessText;
         }
     }
 }

@@ -82,6 +82,34 @@ namespace KiraiMod
             else t.startColor = s;
         }
 
+        public static void MoveParticleSystemGravity(int op, ref ParticleSystem t, ref float s, float i)
+        {
+            if (op == 0) t.gravityModifier = i;
+            else if (op == 1) s = t.gravityModifier;
+            else t.gravityModifier = s;
+        }
+
+        public static void MoveParticleSystemLifetime(int op, ref ParticleSystem t, ref float s, float i)
+        {
+            if (op == 0) t.startLifetime = i;
+            else if (op == 1) s = t.startLifetime;
+            else t.startLifetime = s;
+        }
+
+        public static void MoveParticleSystemEmission(int op, ref ParticleSystem t, ref float s, float i)
+        {
+            if (op == 0) t.emissionRate = i;
+            else if (op == 1) s = t.emissionRate;
+            else t.emissionRate = s;
+        }
+
+        public static void MoveParticleSystemSimulationSpace(int op, ref ParticleSystem t, ref ParticleSystemSimulationSpace s, ParticleSystemSimulationSpace i)
+        {
+            if (op == 0) t.simulationSpace = i;
+            else if (op == 1) s = t.simulationSpace;
+            else t.simulationSpace = s;
+        }
+
         public static void MoveImageActive(int op, ref Image t, ref bool s, bool i)
         {
             if (op == 0) t.enabled = i;

@@ -32,5 +32,10 @@ namespace KiraiMod
         public static Color fireballBall;
         public static Color fireballGlow;
         public static Color fireballTrail;
+
+        public static float ballGravity;
+        public static float ballLifetime;
+        public static float ballEmission;
+        public static ParticleSystemSimulationSpace ballSimSpace;
     }
 }
