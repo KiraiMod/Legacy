@@ -40,6 +40,7 @@ namespace KiraiMod
             public bool bNameplatesRGB;
             public bool bHeadlight;
             public bool bAliases;
+            public bool bDirectionalFlight;
 
             public float fRun;
             public float fWalk;
@@ -63,27 +64,27 @@ namespace KiraiMod
 
             public void Set(bool load)
             {
-                Move(load, ref Shared.modules.kos.state,        ref bKOS           );
-                Move(load, ref Shared.modules.portal.state,     ref bInfinite      );
-                Move(load, ref Shared.modules.modlog.state,     ref bModLog        );
-                Move(load, ref Shared.modules.nameplates.state, ref bNameplates    );
-                Move(load, ref Shared.modules.nameplates.rgb,   ref bNameplatesRGB );
-                Move(load, ref Shared.modules.headlight.state,  ref bHeadlight     );
-                Move(load, ref Shared.modules.aliases.state,    ref bAliases       );
+                Move(load, ref Shared.modules.kos.state,          ref bKOS              );
+                Move(load, ref Shared.modules.portal.state,       ref bInfinite         );
+                Move(load, ref Shared.modules.modlog.state,       ref bModLog           );
+                Move(load, ref Shared.modules.nameplates.state,   ref bNameplates       );
+                Move(load, ref Shared.modules.nameplates.rgb,     ref bNameplatesRGB    );
+                Move(load, ref Shared.modules.headlight.state,    ref bHeadlight        );
+                Move(load, ref Shared.modules.aliases.state,      ref bAliases          );
+                Move(load, ref Shared.modules.flight.directional, ref bDirectionalFlight);
 
-                Move(load, ref Shared.modules.speed.speedRun,   ref fRun           );
-                Move(load, ref Shared.modules.speed.speedWalk,  ref fWalk          );
-                Move(load, ref Shared.modules.flight.speed,     ref fFly           );
-                Move(load, ref Shared.modules.portal.distance,  ref fPortalDistance);
-                Move(load, ref Shared.modules.orbit.speed,      ref fOrbitSpeed    );
-                Move(load, ref Shared.modules.orbit.distance,   ref fOrbitDistance );
-                Move(load, ref Utils.fRGBSpeed,                 ref fRGBSpeed      );
+                Move(load, ref Shared.modules.speed.speedRun,     ref fRun              );
+                Move(load, ref Shared.modules.speed.speedWalk,    ref fWalk             );
+                Move(load, ref Shared.modules.flight.speed,       ref fFly              );
+                Move(load, ref Shared.modules.portal.distance,    ref fPortalDistance   );
+                Move(load, ref Shared.modules.orbit.speed,        ref fOrbitSpeed       );
+                Move(load, ref Shared.modules.orbit.distance,     ref fOrbitDistance    );
+                Move(load, ref Utils.fRGBSpeed,                   ref fRGBSpeed         );
 
                 if (load)
                 {
                     Shared.modules.OnConfigLoaded();
                 }
-
             }
 
             public void Move(bool load, ref float prop1, ref float prop2)
