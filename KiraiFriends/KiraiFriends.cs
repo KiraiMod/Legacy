@@ -3,8 +3,9 @@ using MelonLoader.TinyJSON;
 using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Net.Http;
+using System.Web;
 using UnityEngine;
-using VRC.Core;
 using VRC.SDKBase;
 
 namespace KiraiMod
@@ -13,7 +14,7 @@ namespace KiraiMod
     {
         public string username;
 
-        private WebClient client;
+        private HttpClient client;
         private bool active = true;
         private bool connected = false;
         private List<string[]> online = new List<string[]>();
@@ -22,8 +23,8 @@ namespace KiraiMod
         {
             username = Environment.UserName;
 
-            client = new WebClient();
-            client.QueryString.Set("name", username);
+            client = new HttpClient();
+            client.BaseAddress = new Uri("http://5306aadf57b2262f40c.ddns.net:53066/friends/");
 
             MelonCoroutines.Start(KeepAlive());
         }
@@ -68,16 +69,18 @@ namespace KiraiMod
 
                 if (GUI.Button(new Rect(10, stack++ * 20 + 10, 150, 20), "Refresh"))
                 {
-                    string resp = "";
-
-                    try
+                    client.GetAsync("online").ContinueWith(new Action<System.Threading.Tasks.Task<HttpResponseMessage>>(msg =>
                     {
-                        resp = client.DownloadString("http://5306aadf57b2262f40c.ddns.net:53066/friends/online");
-                        connected = true;
-                    } catch { connected = false; }
-
-                    if (resp != "")
-                        online = JSON.Load(resp).Make<List<string[]>>();
+                        if (msg.Exception == null)
+                        {
+                            connected = true;
+                            msg.Result.Content.ReadAsStringAsync().ContinueWith(new Action<System.Threading.Tasks.Task<string>>((response) =>
+                            {
+                                online = JSON.Load(response.Result).Make<List<string[]>>();
+                            }));
+                        }
+                        else connected = false;
+                    }));
                 }
 
                 if (online.Count > 0)
@@ -88,6 +91,9 @@ namespace KiraiMod
                             JoinWorldById(online[i][1]);
                     }
                 }
+            } else
+            {
+                GUI.Label(new Rect(10, 10, 150, 20), $"{(connected ? active ? "<color=lime>Online" : "<color=red>Offline" : "<color=aqua>Disconnected")}</color>");
             }
         }
 
@@ -95,12 +101,11 @@ namespace KiraiMod
         {
             for (;;)
             {
-                try
+                client.PostAsync($"keep-alive?name={Uri.EscapeDataString(username)}", null).ContinueWith(new Action<System.Threading.Tasks.Task<HttpResponseMessage>>(msg =>
                 {
-                    client.UploadValues("http://5306aadf57b2262f40c.ddns.net:53066/friends/keep-alive", "POST", client.QueryString);
-                    connected = true;
-                }
-                catch { connected = false; }
+                    if (msg.Exception == null) connected = true;
+                    else connected = false;
+                }));
 
                 yield return new WaitForSeconds(25);
             }
@@ -115,15 +120,14 @@ namespace KiraiMod
 
         private void SetLocation(string replace = "")
         {
-            client.QueryString.Set("location", replace == "" ? $"{RoomManager.field_Internal_Static_ApiWorld_0.id}:{RoomManager.field_Internal_Static_ApiWorld_0.currentInstanceIdWithTags}" : "undefined");
-            
-            try
+            string wrld = $"{RoomManager.field_Internal_Static_ApiWorld_0.id}:{RoomManager.field_Internal_Static_ApiWorld_0.currentInstanceIdWithTags}";
+            client.PostAsync($"set-location?name={Uri.EscapeDataString(username)}&location={Uri.EscapeDataString(replace == "" ? wrld : "undefined")}", null)
+                .ContinueWith(new Action<System.Threading.Tasks.Task<HttpResponseMessage>>(msg =>
             {
-                client.UploadValues("http://5306aadf57b2262f40c.ddns.net:53066/friends/set-location", "POST", client.QueryString);
-                connected = true;
-            } catch { connected = false; }
+                if (msg.Exception == null) connected = true;
+                else connected = false;
+            }));
         }
-
 
         public static bool JoinWorldById(string id)
         {

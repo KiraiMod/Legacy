@@ -52,13 +52,16 @@ namespace KiraiMod
 
             System.Collections.Generic.List<Transform> check = new System.Collections.Generic.List<Transform>();
 
+            #region Fetch
             Screens = UIRoot?.Find("MenuContent");
             HUD = UIRoot?.Find("UnscaledUI/HudContent/Hud");
             SelectionMenu = QuickMenu.prop_QuickMenu_0.transform.Find("ShortcutMenu");
             ActionMenu = UIRoot?.Find("ActionMenu");
             QuickMenuNewElements = QuickMenu.prop_QuickMenu_0.transform.Find("QuickMenu_NewElements");
             EarlyAccessText = SelectionMenu?.Find("EarlyAccessText")?.GetComponent<Text>();
+            #endregion
 
+            #region Compatibility
             if (!MelonHandler.Mods.Any(mod => mod.Assembly.GetName().Name == "KiraiMod"))
             {
                 // we have no dom so we will do it ourselves -\_(._.)_/-
@@ -74,6 +77,7 @@ namespace KiraiMod
                 MelonLogger.Log("FClient detected, not moving QuickMenu around.");
                 CompatibilityModule.NoMovement = true;
             }
+            #endregion
 
             if (EarlyAccessText != null) MelonCoroutines.Start(UpdateClock());
         }
