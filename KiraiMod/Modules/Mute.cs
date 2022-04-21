@@ -56,29 +56,29 @@ namespace KiraiMod.Modules
 
         public void Apply(Player player)
         {
-            if (player.field_Internal_VRCPlayer_0 == null) return;
+            //if (player.field_Internal_VRCPlayer_0 == null) return;
 
-            player.field_Internal_VRCPlayer_0.field_Internal_Boolean_3 = !state;
+            //player.field_Internal_VRCPlayer_0.prop_Boolean_9 = !state;
 
-            if (state)
-            {
-                if (Friends)
-                {
-                    if (player.IsFriend())
-                        player.field_Internal_VRCPlayer_0.field_Internal_Boolean_3 = true;
-                }
-                else if (Targeted)
-                {
-                    if (player == Shared.targetPlayer)
-                        player.field_Internal_VRCPlayer_0.field_Internal_Boolean_3 = true;
-                }
-                else if (Favorited)
-                {
-                    if (player.IsFavorite())
-                        player.field_Internal_VRCPlayer_0.field_Internal_Boolean_3 = true;
-                }
-                else MelonLogger.Log("Invalid state @ Mute::Apply");
-            }
+            //if (state)
+            //{
+            //    if (Friends)
+            //    {
+            //        if (player.IsFriend())
+            //            player.field_Internal_VRCPlayer_0.field_Private_Boolean_3 = true;
+            //    }
+            //    else if (Targeted)
+            //    {
+            //        if (player == Shared.targetPlayer)
+            //            player.field_Internal_VRCPlayer_0.field_Private_Boolean_3 = true;
+            //    }
+            //    else if (Favorited)
+            //    {
+            //        if (player.IsFavorite())
+            //            player.field_Internal_VRCPlayer_0.field_Private_Boolean_3 = true;
+            //    }
+            //    else MelonLogger.Log("Invalid state @ Mute::Apply");
+            //}
         }
 
         public void OnStateChangeFriends(bool state)

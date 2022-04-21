@@ -104,9 +104,9 @@ namespace KiraiMod
 
         public static void HUDMessage(string message)
         {
-            if (VRCUiManager.field_Protected_Static_VRCUiManager_0 == null) return;
+            if (VRCUiManager.prop_VRCUiManager_0 == null) return;
 
-            VRCUiManager.field_Protected_Static_VRCUiManager_0.Method_Public_Void_String_PDM_0(message);
+            VRCUiManager.prop_VRCUiManager_0.Method_Public_Void_String_PDM_0(message);
         }
 
         public static Color GetRainbow()

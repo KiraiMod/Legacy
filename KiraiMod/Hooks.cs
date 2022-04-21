@@ -55,6 +55,28 @@ namespace KiraiMod
             }
             catch { MelonLogger.LogWarning("Hooking RPCs... Failed"); }
 
+            //try
+            //{
+            //    Shared.harmony.Patch(typeof(ObjectPublicIPhotonPeerListenerObStBoStObCoDiBo2ObUnique)
+            //        .GetMethod(nameof(ObjectPublicIPhotonPeerListenerObStBoStObCoDiBo2ObUnique
+            //        .Method_Public_Virtual_New_Boolean_Byte_Object_ObjectPublicObByObInByObObUnique_SendOptions_0), 
+            //        BindingFlags.Public | BindingFlags.Instance),
+            //        new HarmonyMethod(typeof(Hooks).GetMethod(nameof(SendOperationPrefix), BindingFlags.NonPublic | BindingFlags.Static)));
+
+            //    MelonLogger.Log("Hooking SendOperationPrefix... Passed");
+            //}
+            //catch { MelonLogger.LogWarning("Hooking SendOperationPrefix... Failed"); }
+
+            try
+            {
+                Shared.harmony.Patch(typeof(ObjectPublicIPhotonPeerListenerObStBoStObCoDiBo2ObUnique)
+                    .GetMethod(nameof(ObjectPublicIPhotonPeerListenerObStBoStObCoDiBo2ObUnique.OnEvent), BindingFlags.Public | BindingFlags.Instance),
+                    new HarmonyMethod(typeof(Hooks).GetMethod(nameof(OnEvent), BindingFlags.NonPublic | BindingFlags.Static)));
+
+            MelonLogger.Log("Hooking OnEvent... Passed");
+        }
+            catch { MelonLogger.LogWarning("Hooking OnEvent... Failed"); }
+
             try
             {
                 Shared.harmony.Patch(typeof(VRCAvatarManager)
@@ -101,7 +123,7 @@ namespace KiraiMod
             Shared.modules.OnAvatarInitialized(__0, __instance);
         }
 
-        private static void OnRPC(ref Player __0, ref VrcEvent __1, ref VrcBroadcastType __2, ref int __3, ref float __4)
+        private static void OnRPC(ref Player __0, ref VrcEvent __1, ref VrcBroadcastType __2)
         {
             if (Shared.Options.bWorldTriggers && __2 == VrcBroadcastType.Local) __2 = VrcBroadcastType.AlwaysUnbuffered;
 
@@ -149,6 +171,20 @@ namespace KiraiMod
                         }
                     }
                     break;
+            }
+        }
+
+        private static void SendOperationPrefix(ref byte __0, ref Il2CppSystem.Object __1, ref ObjectPublicObByObInByObObUnique __2, ref ExitGames.Client.Photon.SendOptions __3)
+        {
+
+        }
+
+        private static void OnEvent(ref ExitGames.Client.Photon.EventData __0)
+        {
+            if (__0 == null) return;
+
+            if (__0.Code == 33)
+            {
             }
         }
     }

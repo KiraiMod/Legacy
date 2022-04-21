@@ -1,5 +1,6 @@
 ﻿using MelonLoader;
 using UnityEngine;
+using VRC.Core;
 
 namespace KiraiMod
 {
@@ -20,6 +21,7 @@ namespace KiraiMod
             Transform onlineFriends = social.Find("OnlineFriends");
 
             Transform kiraiFriends = Object.Instantiate(onlineFriends, onlineFriends.parent);
+            kiraiFriends.gameObject.name = "KiraiFriends";
             kiraiFriends.SetSiblingIndex(onlineFriends.GetSiblingIndex() + 1);
 
             Transform button = kiraiFriends.Find("Button");
@@ -27,19 +29,25 @@ namespace KiraiMod
 
             Transform content = kiraiFriends.Find("ViewPort/Content");
 
-            Object.Destroy(kiraiFriends.GetComponent<UiUserList>());
+            UiUserList ui = kiraiFriends.GetComponent<UiUserList>();
 
-            for (int i = 0; i < content.childCount; i++)
-                Object.Destroy(content.GetChild(i));
+            ui.disableAutoRefresh = true;
 
-            var target = social.Find("InRoom/ViewPort/Content/UserUiPrefab(Clone) 1");
+            var list = new Il2CppSystem.Collections.Generic.List<APIUser>(1);
+            list.Add(APIUser.CurrentUser);
+            ui.Method_Private_IEnumerator_List_1_APIUser_Int32_Boolean_PDM_0(list);
 
-            for (int i = 0; i < 5; i++)
-            {
-                var temp = Object.Instantiate(target, content);
-                temp.Find("Icons").gameObject.active = false;
-                temp.Find("Background/ElementImageShape/ElementImage/Panel/TitleText").GetComponent<UnityEngine.UI.Text>().text = i.ToString();
-            }
+            //for (int i = 0; i < content.childCount; i++)
+            //    Object.Destroy(content.GetChild(i));
+
+            //var target = social.Find("InRoom/ViewPort/Content/UserUiPrefab(Clone) 1");
+
+            //for (int i = 0; i < 5; i++)
+            //{
+            //    var temp = Object.Instantiate(target, content);
+            //    temp.Find("Icons").gameObject.active = false;
+            //    temp.Find("Background/ElementImageShape/ElementImage/Panel/TitleText").GetComponent<UnityEngine.UI.Text>().text = i.ToString();
+            //}
         }
 
         public override void OnUpdate()

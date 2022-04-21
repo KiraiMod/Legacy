@@ -353,7 +353,7 @@ namespace KiraiMod
                 QuickMenu qm = QuickMenu.prop_QuickMenu_0;
                 this.initial = initial;
 
-                GameObject slider = UnityEngine.Object.Instantiate(VRCUiManager.field_Protected_Static_VRCUiManager_0.menuContent.transform.Find("Screens/Settings/AudioDevicePanel/VolumeSlider"), parent).gameObject;
+                GameObject slider = UnityEngine.Object.Instantiate(VRCUiManager.prop_VRCUiManager_0.menuContent.transform.Find("Screens/Settings/AudioDevicePanel/VolumeSlider"), parent).gameObject;
 
                 float size =
                     qm.transform.Find("UserInteractMenu/ForceLogoutButton").localPosition.x - 
