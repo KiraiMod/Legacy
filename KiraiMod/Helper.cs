@@ -63,18 +63,18 @@ namespace KiraiMod
             {
                 Networking.LocalPlayer.TakeOwnership(pickup.gameObject);
                 pickup.transform.localPosition = new Vector3(0, 0, 0);
-                pickup.transform.position = (Shared.targetPlayer?.transform.position ?? VRCPlayer.field_Internal_Static_VRCPlayer_0.transform.position) + new Vector3(0, 0.1f, 0);
+                pickup.transform.position = (Shared.TargetPlayer?.transform.position ?? VRCPlayer.field_Internal_Static_VRCPlayer_0.transform.position) + new Vector3(0, 0.1f, 0);
             }
         }
 
         public static void DropTarget()
         {
-            Shared.targetPlayer = null;
+            Shared.TargetPlayer = null;
         }
 
         public static void CrashSelected()
         {
-            if (Shared.targetPlayer is null)
+            if (Shared.TargetPlayer is null)
             {
                 Utils.HUDMessage("No player is targeted");
                 return;
@@ -84,14 +84,14 @@ namespace KiraiMod
             {
                 VRC_ObjectSync sync = Resources.FindObjectsOfTypeAll<VRC_ObjectSync>().FirstOrDefault(o =>
                     o.GetComponents<Collider>().Concat(o.GetComponentsInChildren<Collider>()).Any(c => !c.isTrigger && ((1016111 >> c.gameObject.layer) & 1) == 1));
-                if (sync != null) MelonCoroutines.Start(OutOfRangeCrash(sync.transform, Shared.targetPlayer));
+                if (sync != null) MelonCoroutines.Start(OutOfRangeCrash(sync.transform, Shared.TargetPlayer));
                 else Utils.HUDMessage("World is invalid.");
             }
             else
             {
                 UdonBehaviour sync = Resources.FindObjectsOfTypeAll<UdonBehaviour>().FirstOrDefault(o => 
                     o.SynchronizePosition && o.GetComponents<Collider>().Concat(o.GetComponentsInChildren<Collider>()).Any(c => !c.isTrigger && ((1016111 >> c.gameObject.layer) & 1) == 1));
-                if (sync != null) MelonCoroutines.Start(OutOfRangeCrash(sync.transform, Shared.targetPlayer));
+                if (sync != null) MelonCoroutines.Start(OutOfRangeCrash(sync.transform, Shared.TargetPlayer));
                 else Utils.HUDMessage("World is invalid.");
             }
         }

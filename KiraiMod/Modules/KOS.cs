@@ -121,8 +121,8 @@ namespace KiraiMod.Modules
             if (active) return;
             active = true;
 
-            oTarget = Shared.targetPlayer;
-            Shared.targetPlayer = target;
+            oTarget = Shared.TargetPlayer;
+            Shared.TargetPlayer = target;
 
             oAuto = Shared.menu.GetBool("p0/auto-portal") ?? oAuto;
             Shared.menu.Set("p0/auto-portal", true);
@@ -136,7 +136,7 @@ namespace KiraiMod.Modules
             if (!active) return;
             active = false;
 
-            Shared.targetPlayer = oTarget;
+            Shared.TargetPlayer = oTarget;
             oTarget = null;
 
             Menu.MenuObject obj;

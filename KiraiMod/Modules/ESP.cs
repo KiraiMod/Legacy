@@ -14,10 +14,9 @@ namespace KiraiMod.Modules
 
         public override void OnStateChange(bool state)
         {
-            GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
-            for (int i = 0; i < players.Length; i++)
+            foreach (Player player in PlayerManager.prop_PlayerManager_0.field_Private_List_1_Player_0)
             {
-                HighlightBubble(players[i], state);
+                HighlightPlayer(player, state);
             }
         }
 
@@ -28,8 +27,7 @@ namespace KiraiMod.Modules
 
         public override void OnAvatarInitialized(GameObject avatar, VRCAvatarManager manager)
         {
-            if (state)
-                MelonCoroutines.Start(DelayRefresh());
+            if (state) MelonCoroutines.Start(DelayRefresh());
         }
 
         public IEnumerator Delay(Player player)
@@ -44,56 +42,25 @@ namespace KiraiMod.Modules
                 timeout++;
             }
 
-            Renderer renderer = GetBubbleRenderer(player.gameObject);
-            HighlightBubble(renderer, state);
-            SetBubbleColor(renderer);
+            HighlightPlayer(player, state);
         }
 
         public IEnumerator DelayRefresh()
         {
             yield return null;
-            GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
-            for (int i = 0; i < players.Length; i++)
+
+            foreach (Player player in PlayerManager.prop_PlayerManager_0.field_Private_List_1_Player_0)
+                HighlightPlayer(player, state);
+        }
+
+        public static void HighlightPlayer(Player player, bool state)
+        {
+            Renderer renderer = player?.transform.Find("SelectRegion")?.GetComponent<Renderer>();
+            if (renderer)
             {
-                HighlightBubble(players[i], true);
+                HighlightsFX.prop_HighlightsFX_0.Method_Public_Void_Renderer_Boolean_0(renderer, state);
+                renderer.sharedMaterial.color = Utils.Colors.primary;
             }
-        }
-
-        public static Renderer GetBubbleRenderer(GameObject player)
-        {
-            if (player == null) return null;
-
-            Transform bubble = player.transform.Find("SelectRegion");
-
-            if (bubble == null) return null;
-
-            Renderer renderer = bubble.GetComponent<Renderer>();
-
-            return renderer ?? null;
-        }
-
-        public static void HighlightBubble(GameObject player, bool state)
-        {
-            Renderer renderer = GetBubbleRenderer(player);
-
-            if (renderer != null) HighlightsFX.prop_HighlightsFX_0.Method_Public_Void_Renderer_Boolean_0(renderer, state);
-        }
-
-        public static void HighlightBubble(Renderer renderer, bool state)
-        {
-            if (renderer != null) HighlightsFX.prop_HighlightsFX_0.Method_Public_Void_Renderer_Boolean_0(renderer, state);
-        }
-
-        public static void SetBubbleColor(GameObject player)
-        {
-            Renderer renderer = GetBubbleRenderer(player);
-
-            if (renderer != null) renderer.sharedMaterial.color = Utils.Colors.primary;
-        }
-
-        public static void SetBubbleColor(Renderer renderer)
-        {
-            if (renderer != null) renderer.sharedMaterial.color = Utils.Colors.primary;
         }
     }
 }

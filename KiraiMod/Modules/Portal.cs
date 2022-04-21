@@ -20,14 +20,14 @@ namespace KiraiMod.Modules
         {
             for (;;)
             {
-                if (Shared.targetPlayer != null && state) Helper.PortalPlayer(Shared.targetPlayer, Shared.modules.portal.distance, Shared.modules.portal.infinite);
+                if (Shared.TargetPlayer != null && state) Helper.PortalPlayer(Shared.TargetPlayer, Shared.modules.portal.distance, Shared.modules.portal.infinite);
                 yield return new WaitForSeconds(5.0f);
             }
         }
 
         public void PortalTarget()
         {
-            Helper.PortalPlayer(Shared.targetPlayer ?? VRCPlayer.field_Internal_Static_VRCPlayer_0.field_Private_Player_0, Shared.modules.portal.distance, Shared.modules.portal.infinite);
+            Helper.PortalPlayer(Shared.TargetPlayer ?? VRCPlayer.field_Internal_Static_VRCPlayer_0.field_Private_Player_0, Shared.modules.portal.distance, Shared.modules.portal.infinite);
         }
 
         public void DeletePortals()

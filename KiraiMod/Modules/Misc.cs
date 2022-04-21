@@ -55,7 +55,7 @@ namespace KiraiMod.Modules
 
         public void DropTarget()
         {
-            Shared.targetPlayer = null;
+            Shared.TargetPlayer = null;
         }
 
         public void ChangePedestals()

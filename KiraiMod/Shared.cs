@@ -1,12 +1,20 @@
 ﻿using Harmony;
-using UnityEngine;
 using VRC;
 
 namespace KiraiMod
 {
     public static class Shared
     {
-        public static Player targetPlayer;
+        private static Player targetPlayer;
+
+        public static Player TargetPlayer { 
+            get => targetPlayer; 
+            set { 
+                targetPlayer = value;
+                modules.nameplates.Refresh();
+            } 
+        }
+
         public static Menu menu;
         public static Config config;
         public static Modules.Modules modules;

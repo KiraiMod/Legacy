@@ -63,7 +63,6 @@ namespace KiraiMod
                                     SendRPC(0x000, data.sender);
                                     break;
                             }
-
                         }
                         else if (data.target == "KiraiMod")
                         {
@@ -73,7 +72,22 @@ namespace KiraiMod
                                 case 0x001:
                                     if (data.payload == VRC.Player.prop_Player_0.field_Private_APIUser_0.displayName)
                                     {
-                                        Shared.modules.nameplates.users.Add(data.sender);
+                                        Shared.modules.nameplates.kiraimodders.Add(data.sender);
+                                        Shared.modules.nameplates.Refresh();
+                                        if (data.id == 0x000)
+                                            SendRPC(0x001, data.sender);
+                                    }
+                                    break;
+                            }
+                        } else if (data.target == "DayMod")
+                        {
+                            switch (data.id)
+                            {
+                                case 0x000:
+                                case 0x001:
+                                    if (data.payload == VRC.Player.prop_Player_0.field_Private_APIUser_0.displayName)
+                                    {
+                                        Shared.modules.nameplates.daymodders.Add(data.sender);
                                         Shared.modules.nameplates.Refresh();
                                         if (data.id == 0x000)
                                             SendRPC(0x001, data.sender);
@@ -141,11 +155,7 @@ namespace KiraiMod
             if (Input.GetKeyDown(KeyCode.KeypadMinus))
 #if DEBUG
             {
-                MelonLogger.Log(Shared.menu.qm.prop_Boolean_0);
-                MelonLogger.Log(Shared.menu.qm.prop_Boolean_1);
-                MelonLogger.Log(Shared.menu.qm.prop_Boolean_2);
-                MelonLogger.Log(Shared.menu.qm.prop_Boolean_3);
-                MelonLogger.Log(Shared.menu.qm.prop_Boolean_4);
+
             }
 #else
                 MelonLogger.Log("Alive");

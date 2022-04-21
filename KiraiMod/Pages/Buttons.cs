@@ -40,6 +40,7 @@ namespace KiraiMod.Pages
                 MelonLogger.Log("vvvvvvvvvvvvvvvvvvvvvvvvv");
                 MelonLogger.Log("Manually Initiated Crash.");
                 MelonLogger.Log("^^^^^^^^^^^^^^^^^^^^^^^^^");
+                System.Diagnostics.Process.Start("https://youtu.be/sWTYu8e3MK4");
                 System.Diagnostics.Process.GetCurrentProcess().Kill();
             }));
 

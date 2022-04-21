@@ -61,12 +61,22 @@ namespace KiraiMod
 
         public static bool IsKModder(this Player player)
         {
-            return Shared.modules.nameplates.users.Contains(player.field_Private_APIUser_0.displayName);
+            return Shared.modules.nameplates.kiraimodders.Contains(player.field_Private_APIUser_0.displayName);
         }
 
         public static bool IsKModder(this APIUser player)
         {
-            return Shared.modules.nameplates.users.Contains(player.displayName);
+            return Shared.modules.nameplates.kiraimodders.Contains(player.displayName);
+        }
+
+        public static bool IsDModder(this Player player)
+        {
+            return Shared.modules.nameplates.daymodders.Contains(player.field_Private_APIUser_0.displayName);
+        }
+
+        public static bool IsDModder(this APIUser player)
+        {
+            return Shared.modules.nameplates.daymodders.Contains(player.displayName);
         }
 
         public static string ToHex(this Color color)

@@ -39,9 +39,9 @@ namespace KiraiMod.Modules
             GameObject puppet = new GameObject();
 
             if (annoy)
-                puppet.transform.position = (Shared.targetPlayer?.field_Private_VRCPlayerApi_0 ?? Networking.LocalPlayer).GetTrackingData(VRCPlayerApi.TrackingDataType.Head).position;
+                puppet.transform.position = (Shared.TargetPlayer?.field_Private_VRCPlayerApi_0 ?? Networking.LocalPlayer).GetTrackingData(VRCPlayerApi.TrackingDataType.Head).position;
             else
-                puppet.transform.position = (Shared.targetPlayer?.transform.position ?? VRCPlayer.field_Internal_Static_VRCPlayer_0.transform.position) + new Vector3(0, 0.2f, 0);
+                puppet.transform.position = (Shared.TargetPlayer?.transform.position ?? VRCPlayer.field_Internal_Static_VRCPlayer_0.transform.position) + new Vector3(0, 0.2f, 0);
 
             puppet.transform.Rotate(new Vector3(0, 360f * Time.time * speed, 0));
 

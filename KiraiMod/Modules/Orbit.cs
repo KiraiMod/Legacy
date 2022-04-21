@@ -28,10 +28,10 @@ namespace KiraiMod.Modules
                 return;
             }
 
-            if (Shared.targetPlayer == null) return;
+            if (Shared.TargetPlayer == null) return;
 
             GameObject puppet = new GameObject();
-            puppet.transform.position = Shared.targetPlayer.transform.position;
+            puppet.transform.position = Shared.TargetPlayer.transform.position;
             puppet.transform.Rotate(new Vector3(0, 1, 0), Time.time * speed * 90);
             VRCPlayer.field_Internal_Static_VRCPlayer_0.transform.position = puppet.transform.position + (puppet.transform.forward * distance);
             Object.Destroy(puppet);

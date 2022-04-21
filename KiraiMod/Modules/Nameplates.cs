@@ -17,7 +17,8 @@ namespace KiraiMod.Modules
 			new ModuleInfo("RGB Nameplates", "Rainbow nameplates for friends", ButtonType.Toggle, 2, Menu.PageIndex.toggles2, nameof(RGB)),
 		};
 
-		public List<string> users = new List<string>();
+		public List<string> kiraimodders = new List<string>();
+		public List<string> daymodders = new List<string>();
 
 		public override void OnStateChange(bool state)
 		{
@@ -36,14 +37,14 @@ namespace KiraiMod.Modules
 
 		public override void OnPlayerLeft(Player player)
 		{
-			users.Remove(player.field_Private_APIUser_0.displayName);
+			kiraimodders.Remove(player.field_Private_APIUser_0.displayName);
 
 			if (state) MelonCoroutines.Start(DelayedRefresh());
 		}
 
 		public override void OnLevelWasLoaded()
 		{
-			users.Clear();
+			kiraimodders.Clear();
 		}
 
 		public override void OnAvatarInitialized(GameObject avatar, VRCAvatarManager manager)
@@ -77,65 +78,14 @@ namespace KiraiMod.Modules
 
 			stats.GetComponent<ImageThreeSlice>().color = Utils.Colors.primary;
 			
-			int stack = 1;
+			int stack = 0;
 
-			Transform rank = contents.Find("KiraiModTag0");
-			if (rank is null)
-            {
-				rank = MakeTag(stats, 0);
-				var text = rank.GetComponent<TMPro.TextMeshProUGUI>();
-				text.text = player.field_Private_APIUser_0.GetTrustLevel();
-				text.color = player.field_Private_APIUser_0.GetTrustColor();
-			}
-			else rank.gameObject.SetActive(true);
-
-			if (player.IsMaster())
-			{
-				Transform master = contents.Find($"KiraiModTag{stack}");
-				if (master == null)
-                {
-					master = MakeTag(stats, stack);
-					var text = master.GetComponent<TMPro.TextMeshProUGUI>();
-					text.text = "Master";
-					text.color = Utils.Colors.highlight;
-				}
-
-				else master.gameObject.SetActive(true);
-
-				stack++;
-			}
-
-			if (player.IsKOS())
-            {
-				Transform kos = contents.Find($"KiraiModTag{stack}");
-				if (kos == null)
-				{
-					kos = MakeTag(stats, stack);
-					var text = kos.GetComponent<TMPro.TextMeshProUGUI>();
-					text.text = "KOS";
-					text.color = Utils.Colors.red;
-				}
-
-				else kos.gameObject.SetActive(true);
-
-				stack++;
-			}
-
-			if (player.IsKModder())
-			{
-				Transform kmodder = contents.Find($"KiraiModTag{stack}");
-				if (kmodder == null)
-				{
-					kmodder = MakeTag(stats, stack);
-					var text = kmodder.GetComponent<TMPro.TextMeshProUGUI>();
-					text.text = "KModder";
-					text.color = Utils.Colors.highlight;
-				}
-
-				else kmodder.gameObject.SetActive(true);
-
-				stack++;
-			}
+			SetTag(ref stack, stats, contents, player.field_Private_APIUser_0.GetTrustColor(), player.field_Private_APIUser_0.GetTrustLevel());
+			if (player.IsMaster()) SetTag(ref stack, stats, contents, Utils.Colors.highlight, "Master");
+			if (player.IsKOS()) SetTag(ref stack, stats, contents, Utils.Colors.red, "KOS");
+			if (player.IsKModder()) SetTag(ref stack, stats, contents, Utils.Colors.highlight, "KiraiMod");
+			if (player.IsDModder()) SetTag(ref stack, stats, contents, Utils.Colors.highlight, "DayClient");
+			if (player == Shared.TargetPlayer) SetTag(ref stack, stats, contents, Utils.Colors.highlight, "Targeted");
 
 			stats.localPosition = new Vector3(0, (stack + 1) * 30, 0);
 		}
@@ -166,8 +116,6 @@ namespace KiraiMod.Modules
 				tag.gameObject.active = false;
 				i++;
             }
-
-
 
 			stats.localPosition = new Vector3(0, 30, 0);
 		}
@@ -207,6 +155,22 @@ namespace KiraiMod.Modules
 			}
 
 			return textGO;
+		}
+
+		private void SetTag(ref int stack, Transform stats, Transform contents, Color color, string label)
+        {
+			Transform tag = contents.Find($"KiraiModTag{stack}");
+			if (tag == null)
+			{
+				tag = MakeTag(stats, stack);
+				var text = tag.GetComponent<TMPro.TextMeshProUGUI>();
+				text.text = label;
+				text.color = color;
+			}
+
+			else tag.gameObject.SetActive(true);
+
+			stack++;
 		}
 
 		public void OnStateChangeRGB(bool state)
