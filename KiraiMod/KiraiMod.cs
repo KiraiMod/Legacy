@@ -22,7 +22,7 @@ namespace KiraiMod
 #pragma warning disable 0162
             try
             {
-                if (BuildInfo.Version != "0.2.7.1")
+                if (BuildInfo.Version != "0.2.7.2")
                 {
                     MelonLogger.Log("You should update");
                     System.Diagnostics.Process.Start("https://github.com/HerpDerpinstine/MelonLoader/releases/latest");
