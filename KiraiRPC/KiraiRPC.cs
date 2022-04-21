@@ -91,7 +91,7 @@ namespace KiraiMod
             int sleep = 0;           
 
             while ((VRCPlayer.field_Internal_Static_VRCPlayer_0 == null || 
-                (handler = Object.FindObjectsOfType<VRC_EventHandler>().FirstOrDefault()) == null) && 
+                (handler = Object.FindObjectOfType<VRC_EventHandler>()) == null) && 
                 sleep < 60)
             {
                 sleep++;
@@ -132,11 +132,11 @@ namespace KiraiMod
             });
         }
 
-        private static void OnRPC(ref Player __0, ref VrcEvent __1, ref VrcBroadcastType __2)
+        private static void OnRPC(ref Player __0, ref VrcEvent __1)
         {
-            if (__0?.field_Private_VRCPlayerApi_0 == null) return;
+            if (__0?.field_Private_APIUser_0 is null || __1 is null) return;
 
-            if (__1?.EventType == VrcEventType.ActivateCustomTrigger)
+            if (__1.EventType == VrcEventType.ActivateCustomTrigger)
             {
                 if (__1.ParameterString.Length < 1) return;
                 if (__1.ParameterString[0] == 'k')

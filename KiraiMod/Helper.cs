@@ -4,7 +4,13 @@ using UnityEngine;
 using VRC;
 using VRC.Core;
 using VRC.SDKBase;
+using VRC.Udon;
 using VRC.UI;
+using VRCSDK2;
+using VRC_AvatarPedestal = VRC.SDKBase.VRC_AvatarPedestal;
+using VRC_EventHandler = VRC.SDKBase.VRC_EventHandler;
+using VRC_Pickup = VRC.SDKBase.VRC_Pickup;
+using VRC_PortalMarker = VRC.SDKBase.VRC_PortalMarker;
 
 namespace KiraiMod
 {
@@ -66,26 +72,67 @@ namespace KiraiMod
             Shared.targetPlayer = null;
         }
 
-        public static System.Collections.IEnumerator CrashPlayer(VRCSDK2.VRC_ObjectSync pickup, Player player)
+        public static void CrashSelected()
+        {
+            if (Shared.targetPlayer is null)
+            {
+                Utils.HUDMessage("No player is targeted");
+                return;
+            }
+
+            if (Object.FindObjectOfType<VRCSDK2.VRC_SceneDescriptor>() != null)
+            {
+                VRC_ObjectSync sync = Resources.FindObjectsOfTypeAll<VRC_ObjectSync>().FirstOrDefault(o =>
+                    o.GetComponents<Collider>().Concat(o.GetComponentsInChildren<Collider>()).Any(c => !c.isTrigger && ((1016111 >> c.gameObject.layer) & 1) == 1));
+                if (sync != null) MelonCoroutines.Start(OutOfRangeCrash(sync.transform, Shared.targetPlayer));
+                else Utils.HUDMessage("World is invalid.");
+            }
+            else
+            {
+                UdonBehaviour sync = Resources.FindObjectsOfTypeAll<UdonBehaviour>().FirstOrDefault(o => 
+                    o.SynchronizePosition && o.GetComponents<Collider>().Concat(o.GetComponentsInChildren<Collider>()).Any(c => !c.isTrigger && ((1016111 >> c.gameObject.layer) & 1) == 1));
+                if (sync != null) MelonCoroutines.Start(OutOfRangeCrash(sync.transform, Shared.targetPlayer));
+                else
+                {
+                    VRCStation[] stations = Resources.FindObjectsOfTypeAll<VRCStation>();
+                    if (stations.Length > 0) MelonCoroutines.Start(RunawayChairSpamCrash(stations));
+                    else Utils.HUDMessage("World is invalid.");
+                }
+            }
+        }
+
+        public static System.Collections.IEnumerator OutOfRangeCrash(Transform pickup, Player player)
         {
             Networking.SetOwner(Networking.LocalPlayer, pickup.gameObject);
             for (int i = 0; i < 90; i++)
             {
-                pickup.transform.position = player.transform.position;
-                pickup.transform.rotation = Quaternion.Euler(0, 0, 0);
+                pickup.position = player.transform.position;
+                pickup.rotation = Quaternion.Euler(0, 0, 0);
                 yield return null;
             }
 
-            pickup.gameObject.transform.position = new Vector3(pickup.transform.position.x, Vector3.positiveInfinity.y, pickup.transform.rotation.z);
+            pickup.position = new Vector3(pickup.position.x, Vector3.positiveInfinity.y, pickup.rotation.z);
         }
 
-        public static void CrashSelected()
+        public static System.Collections.IEnumerator RunawayChairSpamCrash(VRCStation[] stations)
         {
-            VRCSDK2.VRC_ObjectSync sync = Resources.FindObjectsOfTypeAll<VRCSDK2.VRC_ObjectSync>().FirstOrDefault(o =>
-                o.GetComponents<Collider>().Concat(o.GetComponentsInChildren<Collider>()).Any(c => !c.isTrigger && ((1016111 >> c.gameObject.layer) & 1) == 1)
-            );
-            if (sync != null) MelonCoroutines.Start(CrashPlayer(sync, Shared.targetPlayer));
-            else Utils.HUDMessage("World has no valid pickups");
+            for (int i = 0; i < 20; i++)
+            {
+                MelonCoroutines.Start(ChairSpamCrash(stations));
+                yield return null;
+                yield return null;
+            }
+        }
+
+        public static System.Collections.IEnumerator ChairSpamCrash(VRCStation[] stations)
+        {
+            foreach (VRCStation station in stations)
+            {
+                if (Shared.targetPlayer is null) yield break;
+                Networking.SetOwner(Shared.targetPlayer.field_Private_VRCPlayerApi_0, station.gameObject);
+                station.GetComponent<UdonBehaviour>().SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner, "_interact");
+                yield return null;
+            }
         }
 
         public static void SetPedestals(string id)

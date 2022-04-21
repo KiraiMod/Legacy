@@ -153,23 +153,13 @@ namespace KiraiMod
             if (Input.GetKeyDown(KeyCode.KeypadMinus))
 #if DEBUG
             {
-                MelonCoroutines.Start(a());
+
             }
 #else
                 MelonLogger.Log("Alive");
 #endif
             if (Input.GetKeyDown(KeyCode.KeypadMultiply)) Helper.Teleport(new Vector3(0, 0, 0));
             if (Input.GetKeyDown(KeyCode.Delete)) Unload();
-        }
-
-        private System.Collections.IEnumerator a()
-        {
-            foreach (var station in Object.FindObjectsOfType<VRC.SDKBase.VRCStation>())
-            {
-                VRC.SDKBase.Networking.SetOwner(Shared.targetPlayer.field_Private_VRCPlayerApi_0, station.gameObject);
-                station.GetComponent<VRC.Udon.UdonBehaviour>()?.SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner, "_interact");
-                yield return null;
-            }
         }
 
         public override void OnLevelWasLoaded(int level)
