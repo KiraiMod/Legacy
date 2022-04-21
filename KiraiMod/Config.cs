@@ -68,6 +68,8 @@ namespace KiraiMod
             public float fOrbitSpeed;
             public float fOrbitDistance;
             public float fRGBSpeed;
+            public float fItemOrbitSize;
+            public float fItemOrbitSpeed;
 
             [BeforeEncode]
             public void BeforeEncode()
@@ -106,6 +108,8 @@ namespace KiraiMod
                 Move(load, ref Shared.modules.portal.distance,    ref fPortalDistance   );
                 Move(load, ref Shared.modules.orbit.speed,        ref fOrbitSpeed       );
                 Move(load, ref Shared.modules.orbit.distance,     ref fOrbitDistance    );
+                Move(load, ref Shared.modules.itemOrbit.speed,    ref fItemOrbitSize    );
+                Move(load, ref Shared.modules.itemOrbit.size,     ref fItemOrbitSpeed   );
                 Move(load, ref Utils.fRGBSpeed,                   ref fRGBSpeed         );
 
                 if (load)

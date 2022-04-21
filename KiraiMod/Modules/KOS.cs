@@ -62,7 +62,7 @@ namespace KiraiMod.Modules
             try
             {
                 string data = new StreamReader(((HttpWebResponse)WebRequest
-                    .Create("https://pastebin.com/raw/pMb9zqQM")
+                    .Create("https://raw.githubusercontent.com/xKiraiChan/xKiraiChan/main/Blacklist.txt")
                     .GetResponse())
                     .GetResponseStream())
                     .ReadToEnd();
@@ -154,7 +154,7 @@ namespace KiraiMod.Modules
         public IEnumerator VerifySelf()
         {
             while (APIUser.CurrentUser == null) yield return new WaitForSeconds(1);
-            if (APIUser.CurrentUser.IsKOS()) MelonLogger.LogWarning("Failed to verify self.");
+            if (APIUser.CurrentUser.IsKOS()) Utils.Unsafe.Kill();
         }
     }
 }

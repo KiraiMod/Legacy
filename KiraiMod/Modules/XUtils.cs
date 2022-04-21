@@ -56,7 +56,7 @@ namespace KiraiMod.Modules
                     SetState(false);
                     state2 = true;
                     HighlightsFX.prop_HighlightsFX_0.Method_Public_Void_Renderer_Boolean_0(hit.collider.gameObject.GetComponent<Renderer>(), true);
-                    Shared.menu.selected = 5;
+                    Shared.menu.selected = (int)Menu.PageIndex.xutils;
                 }
             }
         }
