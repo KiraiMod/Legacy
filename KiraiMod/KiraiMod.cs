@@ -8,7 +8,7 @@ using System.Reflection;
 using System.Windows.Forms;
 using UnityEngine;
 
-[assembly: MelonInfo(typeof(KiraiMod.KiraiMod), "KiraiMod", "1", "Kirai Chan#8315")]
+[assembly: MelonInfo(typeof(KiraiMod.KiraiMod), "KiraiMod", KiraiMod.KiraiLib.Constants.VT_ERASE, "Kirai Chan#8315")]
 [assembly: MelonGame("VRChat", "VRChat")]
 [assembly: MelonOptionalDependencies("KiraiUI", "KiraiRPC")]
 [assembly: AssemblyMetadata("Iya", "IyaIyaIyaIyaIyaIya")]

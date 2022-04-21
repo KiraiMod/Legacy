@@ -137,7 +137,7 @@ namespace KiraiMod.Modules
                         (user.IsFriend() ? "<b>" : "") +
                         $"<color={user.field_Private_APIUser_0.GetTrustColor().ToHex()}>{user.field_Private_APIUser_0.displayName}</color>" +
                         (user.IsFriend() ? "</b>" : "") +
-                        "\n", i, parent.transform, new Action(() => { Utils.SelectPlayer(user); }), false);
+                        "\n", 0, i * -70, parent.transform, new Action(() => { Utils.SelectPlayer(user); }), false);
                     players.Add(text);
                 }
             }

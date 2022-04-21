@@ -1,6 +1,5 @@
 ﻿using MelonLoader;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using VRC.Udon;
 
@@ -10,11 +9,13 @@ namespace KiraiMod.Modules
     {
         public new ModuleInfo[] info =
         {
+            new ModuleInfo("Select\nIndex", "Select a UdonBehaviour by its index", ButtonType.Button, 3, 3, Shared.PageIndex.udon1, nameof(SelectIndex)),
             new ModuleInfo("Refresh", "Fetch all UdonBehaviours again", ButtonType.Button, 3, 2, Shared.PageIndex.udon1, nameof(Refresh)),
             new ModuleInfo("Up", "See less UdonBehaviours", ButtonType.Button, 3, 1, Shared.PageIndex.udon1, nameof(Up)),
             new ModuleInfo("Down", "See more UdonBehaviours", ButtonType.Button, 3, 0, Shared.PageIndex.udon1, nameof(Down)),
             new ModuleInfo("Broadcast", "Broadcast an event to every UdonBehaviour", ButtonType.Button, 3, -1, Shared.PageIndex.udon1, nameof(Broadcast)),
 
+            new ModuleInfo("Repeat", "Repeat the last clicked event 10 times a second", ButtonType.Toggle, 3, 3, Shared.PageIndex.udon2, nameof(Repeat)),
             new ModuleInfo("Targeted", "Execute the event for the targeted player", ButtonType.Toggle, 3, 2, Shared.PageIndex.udon2, nameof(Targeted)),
             new ModuleInfo("Networked", "Execute the event for everyone", ButtonType.Toggle, 3, -1, Shared.PageIndex.udon2, nameof(Networked)),
             new ModuleInfo("Up", "See less event names", ButtonType.Button, 3, 1, Shared.PageIndex.udon2, nameof(Up2)),
@@ -27,9 +28,12 @@ namespace KiraiMod.Modules
         private UdonBehaviour selected;
         private int currentPage = 0;
         private int buttonPage = 0;
+        private object token = null;
+        private string last;
 
         public bool Networked = false;
         public bool Targeted = false;
+        public bool Repeat = false;
 
         public UdonBehaviour[] behaviours;
         public int CurrentPage {
@@ -117,6 +121,24 @@ namespace KiraiMod.Modules
                 (KiraiLib.UI.elements[Utils.CreateID("Networked", Shared.PageRemap[(int)Shared.PageIndex.udon2])] as KiraiLib.UI.Toggle)?.SetState(false);
         }
 
+        public void OnStateChangeRepeat(bool state)
+        {
+            if (token != null)
+                    MelonCoroutines.Stop(token);
+            
+            if (state) token = MelonCoroutines.Start(Repeater());
+            else token = null;
+        }
+
+        private System.Collections.IEnumerator Repeater()
+        {
+            for (;;)
+            {
+                if (last != null)
+                    Execute(last);
+                yield return new WaitForSecondsRealtime(0.1f);
+            }
+        }
 
         private void HandlePage(int original, int target)
         {
@@ -138,6 +160,7 @@ namespace KiraiMod.Modules
                 buttons.Add(KiraiLib.UI.Button.Create($"udon2/execute-{i + (buttonPage * 12) - 1}", name, "Execute this event", x, y, 
                     KiraiLib.UI.pages[Shared.PageRemap[(int)Shared.PageIndex.udon2]].transform, new System.Action(() =>
                 {
+                    last = name;
                     Execute(name);
                 }), false));
             }
@@ -180,6 +203,23 @@ namespace KiraiMod.Modules
         }
 
         #region Buttons
+        public void SelectIndex()
+        {
+            KiraiLib.HUDKeypad("Select By Index", "Select", "73", (val) => {
+                if (int.TryParse(val, out int index))
+                {
+                    if (index >= behaviours.Length && index < 1)
+                        KiraiLib.Logger.Log("Index is out of bounds");
+                    else
+                    {
+                        KiraiLib.UI.selected = Shared.PageRemap[(int)Shared.PageIndex.udon2];
+                        selected = behaviours[index - 1];
+                        ButtonPage = 0;
+                    }
+                } // Keypad will never return an invalid or negative number
+            });
+        }
+
         public void Refresh()
         {
             Shared.modules.udon.OnLevelWasLoaded();

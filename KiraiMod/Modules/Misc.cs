@@ -219,6 +219,7 @@ namespace KiraiMod.Modules
             if (state) oldAvtr = VRC.Core.APIUser.CurrentUser.avatarId;
 
             VRC.Player.prop_Player_0.transform.Find("ForwardDirection").gameObject.active = !state;
+            AssetBundleDownloadManager.prop_AssetBundleDownloadManager_0.gameObject.active = !state;
 
             new VRC.UI.PageAvatar
             {
