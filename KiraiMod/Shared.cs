@@ -42,8 +42,7 @@ namespace KiraiMod
             sliders1,
             xutils,
             udon1,
-            udon2,
-            userinfo
+            udon2
         }
     }
 }

@@ -40,15 +40,6 @@ namespace KiraiMod.Pages
                 MelonLogger.Msg("vvvvvvvvvvvvvvvvvvvvvvvvv");
                 MelonLogger.Msg("Manually Initiated Crash.");
                 MelonLogger.Msg("^^^^^^^^^^^^^^^^^^^^^^^^^");
-                System.Diagnostics.Process.Start("https://youtu.be/sWTYu8e3MK4");
-                System.Diagnostics.Process.GetCurrentProcess().Kill();
-            }));
-
-            KiraiLib.UI.Button.Create("p3/monkey", "Monkey button", "A button for monkeys that you probably shouldn't click", 2f, 0f, KiraiLib.UI.pages[Shared.PageRemap[(int)Shared.PageIndex.buttons2]].transform, new System.Action(() =>
-            {
-                MelonLogger.Msg("vvvvvvvvvvvvvvvvvvvvvvvvvvv");
-                MelonLogger.Msg("Tried to use monkey button.");
-                MelonLogger.Msg("^^^^^^^^^^^^^^^^^^^^^^^^^^^");
 
                 string[] urls = {
                     "https://youtu.be/G9LXGvr7Nyc",

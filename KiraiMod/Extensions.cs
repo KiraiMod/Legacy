@@ -70,17 +70,10 @@ namespace KiraiMod
         }
 #endif
 
-        public static Color GetNameplateColor(this Player player)
-        {
-            return player.field_Private_APIUser_0.IsKOS() ? Utils.Colors.red :
-                player.IsFriend() ? Utils.Colors.highlight :
-                Utils.Colors.primary;
-        }
-
         public static Color GetTextColor(this Player player)
         {
             return player.field_Private_APIUser_0.IsMod() ? Utils.Colors.aqua : 
-                player.IsKModder() ? Utils.Colors.highlight : 
+                player.IsKModder() ? Utils.Colors.primary : 
                 Utils.Colors.white;
         }
     }

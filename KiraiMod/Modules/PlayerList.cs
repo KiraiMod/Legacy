@@ -10,18 +10,16 @@ namespace KiraiMod.Modules
     public class PlayerList : ModuleBase
     {
         public GameObject parent;
+        public bool locked = false;
 
-        private System.Collections.Generic.List<KiraiLib.UI.Label> players = new System.Collections.Generic.List<KiraiLib.UI.Label>();
+        public System.Collections.Generic.List<KiraiLib.UI.Label> players = new System.Collections.Generic.List<KiraiLib.UI.Label>();
         private bool hasSet = false;
 
         public new ModuleInfo[] info = {
             new ModuleInfo("Player List", "Show the players in your instance", ButtonType.Toggle, 8, Shared.PageIndex.toggles2, nameof(state))
         };
 
-        public PlayerList()
-        {
-            MelonCoroutines.Start(DelayedInit());
-        }
+        public PlayerList() => MelonCoroutines.Start(DelayedInit());
 
         public override void OnConfigLoaded()
         {
@@ -53,12 +51,12 @@ namespace KiraiMod.Modules
 
         public override void OnPlayerJoined(Player player)
         {
-            if (state) Refresh();
+            if (state && !locked) Refresh();
         }
 
         public override void OnPlayerLeft(Player player)
         {
-            if (state) Refresh();
+            if (state && !locked) Refresh();
         }
 
         public override void OnLevelWasLoaded()
@@ -98,7 +96,7 @@ namespace KiraiMod.Modules
             Init();
         }
 
-        private void Init()
+        public void Init()
         {
             if (parent == null)
             {
@@ -130,14 +128,15 @@ namespace KiraiMod.Modules
                 {
                     Player user = PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0[i];
 
-                    KiraiLib.UI.Label text = KiraiLib.UI.Label.Create($"sm/player_{i}", " " +
-                        (user.IsMaster() ? "<b>" : "") +
-                        $"<color={user.GetTextColor().ToHex()}>{i + 1} </color>" +
-                        (user.IsMaster() ? "</b>" : "") +
-                        (user.IsFriend() ? "<b>" : "") +
-                        $"<color={user.field_Private_APIUser_0.GetTrustColor().ToHex()}>{user.field_Private_APIUser_0.displayName}</color>" +
-                        (user.IsFriend() ? "</b>" : "") +
-                        "\n", 0, i * -70, parent.transform, new Action(() => { Utils.SelectPlayer(user); }), false);
+                    KiraiLib.UI.Label text = KiraiLib.UI.Label.Create($"sm/player_{i}",
+                        " " 
+                        + (user.IsMaster() ? "<b>" : "") 
+                        + $"<color={user.GetTextColor().ToHex()}>{i + 1} </color>" 
+                        + (user.IsMaster() ? "</b>" : "") 
+                        + (user.IsFriend() ? "<b>" : "") 
+                        + $"<color={user.field_Private_APIUser_0.GetTrustColor().ToHex()}>{user.field_Private_APIUser_0.displayName}</color>" 
+                        + (user.IsFriend() ? "</b>" : ""), 
+                        0, i * -70, parent.transform, new Action(() => { Utils.SelectPlayer(user); }), false);
                     players.Add(text);
                 }
             }

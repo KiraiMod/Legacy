@@ -264,7 +264,13 @@ namespace KiraiMod
                 Input.GetButton("Oculus_CrossPlatform_Button2") ||
                 Input.GetButton("Oculus_CrossPlatform_Button4");
 
-            if (continueExecuting) { 
+            if (continueExecuting) {
+                if (Shared.modules.playerlist.locked)
+                {
+                    Shared.modules.playerlist.Refresh();
+                    Shared.modules.playerlist.locked = false;
+                }
+                
                 if (Shared.modules.playerlist.state)
                     Shared.modules.playerlist.parent.active = false;
 #if DEBUG

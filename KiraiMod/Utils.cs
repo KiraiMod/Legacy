@@ -81,6 +81,21 @@ namespace KiraiMod
             return null;
         }
 
+        public static Player GetPlayerByID(string id)
+        {
+            List<Player> players = PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0;
+
+            for (int i = 0; i < players.Count; i++)
+            {
+                if (players[i].field_Private_APIUser_0.id == id)
+                {
+                    return players[i];
+                }
+            }
+
+            return null;
+        }
+
         public static string SHA256(string input)
         {
             var crypt = new System.Security.Cryptography.SHA256Managed();

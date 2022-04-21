@@ -67,6 +67,19 @@ namespace KiraiMod.Modules
             this.reference = reference;
         }
 
+        public ModuleInfo(string label, string description, ButtonType type, int index, bool lower, Shared.PageIndex page, string reference)
+        {
+            this.label = label;
+            this.description = description;
+            this.type = type;
+            this.lower = lower;
+            Utils.GetGenericLayout(index, out int x, out int y);
+            this.x = x;
+            this.y = y;
+            this.page = page;
+            this.reference = reference;
+        }
+
         public ModuleInfo(string label, string description, ButtonType type, int x, int y, bool lower, Shared.PageIndex page, string reference)
         {
             this.label = label;

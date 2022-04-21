@@ -271,7 +271,6 @@ namespace KiraiMod
             Shared.PageRemap.Add(KiraiLib.UI.CreatePage("KiraiMod.XUtils"));
             Shared.PageRemap.Add(KiraiLib.UI.CreatePage("KiraiMod.Udon1"));
             Shared.PageRemap.Add(KiraiLib.UI.CreatePage("KiraiMod.Udon2"));
-            Shared.PageRemap.Add(KiraiLib.UI.CreatePage("KiraiMod.UserInfo"));
 
             new Pages.Pages();
 

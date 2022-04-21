@@ -47,7 +47,7 @@ namespace KiraiMod
         internal sealed class Options
         {
             public bool bInfinitePortals;
-            public bool bAutoKOS;
+            public bool bAutoKOS = true;
 
             public bool bESP;
             public bool bNameplates;

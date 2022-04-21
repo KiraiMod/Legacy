@@ -26,6 +26,7 @@ namespace KiraiMod.Modules
         public HideSelf hideself;
         public Udon udon;
         public Misc misc;
+        public WorldCrash worldcrash;
 
         public List<ModuleBase> modules = new List<ModuleBase>();
 
@@ -49,6 +50,7 @@ namespace KiraiMod.Modules
             modules.Add(hideself = new HideSelf());
             modules.Add(udon = new Udon());
             modules.Add(misc = new Misc());
+            modules.Add(worldcrash = new WorldCrash());
         }
 
         public void StartCoroutines()
