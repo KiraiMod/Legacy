@@ -39,7 +39,7 @@ namespace KiraiMod
         {
             KiraiLib.Events.OnOwnershipTransferred += (player) =>
             {
-                KiraiLib.Logger.Display($"[Owner] {player.field_Private_APIUser_0.displayName}", 1);
+                KiraiLib.Logger.Display($"<color=#5600a5>[<color=#ccf>Owner</color>]</color> <color={player.field_Private_APIUser_0.GetTrustColor().ToHex()}>{player.field_Private_APIUser_0.displayName}</color>", 1);
             };
         }
     }
