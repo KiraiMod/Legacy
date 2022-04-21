@@ -118,6 +118,17 @@ namespace KiraiMod.Pages
                 VRCPlayer.field_Internal_Static_VRCPlayer_0.transform.rotation = oRot;
             }));
 
+            Shared.menu.CreateButton("p3/god-mxode", "God Mode", "Enable Murder 2/3 God Mode", 1f, 1f, Shared.menu.pages[3].transform, new Action(() => {
+                foreach (VRC_Trigger trigger in UnityEngine.Object.FindObjectsOfType<VRC_Trigger>())
+                {
+                    if (trigger.name == "Death")
+                    {
+                        trigger.gameObject.SetActive(false);
+                        return;
+                    }
+                }
+            }));
+          
             Shared.menu.CreateButton("p3/open-p4", "Next", "Opens KiraiMod's next page", -2f, 1f, Shared.menu.pages[3].transform, new System.Action(() =>
             {
                 Shared.menu.selected = 4;
