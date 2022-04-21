@@ -102,8 +102,6 @@ namespace KiraiMod.Modules
 			if (player?.field_Private_APIUser_0 is null) return;
 
 			Transform contents = player.transform.Find("Player Nameplate/Canvas/Nameplate/Contents");
-			//Transform main = contents.Find("Main");
-			//Transform icon = contents.Find("Icon");
 			Transform stats = contents.Find("Quick Stats");
 
 			player.field_Internal_VRCPlayer_0.nameplate.uiNameBackground.color = player.field_Private_APIUser_0.GetTrustColor();
@@ -114,16 +112,17 @@ namespace KiraiMod.Modules
 			player.field_Internal_VRCPlayer_0.nameplate.uiIconVoicePulse.color = new Color(1, 0, 1);
 			player.field_Internal_VRCPlayer_0.nameplate.uiIconVoiceGlow.color = new Color(1, 0, 1);
 
-
-			//main.Find("Background").GetComponent<ImageThreeSlice>().color = player.field_Private_APIUser_0.GetTrustColor();
-			//main.Find("Pulse").GetComponent<ImageThreeSlice>().color = new Color(1, 0, 1);
-			//main.Find("Glow").GetComponent<ImageThreeSlice>().color = new Color(1, 0, 1);
-
-			//icon.Find("Background").GetComponent<Image>().color = player.field_Private_APIUser_0.GetTrustColor();
-			//icon.Find("Pulse").GetComponent<Image>().color = new Color(1, 0, 1);
-			//icon.Find("Glow").GetComponent<Image>().color = new Color(1, 0, 1);
-
 			stats.GetComponent<ImageThreeSlice>().color = Utils.Colors.primary;
+
+			int i = 0;
+			for (;;)
+			{
+				Transform tag = contents.Find($"KiraiModTag{i}");
+				if (tag is null) break;
+
+				tag.gameObject.active = false;
+				i++;
+			}
 
 			int stack = 0;
 
@@ -212,9 +211,8 @@ namespace KiraiMod.Modules
         {
 			Transform tag = contents.Find($"KiraiModTag{stack}");
 
-			Transform label = null;
-
-			if (tag == null)
+            Transform label;
+            if (tag == null)
 				label = MakeTag(stats, stack);
 			else 
 			{ 

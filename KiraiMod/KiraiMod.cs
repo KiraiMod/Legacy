@@ -130,13 +130,7 @@ namespace KiraiMod
                                     {
                                         Shared.modules.nameplates.cmodders.Add(data.sender);
                                         Shared.modules.nameplates.Refresh();
-                                        if (data.id == 0x000)
-                                            CartridgeSendRPC(0x001, data.sender);
                                     }
-                                    break;
-                                case 0x002:
-                                    if (data.payload == VRC.Player.prop_Player_0.field_Private_APIUser_0.displayName)
-                                        CartridgeSendRPC(0x001, data.sender);
                                     break;
                             }
                         }

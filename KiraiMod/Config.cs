@@ -77,6 +77,7 @@ namespace KiraiMod
             public float fRGBSpeed;
             public float fItemOrbitSize;
             public float fItemOrbitSpeed;
+            public float fThrowSpeed;
 
             public string szWorldCrash = "avtr_f3739df2-b502-4728-ba19-3099772c2de3";
 
@@ -124,6 +125,7 @@ namespace KiraiMod
                 Move(load, ref Shared.modules.itemOrbit.speed,           ref fItemOrbitSize    );
                 Move(load, ref Shared.modules.itemOrbit.size,            ref fItemOrbitSpeed   );
                 Move(load, ref General.fRGBSpeed,                        ref fRGBSpeed         );
+                Move(load, ref Shared.modules.misc.throwSpeed,           ref fThrowSpeed       );
                 #endregion
                 #region string
                 Move(load, ref Shared.modules.misc.newAvtr,              ref szWorldCrash      );

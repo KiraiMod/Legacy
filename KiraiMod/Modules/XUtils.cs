@@ -117,7 +117,7 @@ namespace KiraiMod.Modules
 
         public static void Portal()
         {
-            Helper.PortalPosition(Shared.modules.xutils.hit.point, Quaternion.Euler(0, 0, 0), Shared.modules.portal.infinite);
+            Helper.PortalPosition(Shared.modules.xutils.hit.point, Quaternion.identity, Shared.modules.portal.infinite);
         }
 
         public static void Teleport()
