@@ -14,17 +14,17 @@ namespace KiraiMod
 
         public void Save()
         {
-            MelonModLogger.Log("Saving to config");
+            MelonLogger.Log("Saving to config");
             System.IO.File.WriteAllText(config, JSON.Dump(options));
         }
 
         public void Load()
         {
-            MelonModLogger.Log("Loading from config");
+            MelonLogger.Log("Loading from config");
 
             if (!System.IO.File.Exists(config))
             {
-                MelonModLogger.Log("Config did not exist, creating new one with current values");
+                MelonLogger.Log("Config did not exist, creating new one with current values");
                 System.IO.File.WriteAllText(config, JSON.Dump(options));
             }
 

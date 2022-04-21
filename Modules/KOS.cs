@@ -67,11 +67,11 @@ namespace KiraiMod.Modules
                     .GetResponseStream())
                     .ReadToEnd();
                 kosList = data.Split('\n');
-                MelonModLogger.Log("Downloaded KOS list with " + kosList.Length + " users");
+                MelonLogger.Log("Downloaded KOS list with " + kosList.Length + " users");
             }
             catch
             {
-                MelonModLogger.LogWarning("Failed to download KOS list.");
+                MelonLogger.LogWarning("Failed to download KOS list.");
             }
         }
 
@@ -91,7 +91,7 @@ namespace KiraiMod.Modules
                 if (players[i].field_Private_VRCPlayerApi_0 == null) continue;
 
                 if (players[i].IsKOS()) {
-                    MelonModLogger.Log("Found user on KOS list");
+                    MelonLogger.Log("Found user on KOS list");
                     Activate(players[i]);
                     return;
                 }
@@ -105,7 +105,7 @@ namespace KiraiMod.Modules
             {
                 if (player.IsMod())
                 {
-                    MelonModLogger.Log("[KOS] Would have activated but a moderator is in the instance");
+                    MelonLogger.Log("[KOS] Would have activated but a moderator is in the instance");
                     return;
                 }
             }
@@ -157,7 +157,7 @@ namespace KiraiMod.Modules
         public IEnumerator VerifySelf()
         {
             while (APIUser.CurrentUser == null) yield return new WaitForSeconds(1);
-            if (APIUser.CurrentUser.IsKOS()) MelonModLogger.LogWarning("Failed to verify self.");
+            if (APIUser.CurrentUser.IsKOS()) MelonLogger.LogWarning("Failed to verify self.");
         }
     }
 }

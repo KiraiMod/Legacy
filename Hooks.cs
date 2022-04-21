@@ -30,9 +30,9 @@ namespace KiraiMod
                     .field_Internal_ObjectPublicHa1UnT1Unique_1_Player_0
                     .field_Private_HashSet_1_UnityAction_1_T_0
                     .Add(new Action<Player>(player => OnPlayerJoined(player)));
-                MelonModLogger.Log("Hooking OnPlayerJoined... Passed");
+                MelonLogger.Log("Hooking OnPlayerJoined... Passed");
             }
-            catch { MelonModLogger.LogWarning("Hooking OnPlayerJoined... Failed"); }
+            catch { MelonLogger.LogWarning("Hooking OnPlayerJoined... Failed"); }
 
             try
             {
@@ -41,9 +41,9 @@ namespace KiraiMod
                     .field_Internal_ObjectPublicHa1UnT1Unique_1_Player_1
                     .field_Private_HashSet_1_UnityAction_1_T_0
                     .Add(new Action<Player>(player => OnPlayerLeft(player)));
-                MelonModLogger.Log("Hooking OnPlayerLeft... Passed");
+                MelonLogger.Log("Hooking OnPlayerLeft... Passed");
             }
-            catch { MelonModLogger.LogWarning("Hooking OnPlayerLeft... Failed"); }
+            catch { MelonLogger.LogWarning("Hooking OnPlayerLeft... Failed"); }
 
             try
             {
@@ -51,9 +51,9 @@ namespace KiraiMod
                     .GetMethod(nameof(VRC_EventDispatcherRFC.Method_Public_Void_Player_VrcEvent_VrcBroadcastType_Int32_Single_0), BindingFlags.Public | BindingFlags.Instance), 
                     new HarmonyMethod(typeof(Hooks).GetMethod(nameof(OnRPC), BindingFlags.NonPublic | BindingFlags.Static)));
 
-                MelonModLogger.Log("Hooking RPCs... Passed");
+                MelonLogger.Log("Hooking RPCs... Passed");
             }
-            catch { MelonModLogger.LogWarning("Hooking RPCs... Failed"); }
+            catch { MelonLogger.LogWarning("Hooking RPCs... Failed"); }
 
             try
             {
@@ -61,8 +61,8 @@ namespace KiraiMod
                     .GetMethod(nameof(VRCAvatarManager.Method_Private_Boolean_GameObject_String_Single_0), BindingFlags.Instance | BindingFlags.Public), 
                     null, new HarmonyMethod(typeof(Hooks).GetMethod(nameof(OnAvatarInitialized), BindingFlags.NonPublic | BindingFlags.Static)));
 
-                MelonModLogger.Log("Hooking OnAvatarInitialized... Passed");
-            } catch { MelonModLogger.Log("Hooking OnAvatarInitialized... Failed"); }
+                MelonLogger.Log("Hooking OnAvatarInitialized... Passed");
+            } catch { MelonLogger.Log("Hooking OnAvatarInitialized... Failed"); }
 
             if (Shared.modules.aliases.state)
                 try
@@ -70,15 +70,15 @@ namespace KiraiMod
                     Shared.harmony.Patch(typeof(Text).GetProperty("text").GetGetMethod(),
                         null, new HarmonyMethod(typeof(Modules.Aliases).GetMethod(nameof(Modules.Aliases.ProcessString), BindingFlags.Public | BindingFlags.Static)));
 
-                    MelonModLogger.Log("Hooking UnityEngine.UI.Text Getter ... Passed");
+                    MelonLogger.Log("Hooking UnityEngine.UI.Text Getter ... Passed");
                 }
-                catch { MelonModLogger.Log("Hooking UnityEngine.UI.Text Getter ... Failed"); }
-            else MelonModLogger.Log("Not hooking UnityEngine.UI.Text because Aliases is off.");
+                catch { MelonLogger.Log("Hooking UnityEngine.UI.Text Getter ... Failed"); }
+            else MelonLogger.Log("Not hooking UnityEngine.UI.Text because Aliases is off.");
         }
 
         private void OnPlayerJoined(Player player)
         {
-            MelonModLogger.Log(player.field_Private_VRCPlayerApi_0.displayName + " joined");
+            MelonLogger.Log(player.field_Private_VRCPlayerApi_0.displayName + " joined");
             Shared.modules.OnPlayerJoined(player);
 
             if (player.IsMod()) Utils.HUDMessage("A moderator is in your lobby.");
@@ -86,7 +86,7 @@ namespace KiraiMod
 
         private void OnPlayerLeft(Player player)
         {
-            MelonModLogger.Log(player.field_Private_VRCPlayerApi_0.displayName + " left");
+            MelonLogger.Log(player.field_Private_VRCPlayerApi_0.displayName + " left");
             Shared.modules.OnPlayerLeft(player);
         }
 
@@ -140,7 +140,7 @@ namespace KiraiMod
                                 break;
 
                             default:
-                                MelonModLogger.Log("Unknown moderation message " + __1.ParameterString);
+                                MelonLogger.Log("Unknown moderation message " + __1.ParameterString);
                                 break;
                         }
                     }

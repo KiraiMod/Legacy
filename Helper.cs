@@ -44,5 +44,20 @@ namespace KiraiMod
         {
             VRCPlayer.field_Internal_Static_VRCPlayer_0.transform.position = pos;
         }
+
+        public static void BringPickups()
+        {
+            foreach (VRC_Pickup pickup in Object.FindObjectsOfType<VRC_Pickup>())
+            {
+                Networking.LocalPlayer.TakeOwnership(pickup.gameObject);
+                pickup.transform.localPosition = new Vector3(0, 0, 0);
+                pickup.transform.position = (Shared.targetPlayer?.transform.position ?? VRCPlayer.field_Internal_Static_VRCPlayer_0.transform.position) + new Vector3(0, 0.1f, 0);
+            }
+        }
+
+        public static void DropTarget()
+        {
+            Shared.targetPlayer = null;
+        }
     }
 }

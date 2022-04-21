@@ -2,8 +2,8 @@
 using System.Reflection;
 using System.Runtime.InteropServices;
 
-[assembly: MelonModInfo(typeof(KiraiMod.KiraiMod), "KiraiMod", "0.0.0", "Kirai-Chan")]
-[assembly: MelonModGame("VRChat", "VRChat")]
+[assembly: MelonInfo(typeof(KiraiMod.KiraiMod), "KiraiMod", "0.0.0", "Kirai-Chan")]
+[assembly: MelonGame("VRChat", "VRChat")]
 
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information

@@ -52,12 +52,12 @@ namespace KiraiMod
             int depth = n_depth ?? 0;
             if (max != -1 && depth > max) return;
 
-            MelonModLogger.Log(System.ConsoleColor.Green, "".PadLeft(depth * 4, ' ') + go.name);
+            MelonLogger.Log(System.ConsoleColor.Green, "".PadLeft(depth * 4, ' ') + go.name);
 
             Component[] components = go.GetComponents<Component>();
             for (int i = 0; i < components.Length; i++)
             {
-                MelonModLogger.Log(
+                MelonLogger.Log(
                     System.ConsoleColor.Cyan,
                     "".PadLeft((depth + 1) * 4, ' ') + 
                     ((go.name.Length + 2 < components[i].ToString().Length) ?
@@ -105,7 +105,7 @@ namespace KiraiMod
         {
             if (VRCUiManager.field_Protected_Static_VRCUiManager_0 == null) return;
 
-            VRCUiManager.field_Protected_Static_VRCUiManager_0.Method_Public_Void_String_2(message);
+            VRCUiManager.field_Protected_Static_VRCUiManager_0.Method_Public_Void_String_1(message);
         }
 
         public static Color GetRainbow()

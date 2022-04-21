@@ -12,7 +12,7 @@ namespace KiraiMod
 
         public override void OnApplicationStart()
         {
-            MelonModLogger.Log("Starting");
+            MelonLogger.Log("Starting");
 
             System.IO.Stream stream = Assembly.GetManifestResourceStream("KiraiMod.resources.assetbundle");
             System.IO.MemoryStream mem = new System.IO.MemoryStream((int)stream.Length);
@@ -69,7 +69,7 @@ namespace KiraiMod
             if (Input.GetKeyDown(KeyCode.Keypad3)) Shared.modules.noclip.SetState();
             if (Input.GetKeyDown(KeyCode.Keypad4)) Shared.modules.esp.SetState();
             if (Input.GetKeyDown(KeyCode.Keypad5)) Shared.modules.orbit.SetState();
-            if (Input.GetKeyDown(KeyCode.KeypadMinus)) MelonModLogger.Log("Alive");
+            if (Input.GetKeyDown(KeyCode.KeypadMinus)) MelonLogger.Log("Alive");
             if (Input.GetKeyDown(KeyCode.KeypadMultiply)) Helper.Teleport(new Vector3(0, 0, 0));
             if (Input.GetKeyDown(KeyCode.Delete)) Unload();
         }
@@ -120,7 +120,7 @@ namespace KiraiMod
                             FieldInfo reference = module.GetType().GetField(info.reference, BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
                             if (reference == null)
                             {
-                                MelonModLogger.LogWarning($"Failed to find property {info.reference} on {module.GetType()}");
+                                MelonLogger.LogWarning($"Failed to find property {info.reference} on {module.GetType()}");
                                 continue;
                             }
                             Shared.menu.CreateToggle(Utils.CreateID(info.label, info.page), (bool)reference.GetValue(module),
@@ -136,7 +136,7 @@ namespace KiraiMod
                         MethodInfo reference = module.GetType().GetMethod(info.reference, BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
                         if (reference == null)
                         {
-                            MelonModLogger.LogWarning($"Failed to find method {info.reference} on {module.GetType()}");
+                            MelonLogger.LogWarning($"Failed to find method {info.reference} on {module.GetType()}");
                             continue;
                         }
                         Utils.GetGenericLayout(info.index, out int x, out int y);
@@ -153,7 +153,7 @@ namespace KiraiMod
                     }
                     else
                     {
-                        MelonModLogger.LogWarning($"[UI] Unknown object {info.label} on {module.GetType()}");
+                        MelonLogger.LogWarning($"[UI] Unknown object {info.label} on {module.GetType()}");
                     }
                 }
             }
@@ -168,7 +168,7 @@ namespace KiraiMod
         public void Unload()
         {
             if (bUnload) return;
-            MelonModLogger.Log("Unloading");
+            MelonLogger.Log("Unloading");
 
             bUnload = true;
 
@@ -197,7 +197,7 @@ namespace KiraiMod
             Unload();
 
             bUnload = false;
-            MelonModLogger.Log("Reloading");
+            MelonLogger.Log("Reloading");
             Shared.config.Load();
             VRChat_OnUiManagerInit();
         }

@@ -1,5 +1,6 @@
 ﻿using MelonLoader;
 using System;
+using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Threading;
@@ -13,7 +14,7 @@ namespace KiraiMod
 
         public IPC()
         {
-            MelonModLogger.Log("[IPC] Starting");
+            MelonLogger.Log("[IPC] Starting");
 
             listener = new HttpListener();
             listener.Prefixes.Add("http://*:53065/");
@@ -22,18 +23,31 @@ namespace KiraiMod
             thread.IsBackground = true;
             thread.Name = "KiraiIPC";
 
-            try { listener.Start(); }
-            catch { MelonModLogger.LogError("Failed to start IPC"); }
-
-            thread.Start();
+            try
+            {
+                listener.Start();
+                thread.Start();
+            }
+            catch (Exception e) { 
+                MelonLogger.Log("[IPC] Failed to start"); 
+                MelonLogger.LogError(e.ToString()); 
+            }
         }
 
         ~IPC()
         {
-            MelonModLogger.Log("[IPC] Stoping");
+            MelonLogger.Log("[IPC] Stoping");
 
-            listener.Stop();
-            thread.Abort();
+            try
+            {
+                thread.Abort();
+                listener.Stop();
+            }
+            catch (Exception e)
+            {
+                MelonLogger.Log("[IPC] Failed to stop");
+                MelonLogger.LogError(e.ToString());
+            }
         }
 
         public void Handler()
@@ -43,7 +57,7 @@ namespace KiraiMod
                 HttpListenerContext ctx = listener.GetContext();
                 if (!ctx.Request.IsLocal)
                 {
-                    MelonModLogger.Log("[IPC] Non local attempted to access IPC.");
+                    MelonLogger.Log("[IPC] Non local attempted to access IPC.");
                     ctx.Response.StatusCode = 403;
                     byte[] resp = System.Text.Encoding.UTF8.GetBytes("Forbidden. This incident has be reported.");
                     ctx.Response.OutputStream.Write(resp, 0, resp.Length);
@@ -58,14 +72,14 @@ namespace KiraiMod
 
         public void GET(HttpListenerContext ctx)
         {
-            MelonModLogger.Log("Sending Web UI");
+            MelonLogger.Log("Sending Web UI");
             ctx.Response.ContentType = "text/html";
 
             try
             {
                 System.IO.Stream resource = Assembly.GetExecutingAssembly().GetManifestResourceStream("KiraiMod.WebUI.html");
                 resource.CopyTo(ctx.Response.OutputStream);
-            } catch { MelonModLogger.LogError("Failed to get Web UI"); }
+            } catch { MelonLogger.LogError("Failed to get Web UI"); }
 
             ctx.Response.Close();
         }
@@ -75,48 +89,101 @@ namespace KiraiMod
             byte[] raw = new byte[65536];
             int len = ctx.Request.InputStream.Read(raw, 0, 65536);
 
-            if (len >= raw.Length)
+            if (len < raw.Length)
             {
-                ctx.Response.StatusCode = 413;
-                ctx.Response.Close();
-                return;
+                byte[] data = new byte[len];
+                Array.Copy(raw, 0, data, 0, len);
+
+                MelonLoader.TinyJSON.Variant parsed = MelonLoader.TinyJSON.JSON.Load(System.Text.Encoding.UTF8.GetString(data));
+                if (parsed != null)
+                {
+                    string[] ipc = parsed.Make<string[]>();
+                    byte[] resp = new byte[0];
+                    if (ipc != null) ctx.Response.StatusCode = HandleIPC(ctx, ipc, out resp);
+                    ctx.Response.Close(resp, false);
+                    return;
+                }
+                else ctx.Response.StatusCode = 400;
+            }
+            else ctx.Response.StatusCode = 413;
+            ctx.Response.Close();
+        }
+
+        private int HandleIPC(HttpListenerContext ctx, string[] args, out byte[] resp)
+        {
+            resp = new byte[0];
+            if (args.Length < 1) return 400;
+
+            string[] trimmed = args.Skip(1).ToArray();
+
+            switch (args[0].ToLower())
+            {
+                case "rpc":
+                    return HandleRPC(trimmed, out resp);
+                case "get":
+                    return HandleGET(trimmed, out resp);
+                case "set":
+                    return HandleSET(trimmed, out resp);
+                default:
+                    return 400;
+            }
+        }
+
+        private int HandleRPC(string[] args, out byte[] resp)
+        {
+            resp = new byte[0];
+            if (args.Length != 1) return 400;
+
+            MethodInfo method = typeof(Registry).GetMethod(args[0], BindingFlags.Public | BindingFlags.Static);
+            if (method == null)
+            {
+                MelonLogger.Log("[IPC] Unknown method");
+                return 404;
             }
 
-            byte[] data = new byte[len];
-            Array.Copy(raw, 0, data, 0, len);
-
-            MelonLoader.TinyJSON.Variant parsed = MelonLoader.TinyJSON.JSON.Load(System.Text.Encoding.UTF8.GetString(data));
-            if (parsed == null)
+            try
             {
-                ctx.Response.StatusCode = 400;
-                ctx.Response.Close();
-                return;
+                method.Invoke(null, null);
             }
+            catch { MelonLogger.Log("[IPC] Unknown exception within reflection invocation."); }
+            
+            return 200;
+        }
 
-            string[] ipc = parsed.Make<string[]>();
-            if (ipc == null || ipc.Length < 1)
-            {
-                ctx.Response.Close();
-                return;
-            }
+        private int HandleGET(string[] args, out byte[] resp)
+        {
+            resp = new byte[0];
+            if (args.Length != 1) return 400;
 
-            PropertyInfo prop = typeof(Registry).GetProperty(ipc[0], BindingFlags.Public | BindingFlags.Static);
+            PropertyInfo prop = typeof(Registry).GetProperty(args[0], BindingFlags.Public | BindingFlags.Static);
             if (prop == null)
             {
-                MelonModLogger.Log("[IPC] Unknown property");
-                ctx.Response.StatusCode = 404;
-                ctx.Response.Close();
-                return;
+                MelonLogger.Log("[IPC] Unknown property");
+                return 404;
             }
 
-            if (ipc.Length == 1)
+            resp = System.Text.Encoding.UTF8.GetBytes(prop.GetValue(null).ToString());
+            return 200;
+        }
+
+        private int HandleSET(string[] args, out byte[] resp)
+        {
+            resp = new byte[0];
+            if (args.Length != 2) return 400;
+
+            PropertyInfo prop = typeof(Registry).GetProperty(args[0], BindingFlags.Public | BindingFlags.Static);
+            if (prop == null)
             {
-                ctx.Response.Close(System.Text.Encoding.UTF8.GetBytes(prop.GetValue(null).ToString()), false);
-                return;
+                MelonLogger.Log("[IPC] Unknown property");
+                return 404;
             }
-            else ctx.Response.Close();
 
-            prop.SetValue(null, prop.PropertyType.GetMethod("Parse", BindingFlags.Public | BindingFlags.Static).Invoke(null, new object[] { ipc[1] }));
+            object parsed;
+            try { parsed = prop.PropertyType.GetMethod("Parse", BindingFlags.Public | BindingFlags.Static).Invoke(null, new object[] { args[1] }); }
+            catch { return 400; }
+
+            prop.SetValue(null, parsed);
+            return 200;
         }
 
         private static class Registry
@@ -130,6 +197,9 @@ namespace KiraiMod
             public static bool bInvis    { get { return Shared.modules.invis .state; } set { Shared.modules.invis .SetState(value); } }
 
             public static bool bWorldTriggers { get { return Shared.Options.bWorldTriggers; } set { Shared.Options.bWorldTriggers = value; } }
+
+            public static void pBringPickups() { Helper.BringPickups(); }
+            public static void pDropTarget()   { Helper  .DropTarget(); }
         }
     }
 }

@@ -20,7 +20,7 @@ namespace KiraiMod
 
         public Menu()
         {
-            MelonModLogger.Log("Menu initializing");
+            MelonLogger.Log("Menu initializing");
 
             qm = QuickMenu.prop_QuickMenu_0;
             sm = qm.transform.Find("ShortcutMenu").gameObject;
@@ -203,7 +203,7 @@ namespace KiraiMod
                 QuickMenu qm = QuickMenu.prop_QuickMenu_0;
 
                 Transform nameplatesButton = qm.transform.Find("UIElementsMenu/ToggleNameplatesButton");
-                if (nameplatesButton == null) MelonModLogger.LogError("Failed to find UIElementMenu/ToggleNamePlatesButton");
+                if (nameplatesButton == null) MelonLogger.LogError("Failed to find UIElementMenu/ToggleNamePlatesButton");
                 GameObject button = UnityEngine.Object.Instantiate(nameplatesButton.gameObject, parent);
 
                 float size =
@@ -280,7 +280,7 @@ namespace KiraiMod
                 QuickMenu qm = QuickMenu.prop_QuickMenu_0;
 
                 Transform blockButton = qm.transform.Find("NotificationInteractMenu/BlockButton");
-                if (blockButton == null) MelonModLogger.LogError("Failed to find NotificationInteractMenu/BlockButton");
+                if (blockButton == null) MelonLogger.LogError("Failed to find NotificationInteractMenu/BlockButton");
                 GameObject button = UnityEngine.Object.Instantiate(blockButton.gameObject, parent);
 
                 float size =

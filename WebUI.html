@@ -19,7 +19,7 @@
             background-color: #222;
         }
 
-        button {
+        .toggle {
             height: 40px;
             width: 240px;
             margin-left: 5px;
@@ -32,6 +32,28 @@
             font-family: 'Roboto', arial, sans-serif;
             font-size: 24px;
         }
+
+        .button {
+            height: 40px;
+            width: 240px;
+            margin-left: 5px;
+            margin-top: 5px;
+            display: inline-block;
+            overflow: hidden;
+            text-align: center;
+            line-height: 40px;
+            vertical-align: middle;
+            font-family: 'Roboto', arial, sans-serif;
+            font-size: 24px;
+            color: var(--highlight);
+            border: 1px solid black;
+            background-color: transparent;
+        }
+
+            .button:hover {
+                background-color: black;
+                box-shadow: 0px 0px 5px 1px black, 0px 0px 5px 1px black inset;
+            }
 
         .on {
             background-color: var(--highlight);
@@ -58,22 +80,28 @@
         var buttons;
 
         function SET(str, bool) {
-            fetch("http://localhost:53065/", { method: 'POST', body: `["${str}","${bool}"]`, headers: { 'Content-Type': 'application/json' } });
+            return fetch("http://localhost:53065/", { method: 'POST', body: `["SET","${str}","${bool}"]`, headers: { 'Content-Type': 'application/json' }, mode: "no-cors" });
         }
 
         function GET(str) {
-            return fetch("http://localhost:53065/", { method: 'POST', body: `["${str}"]`, headers: { 'Content-Type': 'application/json' } });
+            return fetch("http://localhost:53065/", { method: 'POST', body: `["GET","${str}"]`, headers: { 'Content-Type': 'application/json' }, mode: "no-cors" });
+        }
+
+        function RPC(str) {
+            return fetch("http://localhost:53065/", { method: 'POST', body: `["RPC","${str}"]`, headers: { 'Content-Type': 'application/json' }, mode: "no-cors" });
         }
 
         async function Refresh() {
             for (let i = 0; i < buttons.children.length; i++) {
+                if (!buttons.children[i].className.includes("toggle")) continue;
+
                 let resp = await GET(buttons.children[i].id);
                 if (!resp.ok) break;
 
-                let active = buttons.children[i].className == "on";
+                let active = buttons.children[i].className.includes("on");
                 let value = (await resp.text()).toLowerCase() == 'true';
 
-                if (value != active) buttons.children[i].className = value ? "on" : "off";
+                if (value != active) buttons.children[i].className = value ? "toggle on" : "toggle off";
             }
         }
 
@@ -88,11 +116,17 @@
 
             for (let i = 0; i < buttons.children.length; i++) {
                 buttons.children[i].textContent = buttons.children[i].id;
-                if (buttons.children[i].className.length == 0) buttons.children[i].className = "off";
-                buttons.children[i].onclick = function () {
-                    let active = this.className == "on"
-                    this.className = !active ? "on" : "off";
-                    SET(this.id, !active);
+                if (buttons.children[i].className.includes("toggle")) {
+                    if (buttons.children[i].className.length == 6) buttons.children[i].className = "toggle off";
+                    buttons.children[i].onclick = function () {
+                        let active = this.className == "toggle on"
+                        this.className = !active ? "toggle on" : "toggle off";
+                        SET(this.id, !active);
+                    }
+                } else if (buttons.children[i].className.includes("button")) {
+                    buttons.children[i].onclick = function () {
+                        RPC(this.id);
+                    }
                 }
             }
 
@@ -102,13 +136,16 @@
 </head>
 <body>
     <div id="Buttons">
-        <button id="bSpeed"></button>
-        <button id="bFlight"></button>
-        <button id="bNoclip"></button>
-        <button id="bESP"></button>
-        <button id="bMuteSelf"></button>
-        <button id="bOrbit"></button>
-        <button id="bInvis"></button>
+        <button class="toggle" id="bSpeed"></button>
+        <button class="toggle" id="bFlight"></button>
+        <button class="toggle" id="bNoclip"></button>
+        <button class="toggle" id="bESP"></button>
+        <button class="toggle" id="bWorldTriggers"></button>
+        <button class="toggle" id="bMuteSelf"></button>
+        <button class="toggle" id="bOrbit"></button>
+        <button class="toggle" id="bInvis"></button>
+        <button class="button" id="pDropTarget"></button>
+        <button class="button" id="pBringPickups"></button>
     </div>
 </body>
 </html>
