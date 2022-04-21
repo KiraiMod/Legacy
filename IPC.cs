@@ -54,19 +54,27 @@ namespace KiraiMod
         {
             for (;;)
             {
-                HttpListenerContext ctx = listener.GetContext();
-                if (!ctx.Request.IsLocal)
+                try
                 {
-                    MelonLogger.Log("[IPC] Non local attempted to access IPC.");
-                    ctx.Response.StatusCode = 403;
-                    byte[] resp = System.Text.Encoding.UTF8.GetBytes("Forbidden. This incident has be reported.");
-                    ctx.Response.OutputStream.Write(resp, 0, resp.Length);
-                    ctx.Response.Close();
-                    continue;
-                }
+                    HttpListenerContext ctx = listener.GetContext();
+                    if (!ctx.Request.IsLocal)
+                    {
+                        MelonLogger.Log("[IPC] Non local attempted to access IPC.");
+                        ctx.Response.StatusCode = 403;
+                        byte[] resp = System.Text.Encoding.UTF8.GetBytes("Forbidden. This incident has be reported.");
+                        ctx.Response.OutputStream.Write(resp, 0, resp.Length);
+                        ctx.Response.Close();
+                        continue;
+                    }
 
-                if (ctx.Request.HttpMethod == "GET") GET(ctx);
-                else if (ctx.Request.HttpMethod == "POST") POST(ctx);
+                    if (ctx.Request.HttpMethod == "GET") GET(ctx);
+                    else if (ctx.Request.HttpMethod == "POST") POST(ctx);
+                }
+                catch (Exception e)
+                {
+                    MelonLogger.Log($"[IPC] {e.Message}");
+                    break;
+                }
             }
         }
 

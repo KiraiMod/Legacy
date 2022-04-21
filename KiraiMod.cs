@@ -69,6 +69,7 @@ namespace KiraiMod
             if (Input.GetKeyDown(KeyCode.Keypad3)) Shared.modules.noclip.SetState();
             if (Input.GetKeyDown(KeyCode.Keypad4)) Shared.modules.esp.SetState();
             if (Input.GetKeyDown(KeyCode.Keypad5)) Shared.modules.orbit.SetState();
+            if (Input.GetKeyDown(KeyCode.Keypad6)) Shared.Options.bWorldTriggers ^= true;
             if (Input.GetKeyDown(KeyCode.KeypadMinus)) MelonLogger.Log("Alive");
             if (Input.GetKeyDown(KeyCode.KeypadMultiply)) Helper.Teleport(new Vector3(0, 0, 0));
             if (Input.GetKeyDown(KeyCode.Delete)) Unload();
