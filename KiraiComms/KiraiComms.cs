@@ -32,8 +32,7 @@ namespace KiraiMod
         private Dictionary<string, RSA> encryptors = new Dictionary<string, RSA>();
         private RSA ourRSA;
 
-        private Menu menu;
-        private Menu.Button button;
+        private KiraiLib.UI.Button button;
 
         public override void OnApplicationStart()
         {
@@ -141,7 +140,7 @@ namespace KiraiMod
             {
                 if (Input.GetKeyDown(KeyCode.Delete))
                 {
-                    UnityEngine.Object.Destroy(button.self);
+                    button.Destroy();
                     button = null;
                 }
 
@@ -149,7 +148,7 @@ namespace KiraiMod
                 {
                     if (button != null)
                     {
-                        UnityEngine.Object.Destroy(button.self);
+                        button.Destroy();
                         button = null;
                     }
 
@@ -160,9 +159,9 @@ namespace KiraiMod
 
         public override void VRChat_OnUiManagerInit()
         {
-            menu = new Menu();
+            KiraiLib.UI.Initialize();
 
-            button = new Menu.Button("Message", "Send a message to this user", -1, -3, menu.um.transform, new Action(() =>
+            button = KiraiLib.UI.Button.Create("uim/message", "Message", "Send a message to this user", -1, -3, KiraiLib.UI.UserInteractMenu.transform, new Action(() =>
             {
                 string name = QuickMenu.prop_QuickMenu_0.field_Private_APIUser_0.displayName;
                 if (encryptors.TryGetValue(name, out RSA rsa)) {
@@ -177,7 +176,7 @@ namespace KiraiMod
                 {
                     KiraiLib.Logger.Log($"{QuickMenu.prop_QuickMenu_0.field_Private_APIUser_0.displayName} is not using KiraiComms");
                 }
-            }));
+            }), false);
         }
 
         private void OnPlayerLeft(Player player)

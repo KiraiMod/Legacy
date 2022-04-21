@@ -86,7 +86,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="KiraiComms.cs" />
-    <Compile Include="Menu.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
