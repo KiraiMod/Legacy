@@ -42,7 +42,11 @@ namespace KiraiMod
 
             Networking.RPC(RPC.Destination.AllBufferOne, portal, nameof(PortalInternal.ConfigurePortal), new Il2CppSystem.Object[] {
                 "wrld_5b89c79e-c340-4510-be1b-476e9fcdedcc",
+#if BETA
                 $"KOS\n{Shared.TargetPlayer.field_Private_APIUser_0.displayName}\0",
+#else
+                "KOS",
+#endif
                 new Il2CppSystem.Int32
                 {
                     m_value = -666

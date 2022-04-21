@@ -26,6 +26,7 @@ namespace KiraiMod.Modules
                 {
                     if (state && Shared.TargetPlayer != null)
                     {
+#if BETA
                         if (Shared.modules.misc.bAnnoyance)
                         {
                             var player = VRC.PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0[
@@ -39,6 +40,7 @@ namespace KiraiMod.Modules
                             MelonLogger.Log(player.field_Private_APIUser_0.displayName);
                         }
                         else
+#endif
                             Helper.PortalPlayer(Shared.TargetPlayer, Shared.modules.portal.distance, Shared.modules.portal.infinite);
                     }
                 } 
