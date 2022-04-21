@@ -25,5 +25,6 @@ namespace KiraiMod
         public static Vector3 backgroundPos;
 
         public static Sprite panel;
+        public static float qmRPPU;
     }
 }

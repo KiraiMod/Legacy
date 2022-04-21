@@ -60,5 +60,12 @@ namespace KiraiMod
             else if (op == 1) s = t.sprite;
             else t.sprite = s;
         }
+
+        public static void Move(int op, ref CanvasScaler t, ref float s, float i)
+        {
+            if (op == 0) t.m_ReferencePixelsPerUnit = i;
+            else if (op == 1) s = t.m_ReferencePixelsPerUnit;
+            else t.m_ReferencePixelsPerUnit = s;
+        }
     }
 }
