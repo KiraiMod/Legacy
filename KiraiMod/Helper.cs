@@ -54,32 +54,6 @@ namespace KiraiMod
             return portal;
         }
 
-        public static void SetTimer(PortalInternal portal, float time)
-        {
-            if (portal is null) return;
-
-            portal.field_Private_Single_1 = time * -1 + 30;
-
-            //Networking.RPC(RPC.Destination.AllBufferOne, portal, nameof(PortalInternal.SetTimerRPC), new Il2CppSystem.Object[] {
-            //    new Il2CppSystem.Single
-            //    {
-            //        m_value = time
-            //    }.BoxIl2CppObject(),
-            //    Player.prop_Player_0
-            //});
-        }
-
-        public static System.Collections.IEnumerator ReversePortal(PortalInternal portal)
-        {
-            for (int i = 0; i < 116; i++)
-            {
-                if (portal == null || Networking.GetOwner(portal.gameObject) != Networking.LocalPlayer) yield break;
-                SetTimer(portal, i / 4 + 2);
-                yield return new WaitForSecondsRealtime(0.25f);
-            }
-            SetTimer(portal, 0);
-        }
-
         public static void Teleport(Vector3 pos)
         {
             VRCPlayer.field_Internal_Static_VRCPlayer_0.transform.position = pos;

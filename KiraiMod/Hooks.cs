@@ -319,11 +319,6 @@ namespace KiraiMod
                         KiraiLib.Logger.Log($"Blocked invalid portal from <color={Utils.GetPlayer(owner.displayName).field_Private_APIUser_0.GetTrustColor().ToHex()}>{owner.displayName}</color>");
                         portal.gameObject.active = false;
                     }
-                    else if (!Shared.unloaded)
-                    {
-                        VRC.SDKBase.Networking.SetOwner(VRC.SDKBase.Networking.LocalPlayer, portal.gameObject);
-                        MelonCoroutines.Start(Helper.ReversePortal(portal));
-                    }
 
                     break;
                 }
