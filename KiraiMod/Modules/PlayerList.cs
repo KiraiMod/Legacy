@@ -65,7 +65,7 @@ namespace KiraiMod.Modules
 
         public override void OnLevelWasLoaded()
         {
-            if (Shared.menu != null && state && !Shared.menu.qm.prop_Boolean_0)
+            if (Shared.menu != null && state && !Shared.menu.qm.prop_Boolean_1)
                 parent.active = false;
         }
 
@@ -94,7 +94,7 @@ namespace KiraiMod.Modules
                 }
             }
 
-            parent.active = state && Shared.menu.qm.prop_Boolean_0;
+            parent.active = state && Shared.menu.qm.prop_Boolean_1;
         }
 
         private IEnumerator DelayedInit()

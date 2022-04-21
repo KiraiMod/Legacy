@@ -110,7 +110,7 @@ namespace KiraiMod
             {
                 Reload();
             }
-
+             
             if (bUnload) return;
 
             Shared.modules.OnUpdate();
