@@ -10,6 +10,14 @@ using static VRC.SDKBase.VRC_EventHandler;
 
 namespace KiraiMod
 {
+    internal static class Extensions
+    {
+        public static string SafeSubstring(this string value, int startIndex, int length = int.MaxValue)
+        {
+            return new string((value ?? string.Empty).Skip(startIndex).Take(length).ToArray());
+        }
+    }
+
     public class KiraiRPC : MelonMod
     {
         public static System.Action<string, string, string[]> callbackChain = new System.Action<string, string, string[]>((target, type, data) => { });
@@ -125,21 +133,21 @@ namespace KiraiMod
 
                     SendType protocol = (SendType)_protocol;
 
-                    string sid = __1.ParameterString.Substring(1, 2);
+                    string sid = __1.ParameterString.Substring(2, 2);
                     if (!int.TryParse(sid, System.Globalization.NumberStyles.HexNumber, null, out int id)) {
                         MelonLogger.Log($"{__0.field_Private_APIUser_0.displayName} sent a malformed kRPC (invalid id).");
                         return;
                     }
 
-                    string slen = __1.ParameterString.Substring(3, 1);
+                    string slen = __1.ParameterString.Substring(4, 1);
                     if (!int.TryParse(slen, System.Globalization.NumberStyles.HexNumber, null, out int len))
                     {
                         MelonLogger.Log($"{__0.field_Private_APIUser_0.displayName} sent a malformed kRPC (invalid length).");
                         return;
                     }
 
-                    string target = __1.ParameterString.Substring(4, len);
-                    string payload = __1.ParameterString.Substring(4 + len);
+                    string target = __1.ParameterString.SafeSubstring(5, len);
+                    string payload = __1.ParameterString.SafeSubstring(5 + len);
 
                     if (len == 0) // intended for us
                     {
