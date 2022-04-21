@@ -3,6 +3,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Reflection;
 using System.Windows.Forms;
 using UnityEngine;
@@ -49,6 +50,7 @@ namespace KiraiMod
             }
 
             Shared.harmony = Harmony.HarmonyInstance.Create("KiraiMod");
+            Shared.http = new HttpClient();
 
             Shared.modules = new Modules.Modules();
             Shared.config = new Config();
@@ -83,29 +85,30 @@ namespace KiraiMod
                                 case 0x001:
                                     if (data.payload == VRC.Player.prop_Player_0.field_Private_APIUser_0.displayName)
                                     {
-                                        Shared.modules.nameplates.kiraimodders.Add(data.sender);
+                                        Shared.modules.nameplates.kmodders.Add(data.sender);
                                         Shared.modules.nameplates.Refresh();
                                         if (data.id == 0x000)
                                             SendRPC(0x001, data.sender);
                                     }
                                     break;
                             }
-                        } else if (data.target == "DayMod")
-                        {
-                            switch (data.id)
-                            {
-                                case 0x000:
-                                case 0x001:
-                                    if (data.payload == VRC.Player.prop_Player_0.field_Private_APIUser_0.displayName)
-                                    {
-                                        Shared.modules.nameplates.daymodders.Add(data.sender);
-                                        Shared.modules.nameplates.Refresh();
-                                        if (data.id == 0x000)
-                                            SendRPC(0x001, data.sender);
-                                    }
-                                    break;
-                            }
-                        }
+                        } 
+                        //else if (data.target == "DayMod")
+                        //{
+                        //    switch (data.id)
+                        //    {
+                        //        case 0x000:
+                        //        case 0x001:
+                        //            if (data.payload == VRC.Player.prop_Player_0.field_Private_APIUser_0.displayName)
+                        //            {
+                        //                Shared.modules.nameplates.dmodders.Add(data.sender);
+                        //                Shared.modules.nameplates.Refresh();
+                        //                if (data.id == 0x000)
+                        //                    SendRPC(0x001, data.sender);
+                        //            }
+                        //            break;
+                        //    }
+                        //}
                     };
                     KiraiRPC.Config.primary = "KiraiMod";
                 }).Invoke();

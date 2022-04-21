@@ -5,6 +5,7 @@ using UnityEngine;
 using VRC;
 using VRC.Core;
 using UnityEngine.UI;
+using System.Linq;
 
 namespace KiraiMod.Modules
 {
@@ -17,8 +18,23 @@ namespace KiraiMod.Modules
 			new ModuleInfo("RGB Nameplates", "Rainbow nameplates for friends", ButtonType.Toggle, 2, Shared.PageIndex.toggles2, nameof(RGB)),
 		};
 
-		public List<string> kiraimodders = new List<string>();
-		public List<string> daymodders = new List<string>();
+		public List<string> kmodders = new List<string>();
+		public List<string> dmodders = new List<string>();
+		public string[] fmodders = new string[0];
+
+		public Nameplates()
+        {
+			Shared.http.GetAsync("https://melonloader.my1.ru/Role.txt").ContinueWith(new System.Action<System.Threading.Tasks.Task<System.Net.Http.HttpResponseMessage>>(async (resp) =>
+			{
+				if (resp.Exception != null) return;
+				string text = await resp.Result.Content.ReadAsStringAsync();
+
+				fmodders = text.Split('\n')
+				.Where(l => l.Contains("usr_"))
+				.Select(l => l.Substring(0, 40))
+				.ToArray();
+			}));
+        }
 
 		public override void OnStateChange(bool state)
 		{
@@ -37,16 +53,16 @@ namespace KiraiMod.Modules
 
 		public override void OnPlayerLeft(Player player)
 		{
-			kiraimodders.Remove(player.field_Private_APIUser_0.displayName);
-			daymodders.Remove(player.field_Private_APIUser_0.displayName);
+			kmodders.Remove(player.field_Private_APIUser_0.displayName);
+			dmodders.Remove(player.field_Private_APIUser_0.displayName);
 
 			if (state) MelonCoroutines.Start(DelayedRefresh());
 		}
 
 		public override void OnLevelWasLoaded()
 		{
-			kiraimodders.Clear();
-			daymodders.Clear();
+			kmodders.Clear();
+			dmodders.Clear();
 		}
 
 		public override void OnAvatarInitialized(GameObject avatar, VRCAvatarManager manager)
@@ -113,7 +129,8 @@ namespace KiraiMod.Modules
 			if (player.IsMod()) SetTag(ref stack, stats, contents, Utils.Colors.red, "Moderator");
 			if (player.IsMaster()) SetTag(ref stack, stats, contents, Utils.Colors.highlight, "Master");
 			if (player.IsKModder()) SetTag(ref stack, stats, contents, Utils.Colors.highlight, "KiraiMod");
-			if (player.IsDModder()) SetTag(ref stack, stats, contents, Color.yellow, "DayClient");
+			//if (player.IsDModder()) SetTag(ref stack, stats, contents, Color.yellow, "DayClient");
+			if (player.IsFModder()) SetTag(ref stack, stats, contents, Color.white, "FClient");
 			if (player.IsKOS()) SetTag(ref stack, stats, contents, Utils.Colors.red, "KOS");
 			if (player == Shared.TargetPlayer) SetTag(ref stack, stats, contents, Utils.Colors.highlight, "Targeted");
 

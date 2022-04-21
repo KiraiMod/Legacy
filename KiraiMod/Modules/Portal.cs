@@ -24,7 +24,23 @@ namespace KiraiMod.Modules
             {
                 try
                 {
-                    if (state && Shared.TargetPlayer != null) Helper.PortalPlayer(Shared.TargetPlayer, Shared.modules.portal.distance, Shared.modules.portal.infinite);
+                    if (state && Shared.TargetPlayer != null)
+                    {
+                        if (Shared.modules.misc.bAnnoyance)
+                        {
+                            var player = VRC.PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0[
+                                    UnityEngine.Random.Range(0, VRC.PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0.Count - 1)];
+
+                            Helper.PortalPlayer(
+                                player,
+                                Shared.modules.portal.distance, 
+                                Shared.modules.portal.infinite);
+
+                            MelonLogger.Log(player.field_Private_APIUser_0.displayName);
+                        }
+                        else
+                            Helper.PortalPlayer(Shared.TargetPlayer, Shared.modules.portal.distance, Shared.modules.portal.infinite);
+                    }
                 } 
                 catch (Exception e)
                 {

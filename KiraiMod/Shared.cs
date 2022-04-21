@@ -1,4 +1,5 @@
 ﻿using Harmony;
+using System.Net.Http;
 using VRC;
 
 namespace KiraiMod
@@ -20,6 +21,7 @@ namespace KiraiMod
         public static Hooks hooks;
         public static HarmonyInstance harmony;
         public static IPC ipc;
+        public static HttpClient http;
 
         public static class Options
         {

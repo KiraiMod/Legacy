@@ -307,7 +307,9 @@ namespace KiraiMod
 
         private static bool HighlightRenderer(Renderer __0, bool __1)
         {
-            return !Shared.modules.esp.state || __1 || __0?.name != "SelectRegion";
+            if (__0 is null) return false;
+
+            return !Shared.modules.esp.state || __1 || __0.name != "SelectRegion";
         }
 
         private static void LogWithPadding(string src, bool passed)
