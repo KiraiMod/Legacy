@@ -1,3 +1,10 @@
+# Update 2022
+To protect the identity of our contributors, author information has been stripped.
+
+As a result, all commits appear to be from when I stripped the commits.
+
+I do not condone copying anything in this repository verbaitim, however it has already happened enough there is no logical reason to keep this closed source
+
 ## License
 
 This repository intentionally omits a supplementary license. Exclusive copyright is held by the contributors.
